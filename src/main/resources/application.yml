@@ -12,9 +12,12 @@ spring:
         default_batch_fetch_size: 100
         format_sql: create
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    include: smtp
 
 logging:
   level:
     org:
       hibernate:
         sql: debug
+
