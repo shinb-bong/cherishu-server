@@ -11,6 +11,6 @@ mail:
     port: 465
 
 AdminMail:
-  id: daoh98@gmail.com
-  password: vvrwgbbkjgdfmtys
+  id: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
 
