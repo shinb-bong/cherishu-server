@@ -19,28 +19,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public static final QMember member = new QMember("member1");
 
-    public final DatePath<java.time.LocalDate> brith = createDate("brith", java.time.LocalDate.class);
-
-    public final StringPath created_date = createString("created_date");
-
-    public final StringPath email = createString("email");
-
-    // custom
-    public final QGender gender = new QGender(forProperty("gender"));
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final BooleanPath info_check = createBoolean("info_check");
-
-    public final StringPath job = createString("job");
-
-    public final StringPath modified_date = createString("modified_date");
-
-    public final StringPath name = createString("name");
-
-    public final StringPath nickName = createString("nickName");
-
-    public final StringPath password = createString("password");
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));
