@@ -28,11 +28,13 @@ public class Member {
     // 추가 정보
     @Enumerated(EnumType.STRING)
     private Gender gender; // 성별
-    private LocalDate brith; // 생일
+    private LocalDateTime brith; // 생일
     private String job; // 직업
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Builder
-    public Member(String name, String nickName, String email, String password, boolean info_check, String created_date, String modified_date, Gender gender, LocalDate brith, String job) {
+    public Member(String name, String nickName, String email, String password, boolean info_check, String created_date, String modified_date, Gender gender, LocalDateTime brith, String job, Role role) {
         this.name = name;
         this.nickName = nickName;
         this.email = email;
@@ -43,15 +45,16 @@ public class Member {
         this.gender = gender;
         this.brith = brith;
         this.job = job;
+        this.role = role;
     }
 
     // 생성 메소드
-    public Member createMember(MemberFormDto formDto, PasswordEncoder passwordEncoder){
+    public static Member createMember(MemberFormDto formDto, PasswordEncoder passwordEncoder){
         return Member.builder()
                 .name(formDto.getName())
                 .nickName(formDto.getNickName())
                 .email(formDto.getEmail())
-//                .password(passwordEncoder(1111))
+                .password(passwordEncoder.encode(formDto.getPassword()))
                 .info_check(formDto.isInfo_check())
                 .created_date(String.valueOf(LocalDateTime.now()))
                 .modified_date(String.valueOf(LocalDateTime.now()))

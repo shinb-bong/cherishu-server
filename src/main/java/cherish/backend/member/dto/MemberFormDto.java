@@ -5,9 +5,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Data
@@ -20,7 +19,7 @@ public class MemberFormDto {
     // 추가 정보
     @Enumerated(EnumType.STRING)
     private Gender gender; // 성별
-    private LocalDate brith; // 생일
+    private LocalDateTime brith; // 생일
     private String job;
 
 }

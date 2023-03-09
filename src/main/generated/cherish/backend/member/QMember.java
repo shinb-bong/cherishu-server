@@ -19,7 +19,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public static final QMember member = new QMember("member1");
 
-    public final DatePath<java.time.LocalDate> brith = createDate("brith", java.time.LocalDate.class);
+    public final DateTimePath<java.time.LocalDateTime> brith = createDateTime("brith", java.time.LocalDateTime.class);
 
     public final StringPath created_date = createString("created_date");
 
@@ -41,6 +41,8 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath nickName = createString("nickName");
 
     public final StringPath password = createString("password");
+
+    public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));
