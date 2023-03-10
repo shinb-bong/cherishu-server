@@ -1,4 +1,4 @@
-package cherish.backend.member;
+package cherish.backend.member.sub;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEmbeddableSerializer")
 public class QGender extends EnumPath<Gender> {
 
-    private static final long serialVersionUID = -181440039L;
+    private static final long serialVersionUID = 269718855L;
 
     public static final QGender gender = new QGender("gender");
 

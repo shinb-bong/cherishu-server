@@ -1,4 +1,4 @@
-package cherish.backend.member;
+package cherish.backend.member.sub;
 
 import jakarta.persistence.Embeddable;
 

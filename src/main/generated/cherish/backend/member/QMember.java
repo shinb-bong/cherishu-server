@@ -26,7 +26,7 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath email = createString("email");
 
     // custom
-    public final QGender gender = new QGender(forProperty("gender"));
+    public final cherish.backend.member.sub.QGender gender = new cherish.backend.member.sub.QGender(forProperty("gender"));
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -42,7 +42,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath password = createString("password");
 
-    public final EnumPath<Role> role = createEnum("role", Role.class);
+    public final EnumPath<cherish.backend.member.sub.Role> role = createEnum("role", cherish.backend.member.sub.Role.class);
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));

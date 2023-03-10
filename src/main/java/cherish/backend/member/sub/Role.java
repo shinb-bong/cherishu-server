@@ -1,4 +1,4 @@
-package cherish.backend.member;
+package cherish.backend.member.sub;
 
 public enum Role {
     USER("유저"),ADMIN("관리자"),DEL("삭제");

@@ -1,13 +1,13 @@
 package cherish.backend.member;
 
 import cherish.backend.member.dto.MemberFormDto;
+import cherish.backend.member.sub.Gender;
+import cherish.backend.member.sub.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -61,6 +61,7 @@ public class Member {
                 .gender(formDto.getGender())
                 .brith(formDto.getBrith())
                 .job(formDto.getJob())
+                .role(Role.USER)
                 .build();
     }
 }
