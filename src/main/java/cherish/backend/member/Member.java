@@ -64,4 +64,10 @@ public class Member {
                 .role(Role.USER)
                 .build();
     }
+
+    // 유틸 메소드
+    // 비밀번호 변경
+    public void changePwd(String pwd, PasswordEncoder passwordEncoder){
+        this.password = passwordEncoder.encode(pwd);
+    }
 }
