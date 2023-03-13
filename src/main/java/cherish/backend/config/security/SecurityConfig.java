@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+    // 현재 화이트 리스트 모두 열어 놓음
     private static final String[] AUTH_WHITELIST = {
             "/**", "/user/**",
     };

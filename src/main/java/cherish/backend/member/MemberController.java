@@ -36,8 +36,8 @@ public class MemberController {
     }
     // 회원 삭제
     @DeleteMapping("/delete")
-    public ResponseEntity delete(@RequestParam("email") String email){
-        memberService.delete(email);
+    public ResponseEntity delete(@RequestParam("email") String email,@AuthenticationPrincipal SecurityUser securityUser){
+        memberService.delete(email,securityUser.getMember().getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
     }
     // 비밀번호 찾기 (해당 아이디가 있는지 부터 검사)
@@ -48,7 +48,7 @@ public class MemberController {
     }
     // 비밀번호 수정
     @PostMapping("/changePwd")
-    public ResponseEntity changePwd(ChangePwdRequest request, @AuthenticationPrincipal SecurityUser securityUser){
+    public ResponseEntity changePwd(@RequestBody ChangePwdRequest request, @AuthenticationPrincipal SecurityUser securityUser){
         memberService.changePwd(request.getEmail(),request.getPwd(), securityUser.getMember().getEmail());
         return new ResponseEntity(HttpStatus.OK);
     }

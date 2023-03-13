@@ -17,7 +17,7 @@ public class EmailServiceImpl implements EmailService{
 
     public static final String ePw = createKey();
     @Override
-    public String sendSimpleMessage(String to)throws Exception {
+    public String sendSimpleMessage(String to) throws Exception {
         MimeMessage message = createMessage(to);
         try{//예외처리
             emailSender.send(message);
@@ -28,7 +28,7 @@ public class EmailServiceImpl implements EmailService{
         return ePw;
     }
 
-    private MimeMessage createMessage(String to)throws Exception{
+    private MimeMessage createMessage(String to) throws Exception{
         System.out.println("보내는 대상 : "+ to);
         System.out.println("인증 번호 : "+ePw);
         MimeMessage message = emailSender.createMimeMessage();
@@ -51,7 +51,7 @@ public class EmailServiceImpl implements EmailService{
         msgg+= ePw+"</strong><div><br/> ";
         msgg+= "</div>";
         message.setText(msgg, "utf-8", "html");//내용
-        message.setFrom(new InternetAddress("daoh98@naver.com","cherish"));//보내는 사람
+        message.setFrom(new InternetAddress("daoh98@gmail.com","cherish"));//보내는 사람
 
         return message;
     }
