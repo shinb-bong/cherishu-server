@@ -1,19 +1,17 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/cherish
-    username: postgres
-    password: 12345
-    show-sql: true
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        default_batch_fetch_size: 100
-        format_sql: create
-        dialect: org.hibernate.dialect.PostgreSQLDialect
   profiles:
     include: smtp
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+vault.props:
+  schema: http
+  host: ec2-54-180-219-125.ap-northeast-2.compute.amazonaws.com
+  port: 8200
+  roleId: c34df00a-8f11-10ba-a4ff-adc4242b9b65
+  secretId: 9c1ae635-6ea1-7680-4290-688b54855893
+  vaultPath: kv/datasource
 
 logging:
   level:
@@ -37,7 +35,7 @@ mail:
     port: 465
 
 AdminMail:
-  id: ${MAIL_USERNAME}
-  password: ${MAIL_PASSWORD}
+  id: temp
+  password: temp
 
 
