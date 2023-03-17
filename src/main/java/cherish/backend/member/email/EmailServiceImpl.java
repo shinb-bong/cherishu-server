@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
-public class EmailServiceImpl implements EmailService{
+public class EmailServiceImpl implements EmailService {
 
     @Autowired
     JavaMailSender emailSender;

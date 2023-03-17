@@ -1,7 +1,9 @@
 package cherish.backend.member;
 
 import cherish.backend.member.dto.MemberFormDto;
-import cherish.backend.member.sub.Gender;
+import cherish.backend.member.model.enums.Gender;
+import cherish.backend.member.model.Member;
+import cherish.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

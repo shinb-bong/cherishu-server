@@ -1,6 +1,6 @@
 package cherish.backend.member.dto;
 
-import cherish.backend.member.sub.Gender;
+import cherish.backend.member.model.enums.Gender;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
