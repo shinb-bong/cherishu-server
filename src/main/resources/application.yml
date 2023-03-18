@@ -4,6 +4,14 @@ spring:
     hibernate:
       ddl-auto: none
     database: postgresql
+
+    properties:
+      hibernate:
+        default_schema: cherishu
+
+  profiles:
+    default: local
+
 logging:
   level:
     org:
@@ -32,11 +40,12 @@ spring:
   config:
     activate:
       on-profile: local
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu
     username: postgres
-    password: {PASSWORD}
+    password: ${PASSWORD}
 ---
 spring:
   config:
@@ -47,7 +56,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu
     username: postgres
-    password: {PASSWORD}
+    password: ${PASSWORD}
 ---
 spring:
   config:
