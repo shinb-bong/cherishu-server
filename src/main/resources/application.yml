@@ -1,27 +1,22 @@
 spring:
-  profiles:
-    include: smtp
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: none
-vault.props:
-  schema: http
-  host: ec2-54-180-219-125.ap-northeast-2.compute.amazonaws.com
-  port: 8200
-  roleId: c34df00a-8f11-10ba-a4ff-adc4242b9b65
-  secretId: 9c1ae635-6ea1-7680-4290-688b54855893
-  vaultPath: kv/datasource
+    database: postgresql
+
+    properties:
+      hibernate:
+        default_schema: cherishu
+
+  profiles:
+    default: local
 
 logging:
   level:
     org:
       hibernate:
         sql: debug
-
-jwt:
-  secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
-
 mail:
   smtp:
     auth: true
@@ -34,6 +29,49 @@ mail:
       port: 465
     port: 465
 
+jwt:
+  secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
+
 AdminMail:
   id: temp
   password: temp
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu
+    username: postgres
+    password: ${PASSWORD}
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu
+    username: postgres
+    password: ${PASSWORD}
+---
+spring:
+  config:
+    activate:
+      on-profile: main
+vault.props:
+  schema: http
+  host: ec2-54-180-219-125.ap-northeast-2.compute.amazonaws.com
+  port: 8200
+  roleId: c34df00a-8f11-10ba-a4ff-adc4242b9b65
+  secretId: 9c1ae635-6ea1-7680-4290-688b54855893
+  vaultPath: kv/datasource
+
+
+
+
+
+

@@ -2,6 +2,7 @@ package cherish.backend.common.config.db;
 
 import lombok.Data;
 
+
 @Data
 public class SimpleHikariConfig {
     private String username;
