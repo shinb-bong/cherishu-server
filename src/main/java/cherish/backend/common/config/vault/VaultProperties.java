@@ -2,7 +2,9 @@ package cherish.backend.common.config.vault;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 
+@Profile("main")
 @ConfigurationProperties(VaultProperties.PREFIX)
 @Data
 public class VaultProperties {

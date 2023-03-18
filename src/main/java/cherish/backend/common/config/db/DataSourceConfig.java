@@ -6,13 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
+
 
 @Slf4j
 @Configuration
 public class DataSourceConfig {
 
+    @Profile("main")
     @Bean
     public HikariConfig hikariConfig(SimpleHikariConfig simpleHikariConfig) {
         HikariConfig hikariConfig = new HikariConfig();
@@ -24,6 +27,7 @@ public class DataSourceConfig {
         return hikariConfig;
     }
 
+    @Profile("main")
     @Primary
     @Bean
     public DataSource dataSource(HikariConfig hikariConfig) {
