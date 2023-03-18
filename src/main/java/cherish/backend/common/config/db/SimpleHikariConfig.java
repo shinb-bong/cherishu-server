@@ -1,7 +1,6 @@
 package cherish.backend.common.config.db;
 
 import lombok.Data;
-import org.springframework.context.annotation.Profile;
 
 
 @Data
