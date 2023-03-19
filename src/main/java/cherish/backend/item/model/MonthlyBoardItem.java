@@ -1,6 +1,6 @@
 package cherish.backend.item.model;
 
-import cherish.backend.member.model.Member;
+import cherish.backend.board.model.MonthlyBoard;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,17 +8,18 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@ToString
-public class ItemLike {
+@Table(name = "monthly_board_item")
+public class MonthlyBoardItem {
+
     @Id @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "monthly_board_id")
+    private MonthlyBoard monthlyBoard;
 
 }
