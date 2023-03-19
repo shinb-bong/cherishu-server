@@ -1,4 +1,4 @@
-package cherish.backend.category;
+package cherish.backend.category.model;
 
 import cherish.backend.category.model.Category;
 import cherish.backend.category.repository.CategoryRepository;

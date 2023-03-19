@@ -38,6 +38,7 @@ public class Category extends BaseTimeEntity {
         this.parent = parent;
         parent.getChildren().add(this);
     }
+
     public Category getParent() {
         if (this.parent == null) {
             return null;

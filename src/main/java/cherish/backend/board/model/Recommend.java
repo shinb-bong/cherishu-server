@@ -10,11 +10,11 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
-public class Notice {
-    @Id
-    @GeneratedValue
+public class Recommend {
+
+    @Id @GeneratedValue
     private Long id;
-    private String title; // 제목
-    private String content; // 내용
-    private String created_date; // 작성일자
+
+    private String title;
+    private String subTitle;
 }

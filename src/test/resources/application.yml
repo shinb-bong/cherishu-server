@@ -30,7 +30,7 @@ mail:
     port: 465
 
 AdminMail:
-  id: ${MAIL_USERNAME}
-  password: ${MAIL_PASSWORD}
+  id: tmp
+  password: tmp
 
 
