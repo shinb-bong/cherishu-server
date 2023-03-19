@@ -1,6 +1,5 @@
 package cherish.backend.item.model;
 
-import cherish.backend.board.model.MonthlyBoard;
 import cherish.backend.board.model.Recommend;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -25,5 +24,5 @@ public class RecommendItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommend_id")
-    private Recommend monthlyBoard;
+    private Recommend recommend;
 }

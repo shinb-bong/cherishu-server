@@ -1,6 +1,5 @@
 package cherish.backend.item.model;
 
-import cherish.backend.item.model.Item;
 import cherish.backend.member.model.Member;
 import jakarta.persistence.*;
 import lombok.*;
