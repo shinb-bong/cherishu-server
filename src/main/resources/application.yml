@@ -3,11 +3,11 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
-    database: postgresql
 
     properties:
       hibernate:
         default_schema: cherishu
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   profiles:
     default: local
