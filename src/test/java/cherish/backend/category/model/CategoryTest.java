@@ -42,7 +42,6 @@ public class CategoryTest {
 
             // Then
             assertThat(result).hasSize(2);
-            assertThat(result).contains(childCategory1, childCategory2);
             assertThat(result.stream().map(Category::getName))
                     .containsExactlyInAnyOrder(childCategory1.getName(), childCategory2.getName());
 

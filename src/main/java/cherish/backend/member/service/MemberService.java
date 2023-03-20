@@ -56,7 +56,7 @@ public class MemberService {
     public void delete(String email, String nowUserEmail) {
         Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
         Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
-        if ( (nowMember.getRole().equals(ADMIN)) || (changeMember.equals(nowMember))){
+        if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember))){
             Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
             memberRepository.delete(member);
         }
@@ -71,7 +71,7 @@ public class MemberService {
     public void changePwd(String email, String pwd,String nowUserEmail) {
         Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
         Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
-        if ( (nowMember.getRole().equals(ADMIN)) || (changeMember.equals(nowMember))){
+        if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember))){
             changeMember.changePwd(pwd,passwordEncoder);
         }
         else{

@@ -4,26 +4,25 @@ import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.model.enums.Gender;
 import cherish.backend.member.model.Member;
 import cherish.backend.member.repository.MemberRepository;
-import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @SpringBootTest
 class MemberTest {
 
     @Autowired
-    public MemberRepository memberRepository;
-
+    private MemberRepository memberRepository;
     @Autowired
-    public EntityManager em;
-    @Autowired
-    public PasswordEncoder passwordEncoder ;
+    private PasswordEncoder passwordEncoder ;
 
+    @Transactional
     @Test
     public void 회원가입(){
         //given
@@ -37,10 +36,11 @@ class MemberTest {
     }
 
     private static MemberFormDto getMemberFormDto() {
-        MemberFormDto memberFormDto = new MemberFormDto("지수빈", "공주", "test@naver.com", "1234", true, Gender.None, LocalDateTime.now(), "공주");
+        MemberFormDto memberFormDto = new MemberFormDto("지수빈", "공주", "test@naver.com", "1234", true, Gender.None, LocalDate.now(), "공주");
         return memberFormDto;
     }
 
+    @Transactional
     @Test
     public void 비밀번호_변경(){
         MemberFormDto memberFormDto = getMemberFormDto();

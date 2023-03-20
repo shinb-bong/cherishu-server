@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +22,7 @@ class ItemTest {
     @Test
     public void BaseTimeEntity_등록() throws Exception {
         //given
-        LocalDateTime now = LocalDateTime.of(2019, 6, 4, 0, 0, 0);
+        LocalDate now = LocalDate.of(2019, 6, 4);
         //when
         itemRepository.save(Item.builder()
                 .brand("샤넬")

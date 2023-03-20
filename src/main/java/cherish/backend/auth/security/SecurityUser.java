@@ -13,7 +13,7 @@ public class SecurityUser extends User {
 
     public SecurityUser(Member member) {
         super(member.getEmail(), member.getPassword(),
-                AuthorityUtils.createAuthorityList(member.getRole().toString()));
+                AuthorityUtils.createAuthorityList(member.getRoles().toString()));
         this.member = member;
     }
 
