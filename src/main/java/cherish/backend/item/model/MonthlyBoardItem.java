@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "monthly_board_item")
 public class MonthlyBoardItem {
 
     @Id @GeneratedValue

@@ -26,6 +26,7 @@ public class Category extends BaseTimeEntity {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    @Builder.Default
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Category> children = new ArrayList<>();
 
