@@ -1,4 +1,9 @@
+server:
+  shutdown: graceful # 정상적인 종료
+
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 35s
   jpa:
     show-sql: true
     hibernate:
