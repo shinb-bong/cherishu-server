@@ -22,6 +22,4 @@ class RedisServiceTest {
         Assertions.assertThat(uid).isEqualTo(getRedisValue);
     }
 
-
-
 }

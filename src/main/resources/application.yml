@@ -17,6 +17,11 @@ spring:
   profiles:
     default: local
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 logging:
   level:
     org:
@@ -51,11 +56,6 @@ spring:
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu
     username: postgres
     password: ${PASSWORD}
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
 ---
 spring:
   config:
@@ -67,11 +67,6 @@ spring:
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu
     username: postgres
     password: ${PASSWORD}
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
 ---
 spring:
   config:
@@ -84,11 +79,6 @@ vault.props:
   roleId: c34df00a-8f11-10ba-a4ff-adc4242b9b65
   secretId: 9c1ae635-6ea1-7680-4290-688b54855893
   vaultPath: kv/datasource
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 
 
