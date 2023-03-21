@@ -6,6 +6,10 @@ spring:
       hibernate:
         default_batch_fetch_size: 100
         format_sql: create
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
@@ -31,5 +35,7 @@ mail:
 AdminMail:
   id: tmp
   password: tmp
+
+
 
 
