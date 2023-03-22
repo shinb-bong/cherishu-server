@@ -6,6 +6,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.util.Optional;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -15,7 +18,10 @@ public class RedisService {
 
     public String setRedisCode(String key,String validCode) {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
-        operations.set(key, validCode);
+        Optional<String> isKey = Optional.ofNullable(operations.get(key));
+        if (!isKey.isEmpty())
+            throw new IllegalStateException("30초 내에 이메일을 재전송 할 수 없습니다.");
+        operations.set(key, validCode, Duration.ofSeconds(30));
         log.info("input = {} ",validCode);
         return validCode;
     }
