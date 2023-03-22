@@ -3,7 +3,10 @@ package cherish.backend.member.controller;
 import cherish.backend.auth.security.SecurityUser;
 import cherish.backend.auth.jwt.TokenInfo;
 import cherish.backend.member.dto.*;
+import cherish.backend.member.dto.email.EmailCodeRequest;
+import cherish.backend.member.dto.email.EmailRequest;
 import cherish.backend.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,13 +65,13 @@ public class MemberController {
     }
 
     @PostMapping("/emailCode")
-    public ResponseEntity sendEmailCode(@RequestBody EmailRequest emailRequest){
+    public ResponseEntity sendEmailCode(@RequestBody @Valid EmailRequest emailRequest){
         memberService.sendEmailCode(emailRequest.getEmail());
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/emailCode")
-    public ResponseEntity validEmailCode(@RequestBody EmailCodeRequest request){
+    public ResponseEntity validEmailCode(@RequestBody @Valid EmailCodeRequest request){
         memberService.validEmailCode(request.getEmail(), request.getCode());
         return new ResponseEntity(HttpStatus.OK);
     }
