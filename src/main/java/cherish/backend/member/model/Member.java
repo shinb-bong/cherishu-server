@@ -28,7 +28,7 @@ public class Member extends BaseTimeEntity {
     // 추가 정보
     @Enumerated(EnumType.STRING)
     private Gender gender; // 성별
-    private LocalDate brith; // 생일
+    private LocalDate birth; // 생일
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
@@ -45,7 +45,7 @@ public class Member extends BaseTimeEntity {
                 .password(passwordEncoder.encode(formDto.getPassword()))
                 .informationCheck(formDto.isInfoCheck())
                 .gender(formDto.getGender())
-                .brith(formDto.getBrith())
+                .birth(formDto.getBirth())
                 .roles(Role.USER)
                 .build();
     }

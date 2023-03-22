@@ -6,3 +6,5 @@ ${AnsiColor.BRIGHT_GREEN} | |____| | | |  __/ |  | \__ \ | | | ${AnsiColor.BRIGH
 ${AnsiColor.BRIGHT_GREEN}  \_____|_| |_|\___|_|  |_|___/_| |_| ${AnsiColor.BRIGHT_YELLOW} \____/
 
 ${AnsiColor.BRIGHT_MAGENTA}:: Spring Boot ::${AnsiColor.DEFAULT}${spring-boot.formatted-version}
+
+Active profiles :: ${spring.profiles.active:${spring.profiles.default}}

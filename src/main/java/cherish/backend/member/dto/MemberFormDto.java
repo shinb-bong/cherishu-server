@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Data
@@ -20,7 +19,7 @@ public class MemberFormDto {
     // 추가 정보
     @Enumerated(EnumType.STRING)
     private Gender gender; // 성별
-    private LocalDate brith; // 생일
+    private LocalDate birth; // 생일
     private String job;
 
 }
