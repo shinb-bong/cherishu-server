@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
-@Table(name = "monthly_board")
 public class MonthlyBoard extends BaseTimeEntity {
 
     @Id @GeneratedValue

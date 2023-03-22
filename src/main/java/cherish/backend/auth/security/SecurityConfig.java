@@ -30,6 +30,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -42,15 +43,15 @@ public class SecurityConfig {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeHttpRequests(authorize -> authorize
-                .shouldFilterAllDispatcherTypes(false)
-                .requestMatchers(AUTH_WHITELIST)
-                .permitAll()
-                .anyRequest()
-                .authenticated())
+                .authorizeHttpRequests(authorize ->
+                    authorize
+                    .shouldFilterAllDispatcherTypes(false)
+                    .requestMatchers(AUTH_WHITELIST)
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
 
 }

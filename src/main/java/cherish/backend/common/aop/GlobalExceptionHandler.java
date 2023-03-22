@@ -1,4 +1,4 @@
-package cherish.backend.common.exception;
+package cherish.backend.common.aop;
 
 import cherish.backend.common.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;

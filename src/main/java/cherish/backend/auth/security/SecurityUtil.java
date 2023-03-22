@@ -1,5 +1,6 @@
 package cherish.backend.auth.security;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -7,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * 클래스로 사용가능한
  * 현재 접속한 사용자 이메일 유틸 클래스
  */
+@UtilityClass
 public class SecurityUtil {
     public static String getCurrentMemberEmail() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

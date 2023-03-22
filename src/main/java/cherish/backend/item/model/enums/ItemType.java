@@ -1,10 +1,12 @@
 package cherish.backend.item.model.enums;
 
-public enum ItemType {
-    Food("식품"), Beauty("뷰티"), Living("리빙/주방"), Digital("디지털/가전"), Clothes("의류/잡화"), ETC("기타");
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-    private final String name;
-    ItemType(String name) {
-        this.name = name;
-    }
+@Getter
+@RequiredArgsConstructor
+public enum ItemType {
+    FOOD("식품"), BEAUTY("뷰티"), LIVING("리빙/주방"), DIGITAL("디지털/가전"), CLOTHES("의류/잡화"), ETC("기타");
+
+    private final String description;
 }

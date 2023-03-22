@@ -27,21 +27,21 @@ public class JwtTokenProvider {
     private final Key key;
     private final CustomUserDetailService service;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, MemberRepository memberRepository, CustomUserDetailService service) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, CustomUserDetailService service) {
         this.service = service;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public TokenInfo generateToken(Authentication authentication, Boolean isPersist) {
+    public TokenInfo generateToken(Authentication authentication, boolean isPersist) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        if (isPersist == true){
+        if (isPersist){
             now += 9999999999999999L;
         }
         // Access Token 생성
@@ -79,7 +79,7 @@ public class JwtTokenProvider {
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get("auth").toString().split(","))
                         .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+                        .toList();
 
         // UserDetails 객체를 만들어서 Authentication 리턴
         // 여기서 우리는 유틸리티 객체를 쓸 것이기 때문에

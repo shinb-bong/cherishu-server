@@ -1,8 +1,6 @@
 package cherish.backend.test;
 
 import cherish.backend.common.service.RedisService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +15,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("test")
 public class TestRestController {
+
     private final RedisService redisService;
+
     @GetMapping("excuteProcess/{processNum}")
     public String process(@PathVariable int processNum) throws InterruptedException {
         log.info("========================== Start Process -> Process Number: {}", processNum);

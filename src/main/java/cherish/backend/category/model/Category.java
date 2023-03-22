@@ -12,12 +12,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "category")
 public class Category extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
     private Long id;
 
     private String name;
@@ -47,11 +45,11 @@ public class Category extends BaseTimeEntity {
     }
 
     public String getParentName() {
-        Category parent = getParent();
-        if (parent == null) {
+        Category parentCategory = getParent();
+        if (parentCategory == null) {
             return null;
         }
-        return parent.getName();
+        return parentCategory.getName();
     }
 
 }

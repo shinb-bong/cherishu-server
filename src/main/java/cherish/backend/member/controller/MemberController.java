@@ -20,33 +20,34 @@ public class MemberController {
     private final MemberService memberService;
 
     //회원 회원가입
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody MemberFormDto memberFormDto){
-        String savedEmail = memberService.join(memberFormDto);
-        return new ResponseEntity<>(savedEmail, HttpStatus.CREATED);
+    public String register(@RequestBody MemberFormDto memberFormDto){
+        return memberService.join(memberFormDto);
     }
 
     // 회원 로그인
     @PostMapping("/login")
     public TokenInfo login(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
-
-        TokenInfo tokenInfo = memberService.login(memberLoginRequestDto.getEmail(),
+        return memberService.login(memberLoginRequestDto.getEmail(),
                 memberLoginRequestDto.getPassword(),
-                memberLoginRequestDto.getIsPersist()); // 로그인 지속할껀지
-        return tokenInfo;
+                memberLoginRequestDto.getIsPersist());
     }
+
     // 회원 삭제
     @DeleteMapping("/delete")
     public ResponseEntity delete(@RequestParam("email") String email,@AuthenticationPrincipal SecurityUser securityUser){
         memberService.delete(email,securityUser.getMember().getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     // 비밀번호 찾기 (해당 아이디가 있는지 부터 검사)
     @GetMapping("/isMember")
     public MemberEmailResponse isMember(@RequestParam("email") String email){
         Boolean isMember = memberService.isMember(email);
-        return new MemberEmailResponse(email,isMember);
+        return new MemberEmailResponse(email, isMember);
     }
+
     // 비밀번호 수정
     @PostMapping("/changePwd")
     public ResponseEntity changePwd(@RequestBody ChangePwdRequest request, @AuthenticationPrincipal SecurityUser securityUser){
@@ -55,7 +56,6 @@ public class MemberController {
     }
 
     // 회원 수정
-    @PatchMapping("/change")
 
     // 유틸 테스트
     // 객체로 받아오는 것
@@ -64,4 +64,3 @@ public class MemberController {
         return member.getMember().getEmail();
     }
 }
-

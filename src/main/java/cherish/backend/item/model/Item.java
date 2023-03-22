@@ -16,6 +16,7 @@ public class Item extends BaseTimeEntity {
     @Id
     @GeneratedValue
     private Long id;
+
     private String brand;
     private String name;
     private String description;

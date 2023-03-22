@@ -2,6 +2,7 @@ package cherish.backend.member.service;
 
 import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.auth.jwt.TokenInfo;
+import cherish.backend.member.constant.Constants;
 import cherish.backend.member.repository.MemberRepository;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.model.Member;
@@ -35,15 +36,13 @@ public class MemberService {
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication,isPersist);
-
-        return tokenInfo;
+        return jwtTokenProvider.generateToken(authentication, isPersist);
     }
 
     @Transactional
     public String join(MemberFormDto memberFormDto) {
         boolean isAlready = memberRepository.existsByEmail(memberFormDto.getEmail());
-        if (isAlready == true){
+        if (isAlready){
             throw new IllegalArgumentException("이미 이메일이 등록되어 있습니다.");
         }
         else {
@@ -54,10 +53,10 @@ public class MemberService {
 
     @Transactional
     public void delete(String email, String nowUserEmail) {
-        Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
-        Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
+        Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
+        Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
         if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember))){
-            Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
+            Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
             memberRepository.delete(member);
         }
 
@@ -69,8 +68,8 @@ public class MemberService {
 
     @Transactional
     public void changePwd(String email, String pwd,String nowUserEmail) {
-        Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
-        Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
+        Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
+        Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
         if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember))){
             changeMember.changePwd(pwd,passwordEncoder);
         }

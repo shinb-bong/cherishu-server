@@ -1,5 +1,6 @@
 package cherish.backend.common.exception;
 
+import cherish.backend.common.aop.GlobalExceptionHandler;
 import cherish.backend.member.controller.MemberController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
