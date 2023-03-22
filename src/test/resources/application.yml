@@ -36,6 +36,11 @@ AdminMail:
   id: tmp
   password: tmp
 
+aws:
+  ses:
+    access-key: tmp
+    secret-key: tmp
+
 
 
 

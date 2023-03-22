@@ -3,12 +3,15 @@ package cherish.backend.member.email;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
+@Profile("local")
 @Service
 public class EmailServiceImpl implements EmailService {
 

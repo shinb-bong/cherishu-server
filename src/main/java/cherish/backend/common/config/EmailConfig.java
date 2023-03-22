@@ -3,12 +3,14 @@ package cherish.backend.common.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+@Profile("local")
 @Configuration
 @PropertySource("classpath:application.yml")
 public class EmailConfig {
@@ -29,6 +31,7 @@ public class EmailConfig {
     private String id;
     @Value("${AdminMail.password}")
     private String password;
+
 
     @Bean
     public JavaMailSender javaMailService() {

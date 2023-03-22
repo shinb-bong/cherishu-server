@@ -40,10 +40,6 @@ mail:
 
 jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
-
-AdminMail:
-  id: temp
-  password: temp
 ---
 spring:
   config:
@@ -56,10 +52,19 @@ spring:
     username: postgres
     password: ${PASSWORD}
 
+    AdminMail:
+      id: ${MAIL_ID}
+      password: ${MAIL_PASSWORD}
+
 decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+aws:
+  ses:
+    access-key: AKIAWX34FLG2DOH4FW5U
+    secret-key: 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
 ---
 spring:
   config:
@@ -83,6 +88,11 @@ vault.props:
   roleId: c34df00a-8f11-10ba-a4ff-adc4242b9b65
   secretId: 9c1ae635-6ea1-7680-4290-688b54855893
   vaultPath: kv/datasource
+
+aws:
+  ses:
+    access-key: AKIAWX34FLG2DOH4FW5U
+    secret-key: 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
 
 
 
