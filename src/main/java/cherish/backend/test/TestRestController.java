@@ -30,7 +30,7 @@ public class TestRestController {
     @GetMapping("/redis")
     public String testRedis() {
         String uid = UUID.randomUUID().toString().substring(0, 7);
-        redisService.redisString(uid);
+        redisService.setRedisCode("test",uid);
         return uid;
     }
 

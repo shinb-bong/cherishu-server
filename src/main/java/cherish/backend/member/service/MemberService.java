@@ -2,6 +2,9 @@ package cherish.backend.member.service;
 
 import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.auth.jwt.TokenInfo;
+import cherish.backend.common.service.RedisService;
+import cherish.backend.member.email.EmailCode;
+import cherish.backend.member.email.EmailService;
 import cherish.backend.member.repository.MemberRepository;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.model.Member;
@@ -25,6 +28,8 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final RedisService redisService;
 
     @Transactional
     public TokenInfo login(String email, String password, Boolean isPersist) {
@@ -77,5 +82,19 @@ public class MemberService {
         else{
             throw new IllegalStateException("권한이 없습니다.");
         }
+    }
+
+    public String sendEmailCode(String email){
+        if(!isMember(email)){
+            String code = EmailCode.createCode().getCode();
+            emailService.sendMessage(email, code);
+            redisService.setRedisCode(email,code);
+            return code;
+        } else
+            throw new IllegalArgumentException("이미 가입한 사용자 입니다.");
+    }
+
+    public boolean validEmailCode(String email, String inputCode){
+        return redisService.validCode(email,inputCode);
     }
 }

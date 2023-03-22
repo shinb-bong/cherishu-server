@@ -13,11 +13,17 @@ public class RedisService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public String redisString(String validCode) {
+    public String setRedisCode(String key,String validCode) {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
-        operations.set("validCode", validCode);
-        String redis = operations.get("validCode");
-        log.info("input = {} ",redis);
-        return redis;
+        operations.set(key, validCode);
+        log.info("input = {} ",validCode);
+        return validCode;
+    }
+    public boolean validCode(String key,String inputCode) {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        String redisCode = operations.get(key);
+        if (inputCode.equals(redisCode))
+            return true;
+        return false;
     }
 }

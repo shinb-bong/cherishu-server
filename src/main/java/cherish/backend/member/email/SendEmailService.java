@@ -13,18 +13,17 @@ import org.springframework.stereotype.Service;
 public class SendEmailService implements EmailService{
     private final AmazonSimpleEmailService amazonSimpleEmailService;
     @Override
-    public String sendSimpleMessage(String to) throws Exception {
-        String code = EmailCode.createCode().getCode();
+    public String sendMessage(String to, String content){
         final EmailSenderDto senderDto = EmailSenderDto.builder() // 1
                 .to(to)
-                .content(code)
+                .content(content)
                 .build();
 
         final SendEmailResult sendEmailResult = amazonSimpleEmailService // 2
                 .sendEmail(senderDto.toSendRequestDto());
 
         sendingResultMustSuccess(sendEmailResult); // 3
-        return code;
+        return content;
     }
 
     private void sendingResultMustSuccess(SendEmailResult sendEmailResult) {
