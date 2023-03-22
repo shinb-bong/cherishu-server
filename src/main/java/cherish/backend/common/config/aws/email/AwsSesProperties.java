@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 
-@Profile({"dev","main"})
 @Getter
 @AllArgsConstructor
 @ConfigurationProperties("aws.ses")

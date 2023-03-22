@@ -4,8 +4,6 @@ import com.amazonaws.services.simpleemail.model.*;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 public class EmailSenderDto {
     public static final String FROM_EMAIL = "cherishu.fullstack@gmail.com"; // 보내는 사람
