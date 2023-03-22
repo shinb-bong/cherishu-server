@@ -22,8 +22,8 @@ public class RedisService {
     public boolean validCode(String key,String inputCode) {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         String redisCode = operations.get(key);
-        if (inputCode.equals(redisCode))
-            return true;
-        return false;
+        if (!inputCode.equals(redisCode))
+            throw new IllegalStateException("입력한 입력코드가 다릅니다.");
+        return true;
     }
 }

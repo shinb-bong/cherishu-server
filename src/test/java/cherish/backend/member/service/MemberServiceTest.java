@@ -24,5 +24,15 @@ class MemberServiceTest {
         //then
         assertThat(success).isTrue();
     }
+    @Test
+    public void 이메일_인증_불일치_확인(){
+        //given
+        String email = "cherishu.fullstack@gmail.com";
+        //when
+        memberService.sendEmailCode(email);
+        assertThrows(IllegalStateException.class,()->memberService.validEmailCode(email, "test"));
+
+    }
+
 
 }

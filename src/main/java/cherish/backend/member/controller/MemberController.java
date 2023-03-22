@@ -2,11 +2,8 @@ package cherish.backend.member.controller;
 
 import cherish.backend.auth.security.SecurityUser;
 import cherish.backend.auth.jwt.TokenInfo;
+import cherish.backend.member.dto.*;
 import cherish.backend.member.service.MemberService;
-import cherish.backend.member.dto.ChangePwdRequest;
-import cherish.backend.member.dto.MemberEmailResponse;
-import cherish.backend.member.dto.MemberFormDto;
-import cherish.backend.member.dto.MemberLoginRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +59,18 @@ public class MemberController {
     @GetMapping("/info")
     public String info(@AuthenticationPrincipal SecurityUser member){
         return member.getMember().getEmail();
+    }
+
+    @PostMapping("/emailCode")
+    public ResponseEntity sendEmailCode(@RequestBody EmailRequest emailRequest){
+        memberService.sendEmailCode(emailRequest.getEmail());
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/emailCode")
+    public ResponseEntity validEmailCode(@RequestBody EmailCodeRequest request){
+        memberService.validEmailCode(request.getEmail(), request.getCode());
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
 
