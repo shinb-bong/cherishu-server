@@ -6,7 +6,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class EmailCodeRequest {
+public class EmailCodeValidationRequest {
     @Email
     @NotEmpty
     private String email;

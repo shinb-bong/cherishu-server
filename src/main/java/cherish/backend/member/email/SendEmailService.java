@@ -29,6 +29,7 @@ public class SendEmailService implements EmailService{
     private void sendingResultMustSuccess(SendEmailResult sendEmailResult) {
         if (sendEmailResult.getSdkHttpMetadata().getHttpStatusCode() != 200) {
             log.error("{}", sendEmailResult.getSdkResponseMetadata().toString());
+            throw new IllegalStateException("이메일 인증코드 발송에 성공하지 못했습니다.");
         }
     }
 }

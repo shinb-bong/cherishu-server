@@ -3,7 +3,13 @@ package cherish.backend.member.email;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.random.RandomGenerator;
+import java.util.random.RandomGeneratorFactory;
 
 @Builder
 @Getter
@@ -15,13 +21,23 @@ public class EmailCode {
                 code(makeCode()).build();
     }
 
-    public static String makeCode() {
-        StringBuffer key = new StringBuffer();
-        Random rnd = new Random();
+    static String makeCode() {
+        List<Integer> numbers = Collections.synchronizedList(new ArrayList<>());
+        ExecutorService executorService = Executors.newCachedThreadPool();
 
-        for (int i = 0; i < 6; i++) { // 인증코드 8자리
-            key.append((rnd.nextInt(10)));
+        RandomGenerator.SplittableGenerator sourceGenerator = RandomGeneratorFactory
+                .<RandomGenerator.SplittableGenerator>of("L128X256MixRandom")
+                .create();
+
+        sourceGenerator.splits(6).forEach((splitGenerator) -> {
+            executorService.submit(() -> {
+                numbers.add(splitGenerator.nextInt(10));
+            });
+        });
+        StringBuilder sb = new StringBuilder();
+        for (Integer number : numbers) {
+            sb.append(number);
         }
-        return key.toString();
+        return sb.toString();
     }
 }

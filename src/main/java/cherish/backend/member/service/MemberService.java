@@ -68,7 +68,7 @@ public class MemberService {
 
     }
 
-    public Boolean isMember(String email) {
+    public boolean isMember(String email) {
         return memberRepository.existsByEmail(email);
     }
 
@@ -88,7 +88,7 @@ public class MemberService {
         if(!isMember(email)){
             String code = EmailCode.createCode().getCode();
             emailService.sendMessage(email, code);
-            redisService.setRedisCode(email,code);
+            redisService.setRedisCode(email,code,30L);
             return code;
         } else
             throw new IllegalArgumentException("이미 가입한 사용자 입니다.");
