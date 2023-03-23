@@ -1,6 +1,8 @@
 package cherish.backend.common.aop;
 
 import cherish.backend.common.dto.ErrorResponseDto;
+import cherish.backend.common.exception.ApiRequestNotValidException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
@@ -10,21 +12,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String NO_ERROR_MESSAGE = "No error message from server.";
+
     private ErrorResponseDto createError(Exception e) {
+        log.error(e.getMessage(), e);
         if (ObjectUtils.isEmpty(e.getMessage())) {
-            return new ErrorResponseDto("No error message from server.");
+            return new ErrorResponseDto(NO_ERROR_MESSAGE);
         }
         return new ErrorResponseDto(e.getMessage());
-    }
-
-    private ErrorResponseDto createError(String s) {
-        if (ObjectUtils.isEmpty(s)) {
-            return new ErrorResponseDto("No error message from server.");
-        }
-        return new ErrorResponseDto(s);
     }
 
     // 자바 빈 검증 예외 처리
@@ -43,7 +42,8 @@ public class GlobalExceptionHandler {
             builder.append(fieldError.getRejectedValue());
             builder.append("]");
         }
-        return createError(builder.toString());
+
+        return createError(new ApiRequestNotValidException(builder.toString()));
     }
 
     // 공통 예외 처리
