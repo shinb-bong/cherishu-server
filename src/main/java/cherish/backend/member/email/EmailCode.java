@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;
+import java.util.stream.Collectors;
 
 @Builder
 @Getter
@@ -34,10 +35,7 @@ public class EmailCode {
                 numbers.add(splitGenerator.nextInt(10));
             });
         });
-        StringBuilder sb = new StringBuilder();
-        for (Integer number : numbers) {
-            sb.append(number);
-        }
-        return sb.toString();
+        String sb = numbers.stream().map(String::valueOf).collect(Collectors.joining());
+        return sb;
     }
 }
