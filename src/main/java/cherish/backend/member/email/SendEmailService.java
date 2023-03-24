@@ -5,6 +5,7 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -29,7 +30,7 @@ public class SendEmailService implements EmailService{
     private void sendingResultMustSuccess(SendEmailResult sendEmailResult) {
         if (sendEmailResult.getSdkHttpMetadata().getHttpStatusCode() != 200) {
             log.error("{}", sendEmailResult.getSdkResponseMetadata().toString());
-            throw new IllegalStateException("이메일 인증코드 발송에 성공하지 못했습니다.");
+            throw new MailSendException("이메일 인증코드 발송에 성공하지 못했습니다.");
         }
     }
 }

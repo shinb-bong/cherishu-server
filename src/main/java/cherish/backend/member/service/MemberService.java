@@ -9,6 +9,7 @@ import cherish.backend.member.repository.MemberRepository;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static cherish.backend.member.model.enums.Role.ADMIN;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -87,11 +89,12 @@ public class MemberService {
     public String sendEmailCode(String email){
         if(!isMember(email)){
             String code = EmailCode.createCode().getCode();
+            log.info("make code =  {}", code);
             emailService.sendMessage(email, code);
             redisService.setRedisCode(email,code,30L);
             return code;
         } else
-            throw new IllegalArgumentException("이미 가입한 사용자 입니다.");
+            throw new IllegalStateException("이미 가입한 사용자 입니다.");
     }
 
     public boolean validEmailCode(String email, String inputCode){

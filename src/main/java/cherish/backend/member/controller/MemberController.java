@@ -64,13 +64,13 @@ public class MemberController {
         return member.getMember().getEmail();
     }
 
-    @PostMapping("/email-code")
+    @PostMapping("/code-send")
     public ResponseEntity sendEmailCode(@RequestBody @Valid EmailRequest emailRequest){
-        memberService.sendEmailCode(emailRequest.getEmail());
-        return new ResponseEntity(HttpStatus.OK);
+        String code = memberService.sendEmailCode(emailRequest.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(code);
     }
 
-    @GetMapping("/email-code")
+    @PostMapping("/code-valid")
     public ResponseEntity validEmailCode(@RequestBody @Valid EmailCodeValidationRequest request){
         memberService.validEmailCode(request.getEmail(), request.getCode());
         return new ResponseEntity(HttpStatus.OK);
