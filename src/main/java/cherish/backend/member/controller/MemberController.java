@@ -44,19 +44,24 @@ public class MemberController {
     // 비밀번호 찾기 (해당 아이디가 있는지 부터 검사)
     @GetMapping("/is-member")
     public MemberEmailResponse isMember(@RequestParam("email") String email){
-        Boolean isMember = memberService.isMember(email);
+        boolean isMember = memberService.isMember(email);
         return new MemberEmailResponse(email,isMember);
     }
     // 비밀번호 수정
+    // 기존비밀번호 확인이 체크가 되어있거나
+    // 혹은 현재 로그인한 사용자가 바꾸길 원하는 이메일과 같은 경우
     @PostMapping("/change-password")
     public ResponseEntity changePwd(@RequestBody ChangePwdRequest request, @AuthenticationPrincipal SecurityUser securityUser){
-        memberService.changePwd(request.getEmail(),request.getPwd(), securityUser.getMember().getEmail());
+        memberService.changePwd(request.getEmail(), request.isCheck(),request.getPwd(), securityUser.getMember().getEmail());
         return new ResponseEntity(HttpStatus.OK);
     }
 
     // 회원 수정
-    @PatchMapping("/change")
-
+    @PatchMapping("/change-info")
+    public ResponseEntity changeInfo(@RequestBody ChangeInfoRequest request){
+        Long memberId = memberService.changeInfo(request.getNickName(), request.getJobName(), request.getMemberEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(memberId);
+    }
     // 유틸 테스트
     // 객체로 받아오는 것
     @GetMapping("/info")

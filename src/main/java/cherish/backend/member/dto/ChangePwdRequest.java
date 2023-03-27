@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class ChangePwdRequest {
-    private String pwd;
-    private String email;
+    private final String pwd;
+    private final String email;
+    private final boolean check; // 이메일 인증코드 체크된 사람
 }

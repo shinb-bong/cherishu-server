@@ -18,7 +18,6 @@ public class MemberFormDto {
     private String password; // 패스워드
     private boolean infoCheck; // 광고성 동의
     // 추가 정보
-    @Enumerated(EnumType.STRING)
     private Gender gender; // 성별
     private LocalDate brith; // 생일
     private String job;

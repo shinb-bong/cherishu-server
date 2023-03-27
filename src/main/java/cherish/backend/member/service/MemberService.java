@@ -5,6 +5,8 @@ import cherish.backend.auth.jwt.TokenInfo;
 import cherish.backend.common.service.RedisService;
 import cherish.backend.member.email.EmailCode;
 import cherish.backend.member.email.EmailService;
+import cherish.backend.member.model.Job;
+import cherish.backend.member.repository.JobRepository;
 import cherish.backend.member.repository.MemberRepository;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.model.Member;
@@ -32,6 +34,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final RedisService redisService;
+    private final JobRepository jobRepository;
 
     @Transactional
     public TokenInfo login(String email, String password, Boolean isPersist) {
@@ -47,11 +50,10 @@ public class MemberService {
         return tokenInfo;
     }
 
-    @Transactional
     public String join(MemberFormDto memberFormDto) {
         boolean isAlready = memberRepository.existsByEmail(memberFormDto.getEmail());
         if (isAlready == true){
-            throw new IllegalArgumentException("이미 이메일이 등록되어 있습니다.");
+            throw new IllegalStateException("이미 이메일이 등록되어 있습니다.");
         }
         else {
             Member savedMember = memberRepository.save(Member.createMember(memberFormDto, passwordEncoder));
@@ -75,10 +77,10 @@ public class MemberService {
     }
 
     @Transactional
-    public void changePwd(String email, String pwd,String nowUserEmail) {
+    public void changePwd(String email,boolean check, String pwd,String nowUserEmail) {
         Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
         Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
-        if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember))){
+        if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember)) || (check ==true) ){
             changeMember.changePwd(pwd,passwordEncoder);
         }
         else{
@@ -99,5 +101,13 @@ public class MemberService {
 
     public boolean validEmailCode(String email, String inputCode){
         return redisService.validCode(email,inputCode);
+    }
+
+    @Transactional
+    public Long changeInfo(String nickName, String jobName, String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException("유저가 없습니다."));
+        Job job = jobRepository.findByName(jobName).orElseThrow(() -> new IllegalStateException("해당 직업이 존재하지 않습니다."));
+        member.changeInfo(nickName,job);
+        return member.getId();
     }
 }

@@ -55,4 +55,9 @@ public class Member extends BaseTimeEntity {
     public void changePwd(String pwd, PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(pwd);
     }
+
+    public void changeInfo(String nickName, Job job){
+        this.nickName = nickName;
+        this.job = job;
+    }
 }
