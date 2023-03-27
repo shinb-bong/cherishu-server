@@ -77,15 +77,9 @@ public class MemberService {
     }
 
     @Transactional
-    public void changePwd(String email,boolean check, String pwd,String nowUserEmail) {
-        Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
-        Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
-        if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember)) || (check ==true) ){
-            changeMember.changePwd(pwd,passwordEncoder);
-        }
-        else{
-            throw new IllegalStateException("권한이 없습니다.");
-        }
+    public void changePwd(String email,String pwd) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 유저가 없습니다."));
+        member.changePwd(pwd,passwordEncoder);
     }
 
     public String sendEmailCode(String email){

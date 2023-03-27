@@ -51,8 +51,8 @@ public class MemberController {
     // 기존비밀번호 확인이 체크가 되어있거나
     // 혹은 현재 로그인한 사용자가 바꾸길 원하는 이메일과 같은 경우
     @PostMapping("/change-password")
-    public ResponseEntity changePwd(@RequestBody ChangePwdRequest request, @AuthenticationPrincipal SecurityUser securityUser){
-        memberService.changePwd(request.getEmail(), request.isCheck(),request.getPwd(), securityUser.getMember().getEmail());
+    public ResponseEntity changePwd(@RequestBody ChangePwdRequest request){
+        memberService.changePwd(request.getEmail(),request.getPwd());
         return new ResponseEntity(HttpStatus.OK);
     }
 
