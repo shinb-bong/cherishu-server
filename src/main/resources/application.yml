@@ -26,24 +26,13 @@ logging:
     org:
       hibernate:
         sql: debug
-mail:
-  smtp:
-    auth: true
-    starttls:
-      required: true
-      enable: true
-    socketFactory:
-      class: javax.net.ssl.SSLSocketFactory
-      fallback: false
-      port: 465
-    port: 465
+aws:
+  ses:
+    access-key: ${SES_ACCESS_KEY}
+    secret-key: ${SEE_SECRET_KEY}
 
 jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
-
-AdminMail:
-  id: temp
-  password: temp
 ---
 spring:
   config:
@@ -83,6 +72,7 @@ vault.props:
   roleId: c34df00a-8f11-10ba-a4ff-adc4242b9b65
   secretId: 9c1ae635-6ea1-7680-4290-688b54855893
   vaultPath: kv/datasource
+
 
 
 
