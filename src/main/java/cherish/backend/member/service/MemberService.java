@@ -67,14 +67,16 @@ public class MemberService {
     }
 
     @Transactional
-    public void changePwd(String email, String pwd,String nowUserEmail) {
+    public void changePwd(String email, String pwd, String nowUserEmail) {
         Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
         Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
         if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember))){
             changeMember.changePwd(pwd,passwordEncoder);
         }
-        else{
+        else {
             throw new IllegalStateException("권한이 없습니다.");
         }
     }
+
+//    public void pushItemData(csvReader)
 }
