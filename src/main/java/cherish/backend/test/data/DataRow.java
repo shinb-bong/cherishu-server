@@ -34,10 +34,6 @@ public class DataRow {
     private Set<String> type;
     private Set<String> relation;
 
-    private static String toEmpty(String original) {
-        return original == null || original.equals("-") ? "" : original;
-    }
-
     public static DataRow of(String[] row) {
         return new DataRow(
             Long.parseLong(row[0]),

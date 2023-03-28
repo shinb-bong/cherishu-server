@@ -4,14 +4,8 @@ import cherish.backend.category.model.Category;
 import cherish.backend.category.repository.CategoryRepository;
 import cherish.backend.category.repository.FilterRepository;
 import cherish.backend.item.constant.ItemUrlPlatforms;
-import cherish.backend.item.model.Item;
-import cherish.backend.item.model.ItemCategory;
-import cherish.backend.item.model.ItemJob;
-import cherish.backend.item.model.ItemUrl;
-import cherish.backend.item.repository.ItemCategoryRepository;
-import cherish.backend.item.repository.ItemJobRepository;
-import cherish.backend.item.repository.ItemRepository;
-import cherish.backend.item.repository.ItemUrlRepository;
+import cherish.backend.item.model.*;
+import cherish.backend.item.repository.*;
 import cherish.backend.member.model.Job;
 import cherish.backend.member.repository.JobRepository;
 import com.opencsv.CSVReader;
@@ -36,11 +30,12 @@ public class DataParser {
 
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
-    private final FilterRepository filterRepository;
     private final JobRepository jobRepository;
     private final ItemCategoryRepository itemCategoryRepository;
     private final ItemUrlRepository itemUrlRepository;
     private final ItemJobRepository itemJobRepository;
+    private final FilterRepository filterRepository;
+    private final ItemFilterRepository itemFilterRepository;
 
     @Transactional(rollbackOn = RuntimeException.class)
     public void read() {
@@ -219,7 +214,79 @@ public class DataParser {
                         );
                     }
                 }
-
+                // situation filter id = 2
+                long situationId = 2L;
+                for (String situation : row.getSituation()) {
+                    if (itemFilterRepository.findItemFilterByNameAndFilterId(situation, situationId).isEmpty()) {
+                        itemFilterRepository.save(
+                            ItemFilter.builder()
+                                .item(item)
+                                .name(situation)
+                                .filter(filterRepository.findById(situationId).get())
+                                .build()
+                        );
+                    }
+                }
+                long emotionId = 3L;
+                for (String emotion : row.getEmotion()) {
+                    if (itemFilterRepository.findItemFilterByNameAndFilterId(emotion, emotionId).isEmpty()) {
+                        itemFilterRepository.save(
+                            ItemFilter.builder()
+                                .item(item)
+                                .name(emotion)
+                                .filter(filterRepository.findById(emotionId).get())
+                                .build()
+                        );
+                    }
+                }
+                long genderId = 4L;
+                for (String gender : row.getGender()) {
+                    if (itemFilterRepository.findItemFilterByNameAndFilterId(gender, genderId).isEmpty()) {
+                        itemFilterRepository.save(
+                            ItemFilter.builder()
+                                .item(item)
+                                .name(gender)
+                                .filter(filterRepository.findById(genderId).get())
+                                .build()
+                        );
+                    }
+                }
+                long preferenceId = 5L;
+                for (String preference : row.getPreference()) {
+                    if (itemFilterRepository.findItemFilterByNameAndFilterId(preference, preferenceId).isEmpty()) {
+                        itemFilterRepository.save(
+                            ItemFilter.builder()
+                                .item(item)
+                                .name(preference)
+                                .filter(filterRepository.findById(preferenceId).get())
+                                .build()
+                        );
+                    }
+                }
+                long typeId = 6L;
+                for (String type : row.getType()) {
+                    if (itemFilterRepository.findItemFilterByNameAndFilterId(type, typeId).isEmpty()) {
+                        itemFilterRepository.save(
+                            ItemFilter.builder()
+                                .item(item)
+                                .name(type)
+                                .filter(filterRepository.findById(typeId).get())
+                                .build()
+                        );
+                    }
+                }
+                long relationId = 7L;
+                for (String relation : row.getRelation()) {
+                    if (itemFilterRepository.findItemFilterByNameAndFilterId(relation, relationId).isEmpty()) {
+                        itemFilterRepository.save(
+                            ItemFilter.builder()
+                                .item(item)
+                                .name(relation)
+                                .filter(filterRepository.findById(relationId).get())
+                                .build()
+                        );
+                    }
+                }
             }
         } catch (IOException | CsvException ex) {
             throw new RuntimeException(ex);
