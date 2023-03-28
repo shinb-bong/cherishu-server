@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class AgeFilterCondition {
     private String itemFilterName;
-    private Long FilterId;
+    private Long filterId;
     private Integer ageGoe;
     private Integer ageLoe;
 }
