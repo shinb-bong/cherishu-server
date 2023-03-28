@@ -21,7 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-@Profile("local")
+@Profile("put-data")
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -74,26 +74,27 @@ public class DataParser {
                         .maxAge(maxAge)
                         .build()
                 );
-                categoryList.stream()
-                    .filter(category -> category.getName().equalsIgnoreCase(row.getCategory()))
+                // category 있는지 조회 후 없으면 저장
+                Category category = categoryList.stream()
+                    .filter(ct -> ct.getName().equalsIgnoreCase(row.getCategory()))
                     .findFirst()
-                    .ifPresentOrElse(category -> {
-                        ItemCategory itemCategory = ItemCategory.builder()
-                            .category(category)
-                            .item(item)
-                            .build();
-                        itemCategoryRepository.save(itemCategory);
-                    }, () -> {
-                        Category category = Category.builder()
+                    .orElseGet(() -> categoryRepository.save(
+                        Category.builder()
                             .name(row.getCategory())
-                            .build();
-                        categoryRepository.save(category);
-                        ItemCategory itemCategory = ItemCategory.builder()
-                            .category(category)
+                            .build()
+                    ));
+                // 이미 매핑된 item_category의 경우 제외하고 저장
+                if (!itemCategoryRepository.existsByItemAndCategory(item, category)) {
+                    itemCategoryRepository.save(
+                        ItemCategory.builder()
                             .item(item)
-                            .build();
-                        itemCategoryRepository.save(itemCategory);
-                    });
+                            .category(category)
+                            .build()
+                    );
+                }
+                row.getCategoryChild().forEach(c -> {
+
+                });
             }
         } catch (IOException | CsvException ex) {
             throw new RuntimeException(ex);
