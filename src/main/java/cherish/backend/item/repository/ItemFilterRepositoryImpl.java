@@ -1,8 +1,6 @@
 package cherish.backend.item.repository;
 
-import cherish.backend.item.dto.ItemFilterCondition;
-import cherish.backend.item.dto.ItemFilterQueryDto;
-import cherish.backend.item.dto.QItemFilterQueryDto;
+import cherish.backend.item.dto.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -42,12 +40,43 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .fetch();
     }
 
+    @Override
+    public List<AgeFilterQueryDto> findItemFilterByAge(AgeFilterCondition ageCondition) {
+        return queryFactory
+                .select(new QAgeFilterQueryDto(
+                        item.id.as("itemId"),
+                        filter.id.as("filterId"),
+                        itemFilter.id.as("itemFilterId"),
+                        item.name.as("itemName"),
+                        filter.name.as("filterName"),
+                        itemFilter.name.as("itemFilterName"),
+                        item.minAge.as("minAge"),
+                        item.maxAge.as("maxAge")
+                ))
+                .from(itemFilter)
+                .join(itemFilter.filter, filter)
+                .where(
+                        itemFilterNameEq(ageCondition.getItemFilterName()),
+                        filterIdEq(ageCondition.getFilterId()),
+                        ageGoe(ageCondition.getAgeGoe()),
+                        ageLoe(ageCondition.getAgeLoe()))
+                .fetch();
+    }
+
     private BooleanExpression itemFilterNameEq(String itemFilterName) {
         return hasText(itemFilterName) ? itemFilter.name.eq(itemFilterName) : null;
     }
 
     private BooleanExpression filterIdEq(Long filterId) {
         return hasText(String.valueOf(filterId)) ? filter.id.eq(filterId) : null;
+    }
+
+    private BooleanExpression ageGoe(Integer ageGoe) {
+        return ageGoe != null ? item.maxAge.goe(ageGoe) : null;
+    }
+
+    private BooleanExpression ageLoe(Integer ageLoe) {
+        return ageLoe != null ? item.minAge.loe(ageLoe) : null;
     }
 
 }
