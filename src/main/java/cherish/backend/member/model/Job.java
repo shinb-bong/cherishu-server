@@ -3,6 +3,7 @@ package cherish.backend.member.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
