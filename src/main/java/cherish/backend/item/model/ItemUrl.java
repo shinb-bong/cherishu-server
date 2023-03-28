@@ -1,15 +1,13 @@
 package cherish.backend.item.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Builder
 public class ItemUrl {
 
     @Id @GeneratedValue
@@ -22,4 +20,8 @@ public class ItemUrl {
     private String url;
 
     private String platform;
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
 }
