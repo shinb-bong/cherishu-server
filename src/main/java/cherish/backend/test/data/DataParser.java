@@ -14,12 +14,14 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+@Profile("local")
 @Slf4j
 @RequiredArgsConstructor
 @Component
