@@ -21,4 +21,5 @@ public class ItemUrl {
 
     private String url;
 
+    private String platform;
 }
