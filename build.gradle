@@ -58,6 +58,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis
 
 	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'// aws email
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {

@@ -46,6 +46,12 @@ public class GlobalExceptionHandler {
         return createError(builder.toString());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalStateException.class)
+    public ErrorResponseDto handleIllegalStateException(IllegalStateException e){
+        return createError(e);
+    }
+
     // 공통 예외 처리
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
