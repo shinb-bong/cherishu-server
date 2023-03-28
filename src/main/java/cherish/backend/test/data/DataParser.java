@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+@ConditionalOnResource(resources = "data.csv")
 @Profile("put-data")
 @Slf4j
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class DataParser {
     private final ItemFilterRepository itemFilterRepository;
 
     @Transactional(rollbackOn = RuntimeException.class)
-    public void read() {
+    public void read() throws RuntimeException {
         try (CSVReader csvReader = new CSVReader(new FileReader("data.csv"))) {
             List<DataRow> dataList = csvReader.readAll().stream()
                 .map(DataRow::of)
@@ -295,6 +297,10 @@ public class DataParser {
 
     @PostConstruct
     public void test() {
-        read();
+        try {
+            read();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 }
