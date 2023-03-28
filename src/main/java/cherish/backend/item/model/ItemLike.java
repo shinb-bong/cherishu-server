@@ -10,7 +10,8 @@ import lombok.*;
 @Getter
 @ToString
 public class ItemLike {
-    @Id @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

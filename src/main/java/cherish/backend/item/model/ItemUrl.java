@@ -10,7 +10,8 @@ import lombok.*;
 @Getter
 public class ItemUrl {
 
-    @Id @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
 
     @ManyToOne
