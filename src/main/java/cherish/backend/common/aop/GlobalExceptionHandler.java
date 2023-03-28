@@ -1,6 +1,7 @@
 package cherish.backend.common.aop;
 
 import cherish.backend.common.dto.ErrorResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
@@ -10,20 +11,26 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String NO_ERROR_MESSAGE = "No error message from server.";
+    private static final ErrorResponseDto DEFAULT_ERROR_RESPONSE = new ErrorResponseDto(NO_ERROR_MESSAGE);
+
     private ErrorResponseDto createError(Exception e) {
+        log.error(e.getMessage(), e);
         if (ObjectUtils.isEmpty(e.getMessage())) {
-            return new ErrorResponseDto("No error message from server.");
+            return DEFAULT_ERROR_RESPONSE;
         }
         return new ErrorResponseDto(e.getMessage());
     }
 
     private ErrorResponseDto createError(String s) {
         if (ObjectUtils.isEmpty(s)) {
-            return new ErrorResponseDto("No error message from server.");
+            return DEFAULT_ERROR_RESPONSE;
         }
+        log.error(s);
         return new ErrorResponseDto(s);
     }
 
@@ -43,7 +50,14 @@ public class GlobalExceptionHandler {
             builder.append(fieldError.getRejectedValue());
             builder.append("]");
         }
+
         return createError(builder.toString());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalStateException.class)
+    public ErrorResponseDto handleIllegalStateException(IllegalStateException e){
+        return createError(e);
     }
 
     // 공통 예외 처리

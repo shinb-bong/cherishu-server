@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.UUID;
 
 @Slf4j
 @SpringBootTest
@@ -20,7 +20,7 @@ class SendEmailServiceTest {
         //when
         String code = "";
         try {
-            code = emailService.sendSimpleMessage(id);
+            code = emailService.sendMessage(id, UUID.randomUUID().toString().substring(6));
         } catch (Exception e) {
             log.info("발송 오류 = {}", e.getMessage());
             throw new RuntimeException(e);

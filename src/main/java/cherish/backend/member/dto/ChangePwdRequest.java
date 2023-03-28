@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class ChangePwdRequest {
-    private String pwd;
-    private String email;
+    private final String pwd;
+    private final String email;
 }
