@@ -42,9 +42,7 @@ public class DataParser {
             var jobList = jobRepository.findAll();
             var itemList = itemRepository.findAll();
             for (DataRow row : dataList) {
-                if (itemList.stream().anyMatch(item -> item.getName().equalsIgnoreCase(row.getItem()))) {
-                    continue;
-                }
+                // item table 저장된것 조회
                 int price;
                 int minAge;
                 int maxAge;
@@ -63,16 +61,17 @@ public class DataParser {
                 } catch (NumberFormatException e) {
                     maxAge = 100;
                 }
-                Item item = Item.builder()
-                    .name(row.getItem())
-                    .brand(row.getBrand())
-                    .description(row.getDescription())
-                    .price(price)
-                    .minAge(minAge)
-                    .maxAge(maxAge)
-                    .build();
-                itemRepository.save(item);
-                // 1차 카테고리 작업
+                Item item = itemRepository.save(
+                    Item.builder()
+                        .id(row.getId())
+                        .name(row.getItem())
+                        .brand(row.getBrand())
+                        .description(row.getDescription())
+                        .price(price)
+                        .minAge(minAge)
+                        .maxAge(maxAge)
+                        .build()
+                );
                 categoryList.stream()
                     .filter(category -> category.getName().equalsIgnoreCase(row.getCategory()))
                     .findFirst()
@@ -93,8 +92,8 @@ public class DataParser {
                             .build();
                         itemCategoryRepository.save(itemCategory);
                     });
-                }
-            } catch (IOException | CsvException ex) {
+            }
+        } catch (IOException | CsvException ex) {
             throw new RuntimeException(ex);
         }
     }

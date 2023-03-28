@@ -3,7 +3,6 @@ package cherish.backend.test.data;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -13,6 +12,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Data
 public class DataRow {
+    private long id;
     private String item;
     private String brand;
     private String category;
@@ -40,26 +40,27 @@ public class DataRow {
 
     public static DataRow of(String[] row) {
         return new DataRow(
-            row[0],
+            Long.parseLong(row[0]),
             row[1],
             row[2],
-            Arrays.stream(row[3].split(",")).map(String::trim).collect(Collectors.toSet()),
-            row[4],
+            row[3],
+            Arrays.stream(row[4].split(",")).map(String::trim).collect(Collectors.toSet()),
             row[5],
             row[6],
             row[7],
             row[8],
             row[9],
-            Arrays.stream(row[10].split(",")).map(String::trim).collect(Collectors.toSet()),
+            row[10],
             Arrays.stream(row[11].split(",")).map(String::trim).collect(Collectors.toSet()),
-            row[12],
+            Arrays.stream(row[12].split(",")).map(String::trim).collect(Collectors.toSet()),
             row[13],
-            Arrays.stream(row[14].split(",")).map(String::trim).collect(Collectors.toSet()),
+            row[14],
             Arrays.stream(row[15].split(",")).map(String::trim).collect(Collectors.toSet()),
             Arrays.stream(row[16].split(",")).map(String::trim).collect(Collectors.toSet()),
             Arrays.stream(row[17].split(",")).map(String::trim).collect(Collectors.toSet()),
             Arrays.stream(row[18].split(",")).map(String::trim).collect(Collectors.toSet()),
-            Arrays.stream(row[19].split(",")).map(String::trim).collect(Collectors.toSet())
+            Arrays.stream(row[19].split(",")).map(String::trim).collect(Collectors.toSet()),
+            Arrays.stream(row[20].split(",")).map(String::trim).collect(Collectors.toSet())
         );
     }
 }
