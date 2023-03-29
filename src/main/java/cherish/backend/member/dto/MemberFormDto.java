@@ -15,7 +15,7 @@ public class MemberFormDto {
     private String password; // 패스워드
     private boolean infoCheck; // 광고성 동의
     // 추가 정보
-    private Gender gender; // 성별
+    private String gender; // 성별
     private LocalDate birth; // 생일
     private String job;
 

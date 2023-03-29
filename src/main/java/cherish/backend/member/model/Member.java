@@ -31,7 +31,7 @@ public class Member extends BaseTimeEntity {
     private Gender gender; // 성별
     private LocalDate birth; // 생일
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
     private Job job;
     // 생성 메소드
@@ -45,7 +45,7 @@ public class Member extends BaseTimeEntity {
                 .email(formDto.getEmail())
                 .password(passwordEncoder.encode(formDto.getPassword()))
                 .informationCheck(formDto.isInfoCheck())
-                .gender(formDto.getGender())
+                .gender(Gender.valueOf(formDto.getGender()))
                 .birth(formDto.getBirth())
                 .roles(Role.USER)
                 .build();

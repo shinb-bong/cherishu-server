@@ -2,10 +2,7 @@ package cherish.backend.member.controller;
 
 import cherish.backend.auth.security.SecurityUser;
 import cherish.backend.member.dto.*;
-import cherish.backend.member.dto.email.EmailCodeValidationRequest;
-import cherish.backend.member.dto.email.EmailRequest;
 import cherish.backend.member.service.MemberService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +34,11 @@ public class MemberController {
 //        return member.getMember().getEmail();
 //    }
 
-
+    // 내정보
+    @GetMapping("/info")
+    public ResponseEntity memberInfo(@RequestParam("email") String email){
+        MemberInfoResponse info = memberService.getInfo(email);
+        return ResponseEntity.status(HttpStatus.OK).body(info);
+    }
 }
 
