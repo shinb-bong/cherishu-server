@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class RecommendItem {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

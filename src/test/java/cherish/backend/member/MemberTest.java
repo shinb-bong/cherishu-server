@@ -36,7 +36,7 @@ class MemberTest {
     }
 
     private static MemberFormDto getMemberFormDto() {
-        MemberFormDto memberFormDto = new MemberFormDto("지수빈", "공주", "test@naver.com", "1234", true, Gender.None, LocalDate.now(), "공주");
+        MemberFormDto memberFormDto = new MemberFormDto("지수빈", "공주", "test@naver.com", "1234", true, Gender.NONE, LocalDate.now(), "공주");
         return memberFormDto;
     }
 

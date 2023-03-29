@@ -18,7 +18,8 @@ import java.time.LocalDate;
 @ToString
 public class Member extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
     private String name; // 이름
     private String nickName; // 닉네임
@@ -54,5 +55,10 @@ public class Member extends BaseTimeEntity {
     // 비밀번호 변경
     public void changePwd(String pwd, PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(pwd);
+    }
+
+    public void changeInfo(String nickName, Job job){
+        this.nickName = nickName;
+        this.job = job;
     }
 }

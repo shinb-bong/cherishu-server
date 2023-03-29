@@ -16,9 +16,14 @@ logging:
     org:
       hibernate:
         sql: debug
+aws:
+  ses:
+    access-key: ${SES_ACCESS_KEY}
+    secret-key: ${SES_SECRET_KEY}
 
 jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
+
 
 
 

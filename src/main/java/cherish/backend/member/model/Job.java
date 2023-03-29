@@ -3,6 +3,7 @@ package cherish.backend.member.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -10,7 +11,8 @@ import lombok.*;
 @ToString
 public class Job {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

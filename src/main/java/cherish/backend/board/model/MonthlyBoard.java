@@ -10,7 +10,8 @@ import lombok.*;
 @ToString
 public class MonthlyBoard extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
 
     private int year; // 공지 연도

@@ -2,11 +2,11 @@ package cherish.backend.member.controller;
 
 import cherish.backend.auth.security.SecurityUser;
 import cherish.backend.auth.jwt.TokenInfo;
+import cherish.backend.member.dto.*;
+import cherish.backend.member.dto.email.EmailCodeValidationRequest;
+import cherish.backend.member.dto.email.EmailRequest;
 import cherish.backend.member.service.MemberService;
-import cherish.backend.member.dto.ChangePwdRequest;
-import cherish.backend.member.dto.MemberEmailResponse;
-import cherish.backend.member.dto.MemberFormDto;
-import cherish.backend.member.dto.MemberLoginRequestDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,27 +40,44 @@ public class MemberController {
         memberService.delete(email,securityUser.getMember().getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
     // 비밀번호 찾기 (해당 아이디가 있는지 부터 검사)
-    @GetMapping("/isMember")
+    @GetMapping("/is-member")
     public MemberEmailResponse isMember(@RequestParam("email") String email){
-        Boolean isMember = memberService.isMember(email);
-        return new MemberEmailResponse(email, isMember);
+        boolean isMember = memberService.isMember(email);
+        return new MemberEmailResponse(email,isMember);
     }
-
     // 비밀번호 수정
-    @PostMapping("/changePwd")
-    public ResponseEntity changePwd(@RequestBody ChangePwdRequest request, @AuthenticationPrincipal SecurityUser securityUser){
-        memberService.changePwd(request.getEmail(),request.getPwd(), securityUser.getMember().getEmail());
+    // 기존비밀번호 확인이 체크가 되어있거나
+    // 혹은 현재 로그인한 사용자가 바꾸길 원하는 이메일과 같은 경우
+    @PostMapping("/change-password")
+    public ResponseEntity changePwd(@RequestBody ChangePwdRequest request){
+        memberService.changePwd(request.getEmail(),request.getPwd());
         return new ResponseEntity(HttpStatus.OK);
     }
 
     // 회원 수정
-
+    @PatchMapping("/change-info")
+    public ResponseEntity changeInfo(@RequestBody ChangeInfoRequest request){
+        Long memberId = memberService.changeInfo(request.getNickName(), request.getJobName(), request.getMemberEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(memberId);
+    }
     // 유틸 테스트
     // 객체로 받아오는 것
     @GetMapping("/info")
     public String info(@AuthenticationPrincipal SecurityUser member){
         return member.getMember().getEmail();
     }
+
+    @PostMapping("/code-send")
+    public ResponseEntity sendEmailCode(@RequestBody @Valid EmailRequest emailRequest){
+        String code = memberService.sendEmailCode(emailRequest.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(code);
+    }
+
+    @PostMapping("/code-valid")
+    public ResponseEntity validEmailCode(@RequestBody @Valid EmailCodeValidationRequest request){
+        memberService.validEmailCode(request.getEmail(), request.getCode());
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
+

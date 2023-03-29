@@ -2,26 +2,25 @@ package cherish.backend.member.email;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
+@Slf4j
 @Builder
 @Getter
 public class EmailCode {
     private String code;
+    private static final RandomGenerator randomGenerator = RandomGenerator.of("L128X256MixRandom");
 
     public static EmailCode createCode(){
         return EmailCode.builder().
                 code(makeCode()).build();
     }
 
-    public static String makeCode() {
-        StringBuffer key = new StringBuffer();
-        Random rnd = new Random();
-
-        for (int i = 0; i < 8; i++) { // 인증코드 8자리
-            key.append((rnd.nextInt(10)));
-        }
-        return key.toString();
+    private static String makeCode() {
+        int rand = randomGenerator.nextInt(1000000);
+        log.info("code - {}", rand);
+        return String.format("%06d", rand);
     }
 }
