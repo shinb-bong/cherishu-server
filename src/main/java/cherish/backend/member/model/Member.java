@@ -31,7 +31,7 @@ public class Member extends BaseTimeEntity {
     private Gender gender; // 성별
     private LocalDate birth; // 생일
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
     private Job job;
     // 생성 메소드
