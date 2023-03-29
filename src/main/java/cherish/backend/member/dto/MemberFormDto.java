@@ -1,6 +1,5 @@
 package cherish.backend.member.dto;
 
-import cherish.backend.member.model.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
