@@ -18,7 +18,8 @@ import java.time.LocalDate;
 @ToString
 public class Member extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
     private String name; // 이름
     private String nickName; // 닉네임

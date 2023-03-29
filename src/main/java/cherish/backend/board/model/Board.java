@@ -12,7 +12,7 @@ import lombok.*;
 @ToString
 public class Board extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title; // 제목
     private String content; // 내용

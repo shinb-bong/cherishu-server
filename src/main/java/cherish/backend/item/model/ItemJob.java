@@ -1,14 +1,16 @@
 package cherish.backend.item.model;
 
-import cherish.backend.board.model.MonthlyBoard;
+import cherish.backend.member.model.Job;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@ToString
 @Getter
-public class MonthlyBoardItem {
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+public class ItemJob {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -19,7 +21,6 @@ public class MonthlyBoardItem {
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "monthly_board_id")
-    private MonthlyBoard monthlyBoard;
-
+    @JoinColumn(name = "job_id")
+    private Job job;
 }
