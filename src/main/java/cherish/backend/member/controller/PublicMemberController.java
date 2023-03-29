@@ -9,6 +9,7 @@ import cherish.backend.member.dto.email.EmailCodeValidationRequest;
 import cherish.backend.member.dto.email.EmailRequest;
 import cherish.backend.member.service.MemberService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
+@RestController
 @RequestMapping("/public/member")
 public class PublicMemberController {
 
@@ -25,13 +27,13 @@ public class PublicMemberController {
     //회원 회원가입
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    public String register(@RequestBody MemberFormDto memberFormDto){
+    public String register(@RequestBody @Valid MemberFormDto memberFormDto){
         return memberService.join(memberFormDto);
     }
 
     // 회원 로그인
     @PostMapping("/login")
-    public TokenInfo login(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
+    public TokenInfo login(@RequestBody @Valid MemberLoginRequestDto memberLoginRequestDto) {
         TokenInfo token = memberService.login(memberLoginRequestDto.getEmail(),
                 memberLoginRequestDto.getPassword(),
                 memberLoginRequestDto.getIsPersist());
@@ -41,7 +43,7 @@ public class PublicMemberController {
 
     // 비밀번호 찾기 (해당 아이디가 있는지 부터 검사)
     @GetMapping("/is-member")
-    public MemberEmailResponse isMember(@RequestParam("email") String email){
+    public MemberEmailResponse isMember(@RequestParam("email") @NotEmpty String email){
         boolean isMember = memberService.isMember(email);
         return new MemberEmailResponse(email,isMember);
     }
@@ -49,7 +51,7 @@ public class PublicMemberController {
     // 기존비밀번호 확인이 체크가 되어있거나
     // 혹은 현재 로그인한 사용자가 바꾸길 원하는 이메일과 같은 경우
     @PostMapping("/change-password")
-    public ResponseEntity changePwd(@RequestBody ChangePwdRequest request){
+    public ResponseEntity changePwd(@RequestBody @Valid ChangePwdRequest request){
         memberService.changePwd(request.getEmail(),request.getPassword());
         return new ResponseEntity(HttpStatus.OK);
     }
