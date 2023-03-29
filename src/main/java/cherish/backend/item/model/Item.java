@@ -23,4 +23,6 @@ public class Item extends BaseTimeEntity {
     private int price;
     private int views;
     private String imgUrl;
+    private int minAge;
+    private int maxAge;
 }
