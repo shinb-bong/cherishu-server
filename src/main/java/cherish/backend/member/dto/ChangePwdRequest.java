@@ -1,10 +1,14 @@
 package cherish.backend.member.dto;
 
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
 public class ChangePwdRequest {
-    private final String pwd;
+    @Email
     private final String email;
+
+    @NotEmpty
+    private final String password;
 }

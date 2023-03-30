@@ -12,8 +12,8 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmailCodeValidationRequest {
+
     @Email
-    @NotEmpty
     private String email;
 
     @Length(min = 6, max = 6)

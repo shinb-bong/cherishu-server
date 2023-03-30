@@ -21,8 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     // 현재 화이트 리스트 모두 열어 놓음
-    private static final String[] AUTH_WHITELIST = {
-            "/**", "/user/**",
+    private static final String[] PUBLIC_WHITELIST = {
+            "/public/**"
     };
 
     // 비밀번호 변환 알고리즘
@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                     authorize
                     .shouldFilterAllDispatcherTypes(false)
-                    .requestMatchers(AUTH_WHITELIST)
+                    .requestMatchers(PUBLIC_WHITELIST)
                     .permitAll()
                     .anyRequest()
                     .authenticated())
