@@ -3,6 +3,7 @@ package cherish.backend.member.service;
 import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.auth.jwt.TokenInfo;
 import cherish.backend.common.service.RedisService;
+import cherish.backend.member.dto.MemberInfoResponse;
 import cherish.backend.member.email.EmailCode;
 import cherish.backend.member.email.EmailService;
 import cherish.backend.member.model.Job;
@@ -53,7 +54,7 @@ public class MemberService {
     public String join(MemberFormDto memberFormDto) {
         boolean isAlready = memberRepository.existsByEmail(memberFormDto.getEmail());
         if (isAlready){
-            throw new IllegalArgumentException("이미 이메일이 등록되어 있습니다.");
+            throw new IllegalStateException(Constants.EMAIL_ALREADY);
         }
         else {
             Member savedMember = memberRepository.save(Member.createMember(memberFormDto, passwordEncoder));
@@ -90,7 +91,7 @@ public class MemberService {
             redisService.setRedisCode(email,code,30L);
             return code;
         } else
-            throw new IllegalStateException("이미 가입한 사용자 입니다.");
+            throw new IllegalStateException(Constants.EMAIL_ALREADY);
     }
 
     public boolean validEmailCode(String email, String inputCode){
@@ -99,9 +100,15 @@ public class MemberService {
 
     @Transactional
     public Long changeInfo(String nickName, String jobName, String email) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException("유저가 없습니다."));
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
         Job job = jobRepository.findByName(jobName).orElseThrow(() -> new IllegalStateException("해당 직업이 존재하지 않습니다."));
         member.changeInfo(nickName,job);
         return member.getId();
+    }
+
+    public MemberInfoResponse getInfo(String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
+        return MemberInfoResponse.of(member);
+
     }
 }
