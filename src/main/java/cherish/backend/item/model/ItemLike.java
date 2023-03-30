@@ -4,6 +4,7 @@ import cherish.backend.member.model.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,5 +22,11 @@ public class ItemLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
+
+    public static ItemLike createItemLike(Member member, Item item){
+        return ItemLike.builder()
+                .member(member)
+                .item(item).build();
+    }
 
 }
