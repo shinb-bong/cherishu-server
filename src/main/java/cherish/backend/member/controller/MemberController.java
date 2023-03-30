@@ -38,9 +38,8 @@ public class MemberController {
 
     // 내정보
     @GetMapping("/info")
-    public ResponseEntity memberInfo(@RequestParam("email") @Email String email){
-        MemberInfoResponse info = memberService.getInfo(email);
-        return ResponseEntity.status(HttpStatus.OK).body(info);
+    public MemberInfoResponse memberInfo(@RequestParam("email") @Email String email){
+        return memberService.getInfo(email);
     }
 }
 
