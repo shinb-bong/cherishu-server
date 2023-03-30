@@ -1,6 +1,5 @@
 package cherish.backend.item.dto;
 
-import cherish.backend.category.model.Filter;
 import lombok.Data;
 
 @Data

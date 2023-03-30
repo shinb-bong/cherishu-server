@@ -1,9 +1,8 @@
 package cherish.backend.item.repository;
 
-import cherish.backend.item.dto.AgeFilterCondition;
-import cherish.backend.item.dto.AgeFilterQueryDto;
-import cherish.backend.item.dto.ItemFilterCondition;
-import cherish.backend.item.dto.ItemFilterQueryDto;
+import cherish.backend.item.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,5 +11,7 @@ public interface ItemFilterRepositoryCustom {
     List<ItemFilterQueryDto> findItemFilterByNameAndId(ItemFilterCondition filterCondition);
 
     List<AgeFilterQueryDto> findItemFilterByAge(AgeFilterCondition ageCondition);
+
+    Page<ItemSearchQueryDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable);
 
 }

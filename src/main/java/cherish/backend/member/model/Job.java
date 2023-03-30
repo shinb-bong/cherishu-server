@@ -1,7 +1,11 @@
 package cherish.backend.member.model;
 
+import cherish.backend.category.model.Category;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Entity
@@ -21,4 +25,6 @@ public class Job {
     @JoinColumn(name = "parent_id")
     private Job parent;
 
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Job> children = new ArrayList<>();
 }
