@@ -1,20 +1,19 @@
 package cherish.backend.item.repository;
 
-import cherish.backend.category.model.QCategory;
-import cherish.backend.category.model.QFilter;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static cherish.backend.category.model.QCategory.*;
 import static cherish.backend.category.model.QFilter.*;
@@ -28,9 +27,11 @@ import static org.springframework.util.StringUtils.*;
 public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
+    private final ItemMapper itemMapper;
 
-    public ItemFilterRepositoryImpl(EntityManager em) {
+    public ItemFilterRepositoryImpl(EntityManager em, ItemMapper itemMapper) {
         this.queryFactory = new JPAQueryFactory(em);
+        this.itemMapper = itemMapper;
     }
 
     @Override
@@ -131,10 +132,11 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                         jobChildrenEq(searchCondition.getItemJobChildren()),
                         itemNameEq(searchCondition.getItemName()),
                         itemBrandEq(searchCondition.getItemBrand()),
-                        targetEqWithKeyword(searchCondition.getKeyword(), searchCondition.getTarget())
+                        keywordEq(searchCondition.getKeyword(), searchCondition.getTarget())
                 );
 
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
+        long total = countQuery.fetchCount();
+        return new PageImpl<>(content, pageable, total);
     }
 
 
@@ -170,10 +172,6 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
         return hasText(String.valueOf(filterId)) ? filter.id.eq(filterId) : null;
     }
 
-    private BooleanExpression categoryEq(Long categoryId) {
-        return hasText(String.valueOf(categoryId)) ? category.parent.id.eq(categoryId) : null;
-    }
-
     private BooleanExpression ageGoe(Integer ageGoe) {
         return ageGoe != null ? item.maxAge.goe(ageGoe) : null;
     }
@@ -182,9 +180,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
         return ageLoe != null ? item.minAge.loe(ageLoe) : null;
     }
 
-    private BooleanExpression keywordEq(ItemSearchCondition searchCondition) {
-        String keyword = searchCondition.getKeyword();
-        String target = searchCondition.getTarget();
+    private BooleanExpression keywordEq(String keyword, String target) {
         return keyword != null ? targetEqWithKeyword(keyword, target) : null;
     }
 

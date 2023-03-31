@@ -4,7 +4,6 @@ import cherish.backend.category.model.Filter;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Entity
 @Getter
 @Builder
