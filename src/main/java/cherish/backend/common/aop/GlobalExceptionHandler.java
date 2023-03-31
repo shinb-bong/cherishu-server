@@ -2,7 +2,9 @@ package cherish.backend.common.aop;
 
 import cherish.backend.common.dto.ErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -52,6 +54,11 @@ public class GlobalExceptionHandler {
         }
 
         return createError(builder.toString());
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({TypeMismatchException.class, HttpMessageNotReadableException.class})
+    public ErrorResponseDto handleTypeException(Exception e){
+        return createError("타입 오류입니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
