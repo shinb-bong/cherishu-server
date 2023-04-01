@@ -33,7 +33,7 @@ public class PublicItemController {
             @RequestParam(value = "itemBrand", required = false) String itemBrand,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "target", required = false) String target,
-            @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(size = 10, page = 0, sort = "vid", direction = Sort.Direction.ASC) Pageable pageable) {
 
         ItemSearchCondition condition = new ItemSearchCondition();
         condition.setFilterId(filterId);
@@ -48,7 +48,6 @@ public class PublicItemController {
         condition.setTarget(target);
         Page<ItemDto.RequestSearchItem> items = itemService.searchItem(condition, pageable);
         return ResponseEntity.ok(items);
-
     }
 
 }
