@@ -5,7 +5,7 @@ import lombok.*;
 public class ItemDto {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class RequestSearchItem {
+    public static class ResponseSearchItem {
         private Long id;
         private String brand;
         private String name;
@@ -13,9 +13,11 @@ public class ItemDto {
         private int price;
         private int views;
         private String imgUrl;
+        private String url;
+        private String platform;
 
         @Builder
-        public RequestSearchItem(Long id, String brand, String name, String description, int price, int views, String imgUrl) {
+        public ResponseSearchItem(Long id, String brand, String name, String description, int price, int views, String imgUrl, String url, String platform) {
             this.id = id;
             this.brand = brand;
             this.name = name;
@@ -23,6 +25,8 @@ public class ItemDto {
             this.price = price;
             this.views = views;
             this.imgUrl = imgUrl;
+            this.url = url;
+            this.platform = platform;
         }
 
         @Override
@@ -34,7 +38,9 @@ public class ItemDto {
                     ", description='" + description + '\'' +
                     ", price=" + price +
                     ", views=" + views +
-                    ", imgUrl='" + imgUrl + '\'' +
+                    ", imgUrl=" + imgUrl +
+                    ", url=" + url +
+                    ", platform='" + platform + '\'' +
                     '}';
         }
     }

@@ -36,4 +36,7 @@ public class Item extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<ItemCategory> itemCategories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<ItemUrl> itemUrls = new ArrayList<>();
 }

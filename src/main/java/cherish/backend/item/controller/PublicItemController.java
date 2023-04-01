@@ -22,7 +22,7 @@ public class PublicItemController {
     private final ItemService itemService;
 
     @GetMapping("/search")
-    public ResponseEntity<Page<ItemDto.RequestSearchItem>> searchItemWithFilter(
+    public ResponseEntity<Page<ItemDto.ResponseSearchItem>> searchItemWithFilter(
             @RequestParam(value = "filterId", required = false) Long filterId,
             @RequestParam(value = "itemFilterName", required = false) String itemFilterName,
             @RequestParam(value = "itemCategoryParent", required = false) String itemCategoryParent,
@@ -46,7 +46,7 @@ public class PublicItemController {
         condition.setItemBrand(itemBrand);
         condition.setKeyword(keyword);
         condition.setTarget(target);
-        Page<ItemDto.RequestSearchItem> items = itemService.searchItem(condition, pageable);
+        Page<ItemDto.ResponseSearchItem> items = itemService.searchItem(condition, pageable);
         return ResponseEntity.ok(items);
     }
 

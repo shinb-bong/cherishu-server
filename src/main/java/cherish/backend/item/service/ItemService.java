@@ -1,16 +1,12 @@
 package cherish.backend.item.service;
 
-import cherish.backend.item.dto.ItemDto;
-import cherish.backend.item.dto.ItemMapper;
-import cherish.backend.item.dto.ItemSearchCondition;
-import cherish.backend.item.dto.ItemSearchQueryDto;
+import cherish.backend.item.dto.*;
 import cherish.backend.item.model.Item;
 import cherish.backend.item.repository.ItemFilterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +19,15 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemFilterRepository itemFilterRepository;
-    private final ItemMapper itemMapper;
+    private final ItemSearchQueryDtoMapper itemMidMapper;
 
-    public Page<ItemDto.RequestSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
-        Page<ItemSearchQueryDto> searchResult = itemFilterRepository.searchItem(searchCondition, pageable);
-        List<ItemDto.RequestSearchItem> items = searchResult.getContent()
-                .stream()
-                .map(itemMapper::searchQueryToRequestSearchDto)
+    public Page<ItemDto.ResponseSearchItem> search(ItemSearchCondition searchCondition, Pageable pageable) {
+        Page<ItemSearchQueryDto> content = itemFilterRepository.searchItem(searchCondition, pageable);
+        List<ItemDto.ResponseSearchItem> response = content.stream()
+                .map(itemSearchQueryDto -> itemMidMapper.map(itemSearchQueryDto))
                 .collect(Collectors.toList());
-        return new PageImpl<>(items, pageable, searchResult.getTotalElements());
-    }
 
+        return new PageImpl<>(response, pageable, content.getTotalElements());
+    }
 }
 

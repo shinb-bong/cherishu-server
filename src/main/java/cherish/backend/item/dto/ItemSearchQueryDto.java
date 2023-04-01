@@ -12,6 +12,7 @@ public class ItemSearchQueryDto {
     private Long itemCategoryId;
     private Long jobId;
     private Long itemJobId;
+    private Long itemUrlId;
     private String filterName;
     private String itemFilterName;
     private String categoryParent;
@@ -22,7 +23,7 @@ public class ItemSearchQueryDto {
     private String itemBrand;
 
     @QueryProjection
-    public ItemSearchQueryDto(Long filterId, Long itemFilterId, Long itemId, Long categoryId, Long itemCategoryId, Long jobId, Long itemJobId, String filterName, String itemFilterName, String categoryParent, String categoryChildren, String jobParent, String jobChildren, String itemName, String itemBrand) {
+    public ItemSearchQueryDto(Long filterId, Long itemFilterId, Long itemId, Long categoryId, Long itemCategoryId, Long jobId, Long itemJobId, Long itemUrlId, String filterName, String itemFilterName, String categoryParent, String categoryChildren, String jobParent, String jobChildren, String itemName, String itemBrand) {
         this.filterId = filterId;
         this.itemFilterId = itemFilterId;
         this.itemId = itemId;
@@ -30,6 +31,7 @@ public class ItemSearchQueryDto {
         this.itemCategoryId = itemCategoryId;
         this.jobId = jobId;
         this.itemJobId = itemJobId;
+        this.itemUrlId = itemUrlId;
         this.filterName = filterName;
         this.itemFilterName = itemFilterName;
         this.categoryParent = categoryParent;

@@ -6,7 +6,7 @@ import java.util.Set;
 
 @Data
 public class ItemSearchCondition {
-    private Long filterId;
+    private String filterName;
     private String itemFilterName;
     private String itemCategoryParent;
     private String itemCategoryChildren;

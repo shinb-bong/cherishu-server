@@ -21,6 +21,7 @@ import static cherish.backend.item.model.QItem.*;
 import static cherish.backend.item.model.QItemCategory.*;
 import static cherish.backend.item.model.QItemFilter.*;
 import static cherish.backend.item.model.QItemJob.itemJob;
+import static cherish.backend.item.model.QItemUrl.*;
 import static cherish.backend.member.model.QJob.job;
 import static org.springframework.util.StringUtils.*;
 
@@ -88,6 +89,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                         itemCategory.id.as("itemCategoryId"),
                         job.id.as("jobId"),
                         itemJob.id.as("itemJobId"),
+                        itemUrl.id.as("itemUrlId"),
                         filter.name.as("filterName"),
                         itemFilter.name.as("itemFilterName"),
                         category.parent.name.as("categoryParent"),
@@ -100,19 +102,20 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .leftJoin(item.itemFilters, itemFilter).fetchJoin()
                 .leftJoin(item.itemJobs, itemJob).fetchJoin()
                 .leftJoin(item.itemCategories, itemCategory).fetchJoin()
+                .leftJoin(itemUrl).on(itemUrl.item.id.eq(item.id))
                 .leftJoin(itemFilter.filter, filter)
                 .leftJoin(itemJob.job, job)
                 .leftJoin(itemCategory.category, category)
                 .where(
                         itemFilterNameEq(searchCondition.getItemFilterName()),
-                        filterIdEq(searchCondition.getFilterId()),
+                        filterNameEq(searchCondition.getFilterName()),
                         categoryParentEq(searchCondition.getItemCategoryParent()),
                         categoryChildrenEq(searchCondition.getItemCategoryChildren()),
                         jobParentEq(searchCondition.getItemJobParent()),
                         jobChildrenEq(searchCondition.getItemJobChildren()),
                         itemNameEq(searchCondition.getItemName()),
                         itemBrandEq(searchCondition.getItemBrand()),
-                        targetEqWithKeyword(searchCondition.getKeyword(), searchCondition.getTarget())
+                        keywordEq(searchCondition.getKeyword(), searchCondition.getTarget())
                 )
                 .fetch();
 
@@ -120,12 +123,13 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .leftJoin(item.itemFilters, itemFilter)
                 .leftJoin(item.itemJobs, itemJob)
                 .leftJoin(item.itemCategories, itemCategory)
+                .leftJoin(itemUrl).on(itemUrl.item.id.eq(item.id))
                 .leftJoin(itemFilter.filter, filter)
                 .leftJoin(itemJob.job, job)
                 .leftJoin(itemCategory.category, category)
                 .where(
                         itemFilterNameEq(searchCondition.getItemFilterName()),
-                        filterIdEq(searchCondition.getFilterId()),
+                        filterNameEq(searchCondition.getFilterName()),
                         categoryParentEq(searchCondition.getItemCategoryParent()),
                         categoryChildrenEq(searchCondition.getItemCategoryChildren()),
                         jobParentEq(searchCondition.getItemJobParent()),
@@ -172,6 +176,9 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
         return hasText(String.valueOf(filterId)) ? filter.id.eq(filterId) : null;
     }
 
+    private BooleanExpression filterNameEq(String filterName) {
+        return hasText(String.valueOf(filterName)) ? filter.name.eq(filterName) : null;
+    }
     private BooleanExpression ageGoe(Integer ageGoe) {
         return ageGoe != null ? item.maxAge.goe(ageGoe) : null;
     }
