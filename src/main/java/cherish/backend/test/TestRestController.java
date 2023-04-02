@@ -4,18 +4,16 @@ import cherish.backend.common.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Profile("local")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("test")
+@RequestMapping("/test")
 public class TestRestController {
 
     private final RedisService redisService;
@@ -41,4 +39,8 @@ public class TestRestController {
         return "ok";
     }
 
+    @GetMapping("/date")
+    public LocalDate testDate(@RequestParam("date") LocalDate date){
+        return date;
+    }
 }
