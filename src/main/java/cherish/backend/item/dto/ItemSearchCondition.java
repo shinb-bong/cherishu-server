@@ -2,8 +2,6 @@ package cherish.backend.item.dto;
 
 import lombok.Data;
 
-import java.util.Set;
-
 @Data
 public class ItemSearchCondition {
     private String filterName;

@@ -1,93 +1,75 @@
 package cherish.backend.item.dto;
 
-import cherish.backend.category.model.Category;
-import cherish.backend.category.model.Filter;
-import cherish.backend.item.model.*;
-import cherish.backend.member.model.Job;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.ReportingPolicy;
+public class ItemSearchQueryDtoMapper {
+    public ItemSearchDto.ResponseSearchItem map(ItemSearchQueryDto searchQueryDto) {
+        ItemSearchDto.ResponseSearchItem.ResponseSearchItemBuilder builder = ItemSearchDto.ResponseSearchItem.builder();
 
-import java.util.Collections;
+        // FilterDto 매핑
+        if (searchQueryDto.getFilterId() != null) {
+            builder.filter(ItemSearchDto.FilterDto.builder()
+                    .id(searchQueryDto.getFilterId())
+                    .name(searchQueryDto.getFilterName())
+                    .build());
+        }
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface ItemSearchQueryDtoMapper {
+        if (searchQueryDto.getItemFilterId() != null) {
+            builder.itemFilter(ItemSearchDto.FilterDto.builder()
+                    .id(searchQueryDto.getItemFilterId())
+                    .name(searchQueryDto.getItemFilterName())
+                    .build());
+        }
 
-    @Mappings({
-            @Mapping(source = "filter.id", target = "filterId"),
-            @Mapping(source = "itemFilter.id", target = "itemFilterId"),
-            @Mapping(source = "item.id", target = "itemId"),
-            @Mapping(source = "category.id", target = "categoryId"),
-            @Mapping(source = "itemCategory.id", target = "itemCategoryId"),
-            @Mapping(source = "job.id", target = "jobId"),
-            @Mapping(source = "itemJob.id", target = "itemJobId"),
-            @Mapping(source = "itemUrl.id", target = "itemUrlId"),
-            @Mapping(source = "filter.name", target = "filterName"),
-            @Mapping(source = "itemFilter.name", target = "itemFilterName"),
-            @Mapping(source = "category.parent", target = "categoryParent"),
-            @Mapping(source = "category.children", target = "categoryChildren"),
-            @Mapping(source = "job.parent", target = "jobParent"),
-            @Mapping(source = "job.children", target = "jobChildren"),
-            @Mapping(source = "item.name", target = "itemName"),
-            @Mapping(source = "item.brand", target = "itemBrand"),
-            @Mapping(source = "item.description", target = "description"),
-            @Mapping(source = "item.price", target = "price"),
-            @Mapping(source = "item.imgUrl", target = "imgUrl"),
-            @Mapping(source = "itemUrl.url", target = "url"),
-            @Mapping(source = "itemUrl.platform", target = "platform"),
-    })
-    ItemDto.ResponseSearchItem map(ItemSearchQueryDto itemSearchQueryDto);
+        // ItemDto 매핑
+        if (searchQueryDto.getItemId() != null) {
+            builder.item(ItemSearchDto.ItemDto.builder()
+                    .id(searchQueryDto.getItemId())
+                    .name(searchQueryDto.getItemName())
+                    .brand(searchQueryDto.getItemBrand())
+                    .description("")
+                    .price(0)
+                    .imgUrl("")
+                    .build());
+        }
 
-    default Filter mapFilter(Long filterId, String filterName) {
-        Filter filter = Filter.builder().id(filterId).name(filterName).build();
-        return filter;
+        // CategoryDto 매핑
+        if (searchQueryDto.getCategoryId() != null) {
+            builder.category(ItemSearchDto.CategoryDto.builder()
+                    .id(searchQueryDto.getCategoryId())
+                    .name(searchQueryDto.getCategoryParent())
+                    .build());
+        }
+
+        if (searchQueryDto.getItemCategoryId() != null) {
+            builder.itemCategory(ItemSearchDto.CategoryDto.builder()
+                    .id(searchQueryDto.getItemCategoryId())
+                    .name(searchQueryDto.getCategoryChildren())
+                    .build());
+        }
+
+        // JobDto 매핑
+        if (searchQueryDto.getJobId() != null) {
+            builder.job(ItemSearchDto.JobDto.builder()
+                    .id(searchQueryDto.getJobId())
+                    .name(searchQueryDto.getJobParent())
+                    .build());
+        }
+
+        if (searchQueryDto.getItemJobId() != null) {
+            builder.itemJob(ItemSearchDto.JobDto.builder()
+                    .id(searchQueryDto.getItemJobId())
+                    .name(searchQueryDto.getJobChildren())
+                    .build());
+        }
+
+        // ItemUrlDto 매핑
+        if (searchQueryDto.getItemUrlId() != null) {
+            builder.itemUrl(ItemSearchDto.ItemUrlDto.builder()
+                    .id(searchQueryDto.getItemUrlId())
+                    .url("")
+                    .platform("")
+                    .build());
+        }
+
+        return builder.build();
     }
-
-    default ItemFilter mapItemFilter(Long itemFilterId, String itemFilterName) {
-        ItemFilter itemFilter = ItemFilter.builder().id(itemFilterId).name(itemFilterName).build();
-        return itemFilter;
-    }
-
-    default Item mapItem(Long itemId, String itemName, String itemBrand, String description, int price, String imgUrl) {
-        Item item = Item.builder().id(itemId).name(itemName).brand(itemBrand).description(description).price(price).imgUrl(imgUrl).build();
-        return item;
-    }
-
-    default Job mapJob(Long jobId, String jobParent, String jobChildren) {
-        Job job = Job.builder()
-                .id(jobId)
-                .parent(Job.builder()
-                        .name(jobParent)
-                        .build())
-                .children(Collections.singletonList(Job.builder()
-                        .name(jobChildren)
-                        .build()))
-                .build();
-        return job;
-    }
-
-    default ItemJob mapItemJob(Long itemJobId) {
-        ItemJob itemJob = ItemJob.builder().id(itemJobId).build();
-        return itemJob;
-    }
-
-    default Category mapCategory(Long categoryId, String categoryParent, String categoryChildren) {
-        Category category = Category.builder().id(categoryId)
-                .parent(Category.builder().name(categoryParent).build())
-                .children(Collections.singletonList(Category.builder().name(categoryChildren).build()))
-                .build();
-        return category;
-    }
-
-    default ItemCategory mapItemCategory(Long itemCategoryid) {
-        ItemCategory itemCategory = ItemCategory.builder().id(itemCategoryid).build();
-        return itemCategory;
-    }
-
-    default ItemUrl mapItemUrl(Long itemUrlId, String platform) {
-        ItemUrl itemUrl = ItemUrl.builder().id(itemUrlId).platform(platform).build();
-        return itemUrl;
-    }
-
 }

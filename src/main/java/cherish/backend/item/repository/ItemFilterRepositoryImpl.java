@@ -28,11 +28,9 @@ import static org.springframework.util.StringUtils.*;
 public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
-    private final ItemMapper itemMapper;
 
-    public ItemFilterRepositoryImpl(EntityManager em, ItemMapper itemMapper) {
+    public ItemFilterRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
-        this.itemMapper = itemMapper;
     }
 
     @Override

@@ -4,6 +4,8 @@ import cherish.backend.item.constant.ItemUrlPlatforms;
 import cherish.backend.item.model.Item;
 import cherish.backend.item.model.ItemUrl;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -25,4 +27,7 @@ public interface ItemUrlRepository extends JpaRepository<ItemUrl, Long> {
     default Optional<ItemUrl> findKakaoUrlByItem(Item item) {
         return findByItemAndPlatform(item, ItemUrlPlatforms.KAKAO);
     }
+
+    @Query("select iu from ItemUrl iu join iu.item i where i.id = :itemId")
+    Optional<ItemUrl> findByItemId(@Param("itemId") Long itemId);
 }
