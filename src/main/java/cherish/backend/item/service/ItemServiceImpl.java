@@ -2,7 +2,7 @@ package cherish.backend.item.service;
 
 import cherish.backend.category.repository.CategoryRepository;
 import cherish.backend.category.repository.FilterRepository;
-import cherish.backend.common.dto.ModelMapperUtils;
+import cherish.backend.common.util.ModelMapperUtils;
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchDto;
 import cherish.backend.item.dto.ItemSearchQueryDto;

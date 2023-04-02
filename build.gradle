@@ -61,7 +61,6 @@ dependencies {
     implementation 'com.opencsv:opencsv:5.5.2' //csv open library
 
     implementation 'org.modelmapper:modelmapper:2.4.4' // model mapper
-
 }
 
 tasks.named('test') {

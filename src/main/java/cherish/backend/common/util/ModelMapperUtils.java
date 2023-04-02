@@ -1,4 +1,4 @@
-package cherish.backend.common.dto;
+package cherish.backend.common.util;
 
 import org.modelmapper.ModelMapper;
 
