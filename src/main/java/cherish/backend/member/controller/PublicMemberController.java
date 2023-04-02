@@ -27,7 +27,7 @@ public class PublicMemberController {
     //회원 회원가입
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    public String register(@RequestBody @Valid MemberFormDto memberFormDto){
+    public Long register(@RequestBody @Valid MemberFormDto memberFormDto){
         return memberService.join(memberFormDto);
     }
 

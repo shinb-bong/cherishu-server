@@ -51,14 +51,14 @@ public class MemberService {
     }
 
     @Transactional
-    public String join(MemberFormDto memberFormDto) {
+    public Long join(MemberFormDto memberFormDto) {
         boolean isAlready = memberRepository.existsByEmail(memberFormDto.getEmail());
         if (isAlready){
             throw new IllegalStateException(Constants.EMAIL_ALREADY);
         }
         else {
             Member savedMember = memberRepository.save(Member.createMember(memberFormDto, passwordEncoder));
-            return savedMember.getEmail();
+            return savedMember.getId();
         }
     }
 

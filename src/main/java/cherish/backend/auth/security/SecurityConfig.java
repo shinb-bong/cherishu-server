@@ -66,6 +66,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
+        config.addAllowedOrigin(CommonConstants.LOCALHOST);
         config.addAllowedOrigin(CommonConstants.CLIENT_ORIGIN); // 프론트 IPv4 주소
         config.addAllowedMethod(""); // 모든 메소드 허용.
         config.addAllowedHeader("");

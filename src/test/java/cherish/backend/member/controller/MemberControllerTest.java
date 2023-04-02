@@ -1,7 +1,10 @@
 package cherish.backend.member.controller;
 
+import cherish.backend.auth.jwt.TokenInfo;
+import cherish.backend.member.dto.MemberLoginRequestDto;
 import cherish.backend.member.dto.email.EmailCodeValidationRequest;
 import cherish.backend.member.dto.email.EmailRequest;
+import cherish.backend.member.model.Member;
 import cherish.backend.member.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -15,14 +18,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
 @MockBean(JpaMetamodelMappingContext.class)
-@WebMvcTest(MemberController.class)
+@WebMvcTest({MemberController.class, PublicMemberController.class})
 class MemberControllerTest {
 
     @Autowired
@@ -64,8 +67,31 @@ class MemberControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isOk());
-
-
     }
+
+    @Test
+    @WithMockUser
+    void 로그인_테스트() throws Exception {
+        //given
+        Member member = Member.builder().id(1L).name("test").email("test@naver.com").password("12345").build();
+        given(memberService.login(member.getEmail(), member.getPassword(),false )).willReturn(
+                TokenInfo.builder()
+                .grantType("Bearer").refreshToken("abc").accessToken("cde").build()
+        );
+        //when
+        //then
+        String content = objectMapper.writeValueAsString(new MemberLoginRequestDto("test@naver.com", "12345", false));
+        mvc.perform(post("/public/member/login")
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.grantType").value("Bearer"))
+                .andExpect(jsonPath("$.refreshToken").value("abc"))
+                .andExpect(jsonPath("$.accessToken").value("cde"));
+    }
+
 
 }
