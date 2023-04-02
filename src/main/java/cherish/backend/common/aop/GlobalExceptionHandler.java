@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -66,6 +67,13 @@ public class GlobalExceptionHandler {
     public ErrorResponseDto handleIllegalStateException(IllegalStateException e){
         return createError(e);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadCredentialsException.class)
+    public ErrorResponseDto handleCredential(BadCredentialsException e){
+        return createError("로그인에 실패하였습니다.");
+    }
+
 
     // 공통 예외 처리
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

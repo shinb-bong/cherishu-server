@@ -2,6 +2,7 @@ package cherish.backend.member.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -11,6 +12,6 @@ public class MemberLoginRequestDto {
     private String email;
     @NotEmpty
     private String password;
-    @NotEmpty
-    private Boolean isPersist;
+    @NotNull
+    private boolean isPersist;
 }

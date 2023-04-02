@@ -36,7 +36,7 @@ public class PublicMemberController {
     public TokenInfo login(@RequestBody @Valid MemberLoginRequestDto memberLoginRequestDto) {
         TokenInfo token = memberService.login(memberLoginRequestDto.getEmail(),
                 memberLoginRequestDto.getPassword(),
-                memberLoginRequestDto.getIsPersist());
+                memberLoginRequestDto.isPersist());
         log.info("member_login = {}", memberLoginRequestDto.getEmail());
         return token;
     }
