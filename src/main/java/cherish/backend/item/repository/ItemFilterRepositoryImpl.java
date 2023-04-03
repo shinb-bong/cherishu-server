@@ -9,12 +9,9 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import static cherish.backend.category.model.QCategory.*;
 import static cherish.backend.category.model.QFilter.*;
 import static cherish.backend.item.model.QItem.*;

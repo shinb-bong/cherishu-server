@@ -1,5 +1,8 @@
 package cherish.backend.item.dto;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ItemSearchQueryDtoMapper {
     public ItemSearchDto.ResponseSearchItem map(ItemSearchQueryDto searchQueryDto) {
         ItemSearchDto.ResponseSearchItem.ResponseSearchItemBuilder builder = ItemSearchDto.ResponseSearchItem.builder();

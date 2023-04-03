@@ -4,6 +4,7 @@ import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchDto;
 import cherish.backend.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,31 +22,16 @@ public class PublicItemController {
 
     private final ItemService itemService;
 
+    @Profile("put-data")
     @GetMapping("/search")
     public ResponseEntity<Page<ItemSearchDto.ResponseSearchItem>> searchItemWithFilter(
-            @RequestParam(value = "filterName", required = false) String filterName,
-            @RequestParam(value = "itemFilterName", required = false) String itemFilterName,
-            @RequestParam(value = "itemCategoryParent", required = false) String itemCategoryParent,
-            @RequestParam(value = "itemCategoryChildren", required = false) String itemCategoryChildren,
-            @RequestParam(value = "itemJobParent", required = false) String itemJobParent,
-            @RequestParam(value = "itemJobChildren", required = false) String itemJobChildren,
-            @RequestParam(value = "itemName", required = false) String itemName,
-            @RequestParam(value = "itemBrand", required = false) String itemBrand,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "target", required = false) String target,
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-
         ItemSearchCondition condition = new ItemSearchCondition();
-        condition.setFilterName(filterName);
-        condition.setItemFilterName(itemFilterName);
-        condition.setItemCategoryParent(itemCategoryParent);
-        condition.setItemCategoryChildren(itemCategoryChildren);
-        condition.setItemJobParent(itemJobParent);
-        condition.setItemJobChildren(itemJobChildren);
-        condition.setItemName(itemName);
-        condition.setItemBrand(itemBrand);
         condition.setKeyword(keyword);
         condition.setTarget(target);
+
         Page<ItemSearchDto.ResponseSearchItem> items = itemService.searchItem(condition, pageable);
         return ResponseEntity.ok(items);
     }
