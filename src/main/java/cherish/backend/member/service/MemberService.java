@@ -7,6 +7,7 @@ import cherish.backend.member.dto.MemberInfoResponse;
 import cherish.backend.member.email.EmailCode;
 import cherish.backend.member.email.EmailService;
 import cherish.backend.member.model.Job;
+import cherish.backend.member.model.enums.Role;
 import cherish.backend.member.repository.JobRepository;
 import cherish.backend.member.constant.Constants;
 import cherish.backend.member.repository.MemberRepository;
@@ -14,6 +15,7 @@ import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -22,7 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cherish.backend.member.model.enums.Role.ADMIN;
+import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -63,14 +66,12 @@ public class MemberService {
     }
 
     @Transactional
-    public void delete(String email, String nowUserEmail) {
+    public void delete(String email, String loginUserEmail) {
         Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-        Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-        if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember))){
-            Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-            memberRepository.delete(member);
+        Member loginMember = memberRepository.findByEmail(loginUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
+        if ( (loginMember.getRoles().equals(Role.ROLE_ADMIN)) || (changeMember.equals(loginMember))){
+            memberRepository.delete(changeMember);
         }
-
     }
 
     public boolean isMember(String email) {
@@ -99,16 +100,23 @@ public class MemberService {
     }
 
     @Transactional
-    public Long changeInfo(String nickName, String jobName, String email) {
+    public Long changeInfo(String nickName, String jobName, String email, String loginUserEmail) {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
+        Member loginUser = memberRepository.findByEmail(loginUserEmail).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
         Job job = jobRepository.findByName(jobName).orElseThrow(() -> new IllegalStateException("해당 직업이 존재하지 않습니다."));
-        member.changeInfo(nickName,job);
+        if (loginUser.getRoles().equals(Role.ROLE_ADMIN)|| member.equals(loginUser)){
+            member.changeInfo(nickName,job);
+        }
         return member.getId();
     }
 
-    public MemberInfoResponse getInfo(String email) {
+    public MemberInfoResponse getInfo(String email,String loginUserEmail) {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
-        return MemberInfoResponse.of(member);
-
+        Member loginUser = memberRepository.findByEmail(loginUserEmail).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
+        if (loginUser.getRoles().equals(Role.ROLE_ADMIN)|| member.equals(loginUser)) {
+            Optional<Job> job = Optional.ofNullable(member.getJob());
+            return MemberInfoResponse.of(member,job);
+        }
+        throw new BadCredentialsException("권한 없음");
     }
 }

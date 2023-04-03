@@ -20,10 +20,10 @@ public class MemberFormDto {
     @NotEmpty
     private final String password; // 패스워드
     @NotNull
-    private final boolean infoCheck; // 광고성 동의
+    private final boolean infoCheck;// 광고성 동의
     // 추가 정보
-    private final String gender; // 성별
-    private final LocalDate birth; // 생일
+    private final String gender = "NONE"; // 성별
+    private final LocalDate birth ; // 생일
     private final String job;
 
 }

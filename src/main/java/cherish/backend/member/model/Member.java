@@ -47,7 +47,7 @@ public class Member extends BaseTimeEntity {
                 .informationCheck(formDto.isInfoCheck())
                 .gender(Gender.valueOf(formDto.getGender()))
                 .birth(formDto.getBirth())
-                .roles(Role.USER)
+                .roles(Role.ROLE_USER)
                 .build();
     }
 

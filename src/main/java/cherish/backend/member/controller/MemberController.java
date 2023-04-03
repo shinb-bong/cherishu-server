@@ -1,7 +1,9 @@
 package cherish.backend.member.controller;
 
+import cherish.backend.auth.security.CurrentUser;
 import cherish.backend.auth.security.SecurityUser;
 import cherish.backend.member.dto.*;
+import cherish.backend.member.model.Member;
 import cherish.backend.member.service.MemberService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -18,15 +20,15 @@ public class MemberController {
     private final MemberService memberService;
     // 회원 삭제
     @DeleteMapping("/delete")
-    public ResponseEntity delete(@RequestParam("email") @Email String email, @AuthenticationPrincipal SecurityUser securityUser){
-        memberService.delete(email,securityUser.getMember().getEmail());
+    public ResponseEntity delete(@RequestParam("email") @Email String email, @CurrentUser Member member){
+        memberService.delete(email,member.getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // 회원 수정
     @PatchMapping("/change-info")
-    public ResponseEntity changeInfo(@RequestBody @Valid ChangeInfoRequest request){
-        Long memberId = memberService.changeInfo(request.getNickName(), request.getJobName(), request.getEmail());
+    public ResponseEntity changeInfo(@RequestBody @Valid ChangeInfoRequest request , @CurrentUser Member member){
+        Long memberId = memberService.changeInfo(request.getNickName(), request.getJobName(), request.getEmail(), member.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(memberId);
     }
     // 유틸 테스트
@@ -38,8 +40,8 @@ public class MemberController {
 
     // 내정보
     @GetMapping("/info")
-    public MemberInfoResponse memberInfo(@RequestParam("email") @Email String email){
-        return memberService.getInfo(email);
+    public MemberInfoResponse memberInfo(@RequestParam("email") @Email String email, @CurrentUser Member member){
+        return memberService.getInfo(email, member.getEmail());
     }
 }
 
