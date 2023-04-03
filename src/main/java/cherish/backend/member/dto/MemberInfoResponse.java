@@ -1,12 +1,10 @@
 package cherish.backend.member.dto;
 
-import cherish.backend.member.model.Job;
 import cherish.backend.member.model.Member;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Data
 @Builder
@@ -18,7 +16,7 @@ public class MemberInfoResponse {
     private LocalDate birth; // 생일
     private String job;
 
-    public static MemberInfoResponse of(Member member, Optional<Job> job){
+    public static MemberInfoResponse of(Member member){
         return MemberInfoResponse.builder().name(member.getName())
                 .nickName(member.getNickName())
                 .email(member.getEmail())
