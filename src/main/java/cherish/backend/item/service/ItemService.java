@@ -23,7 +23,7 @@ public class ItemService {
     public Page<ItemSearchDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
         Page<ItemSearchQueryDto> content = itemFilterRepository.searchItem(searchCondition, pageable);
         List<ItemSearchDto.ResponseSearchItem> response = content.stream()
-                .map(itemSearchQueryDto -> itemMidMapper.map(itemSearchQueryDto))
+                .map(itemSearchQueryDto -> itemMidMapper.toResponseSearchItem(itemSearchQueryDto))
                 .collect(Collectors.toList());
 
         return new PageImpl<>(response, pageable, content.getTotalElements());
