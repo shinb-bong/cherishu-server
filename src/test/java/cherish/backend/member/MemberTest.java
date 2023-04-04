@@ -1,7 +1,6 @@
 package cherish.backend.member;
 
 import cherish.backend.member.dto.MemberFormDto;
-import cherish.backend.member.model.enums.Gender;
 import cherish.backend.member.model.Member;
 import cherish.backend.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
@@ -10,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 
 @SpringBootTest
@@ -36,7 +33,13 @@ class MemberTest {
     }
 
     private static MemberFormDto getMemberFormDto() {
-        MemberFormDto memberFormDto = new MemberFormDto("지수빈", "공주", "test@naver.com", "1234", true, "NONE", LocalDate.now(), "공주");
+        MemberFormDto memberFormDto = MemberFormDto.builder()
+                .name("testUser")
+                .email("test@naver.com")
+                .password("123456")
+                .nickName("test-man")
+                .infoCheck(true)
+                .build();
         return memberFormDto;
     }
 

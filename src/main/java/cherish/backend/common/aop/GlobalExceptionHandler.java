@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -17,23 +19,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final String NO_ERROR_MESSAGE = "No error message from server.";
-    private static final ErrorResponseDto DEFAULT_ERROR_RESPONSE = new ErrorResponseDto(NO_ERROR_MESSAGE);
+    private static final String DEFAULT_ERROR_MSG = "알 수 없는 에러가 발생했습니다. 운영자에게 문의 바랍니다.";
+    private static final ErrorResponseDto DEFAULT_ERROR_RESPONSE = new ErrorResponseDto(DEFAULT_ERROR_MSG);
 
     private ErrorResponseDto createError(Exception e) {
         log.error(e.getMessage(), e);
-        if (ObjectUtils.isEmpty(e.getMessage())) {
-            return DEFAULT_ERROR_RESPONSE;
-        }
-        return new ErrorResponseDto(e.getMessage());
+        return DEFAULT_ERROR_RESPONSE;
     }
 
-    private ErrorResponseDto createError(String s) {
-        if (ObjectUtils.isEmpty(s)) {
-            return DEFAULT_ERROR_RESPONSE;
-        }
-        log.error(s);
-        return new ErrorResponseDto(s);
+    private ErrorResponseDto createError(Exception e, String message) {
+        log.error(e.getMessage(), e);
+        return new ErrorResponseDto(message);
     }
 
     // 자바 빈 검증 예외 처리
@@ -53,18 +49,30 @@ public class GlobalExceptionHandler {
             builder.append("]");
         }
 
-        return createError(builder.toString());
+        return createError(e, builder.toString());
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({TypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorResponseDto handleTypeException(Exception e){
-        return createError("타입 오류입니다.");
+        return createError(e, "타입 오류입니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalStateException.class)
     public ErrorResponseDto handleIllegalStateException(IllegalStateException e){
         return createError(e);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadCredentialsException.class)
+    public ErrorResponseDto handleCredential(BadCredentialsException e){
+        return createError(e, "로그인에 실패하였습니다.");
+    }
+
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ErrorResponseDto handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
+        return createError(e, "잘못된 요청입니다.");
     }
 
     // 공통 예외 처리
