@@ -25,9 +25,10 @@ public class PublicItemController {
     @Profile("put-data")
     @GetMapping("/search")
     public ResponseEntity<Page<ItemSearchDto.ResponseSearchItem>> searchItemWithFilter(
-            @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "target", required = false) String target,
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "target") String target,
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+
         ItemSearchCondition condition = new ItemSearchCondition();
         condition.setKeyword(keyword);
         condition.setTarget(target);

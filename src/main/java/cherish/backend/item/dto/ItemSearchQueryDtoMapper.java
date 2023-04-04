@@ -4,14 +4,12 @@ import cherish.backend.item.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-import org.mapstruct.ReportingPolicy;
 
 import java.util.Collections;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ItemSearchQueryDtoMapper {
-
     @Mappings({
             @Mapping(source = "filterId", target = "filter.id"),
             @Mapping(source = "filterName", target = "filter.name"),
@@ -54,12 +52,11 @@ public interface ItemSearchQueryDtoMapper {
     }
 
     default ItemSearchDto.CategoryDto mapCategory(Long categoryId, String categoryParent, String categoryChildren) {
-        ItemSearchDto.CategoryDto category = ItemSearchDto.CategoryDto.builder()
+        return ItemSearchDto.CategoryDto.builder()
                 .id(categoryId)
                 .parent(ItemSearchDto.CategoryDto.builder().name(categoryParent).build())
-                .children(mapCategoryChildren(categoryChildren)) // categoryChildren 매핑
+                .children(categoryChildren != null ? mapCategoryChildren(categoryChildren) : Collections.emptyList()) // null 인 경우 빈 리스트 반환
                 .build();
-        return category;
     }
 
     default ItemSearchDto.JobDto toJobDto(Long id, String name, ItemSearchDto.JobDto parent, String jobChildren) {
@@ -67,7 +64,7 @@ public interface ItemSearchQueryDtoMapper {
                 .id(id)
                 .name(name)
                 .parent(parent)
-                .children(jobChildren != null ? mapJobChildren(jobChildren) : Collections.emptyList())
+                .children(jobChildren != null ? mapJobChildren(jobChildren) : Collections.emptyList()) // null 인 경우 빈 리스트 반환
                 .build();
     }
 

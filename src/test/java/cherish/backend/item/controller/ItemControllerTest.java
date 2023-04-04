@@ -11,13 +11,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("put-data")
 @SpringBootTest
@@ -41,10 +41,12 @@ class ItemControllerTest {
         Page<ItemSearchDto.ResponseSearchItem> result = itemService.searchItem(condition, pageable);
 
         mockMvc.perform(get("/public/item/search")
-                        .param("itemName", "어딕트 립 글로우")
+                        .param("keyword", condition.getKeyword())
+                        .param("target", condition.getKeyword())
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(jsonPath("$.content[0].item.id").value(01001L))
                 .andExpect(jsonPath("$.content[0].item.name").value("어딕트 립 글로우"))
                 .andExpect(jsonPath("$.content[0].item.brand").value("디올"))

@@ -1,11 +1,11 @@
 package cherish.backend.item.repository;
 
+import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,17 +22,14 @@ import static cherish.backend.item.model.QItemUrl.*;
 import static cherish.backend.member.model.QJob.job;
 import static org.springframework.util.StringUtils.*;
 
+@RequiredArgsConstructor
 public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
-    private final JPAQueryFactory queryFactory;
-
-    public ItemFilterRepositoryImpl(EntityManager em) {
-        this.queryFactory = new JPAQueryFactory(em);
-    }
+    private final QueryDslConfig queryDslConfig;
 
     @Override
     public List<ItemFilterQueryDto> findItemFilterByNameAndId(ItemFilterCondition filterCondition) {
-        return queryFactory
+        return queryDslConfig.jpaQueryFactory()
                 .select(new QItemFilterQueryDto(
                         item.id.as("itemId"),
                         filter.id.as("filterId"),
@@ -52,7 +49,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
     @Override
     public List<AgeFilterQueryDto> findItemFilterByAge(AgeFilterCondition ageCondition) {
-        return queryFactory
+        return queryDslConfig.jpaQueryFactory()
                 .select(new QAgeFilterQueryDto(
                         item.id.as("itemId"),
                         filter.id.as("filterId"),
@@ -76,7 +73,8 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     @Override
     public Page<ItemSearchQueryDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
 
-        List<ItemSearchQueryDto> content = queryFactory.select(new QItemSearchQueryDto(
+        List<ItemSearchQueryDto> content = queryDslConfig.jpaQueryFactory()
+                .select(new QItemSearchQueryDto(
                         filter.id.as("filterId"),
                         itemFilter.id.as("itemFilterId"),
                         item.id.as("itemId"),
@@ -114,10 +112,11 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 )
                 .fetch();
 
-        JPAQuery<Item> countQuery = queryFactory.selectFrom(item)
-                .leftJoin(item.itemFilters, itemFilter)
-                .leftJoin(item.itemJobs, itemJob)
-                .leftJoin(item.itemCategories, itemCategory)
+        JPAQuery<Item> countQuery = queryDslConfig.jpaQueryFactory()
+                .selectFrom(item)
+                .leftJoin(item.itemFilters, itemFilter).fetchJoin()
+                .leftJoin(item.itemJobs, itemJob).fetchJoin()
+                .leftJoin(item.itemCategories, itemCategory).fetchJoin()
                 .leftJoin(itemUrl).on(itemUrl.item.id.eq(item.id))
                 .leftJoin(itemFilter.filter, filter)
                 .leftJoin(itemJob.job, job)
