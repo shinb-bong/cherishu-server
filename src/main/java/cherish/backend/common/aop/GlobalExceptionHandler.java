@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -74,6 +75,11 @@ public class GlobalExceptionHandler {
         return createError("로그인에 실패하였습니다.");
     }
 
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ErrorResponseDto handleMethodNotAllowed() {
+        return createError("잘못된 요청입니다.");
+    }
 
     // 공통 예외 처리
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
