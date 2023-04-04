@@ -20,8 +20,7 @@ public class ItemLikeController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/like")
     public Long itemLike(@RequestBody ItemLikeRequest request){
-        Long itemLikeId = itemLikeService.likeItem(request.getEmail(), request.getItemId());
-        return itemLikeId;
+        return itemLikeService.likeItem(request.getEmail(), request.getItemId());
     }
 
     @DeleteMapping("/like")

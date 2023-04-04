@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     // 현재 화이트 리스트 모두 열어 놓음
     private static final String[] PUBLIC_WHITELIST = {
-            "/public/**"
+            "/public/**", "/test/**"
     };
 
     // 비밀번호 변환 알고리즘
@@ -66,6 +66,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
+        config.addAllowedOrigin(CommonConstants.LOCALHOST);
         config.addAllowedOrigin(CommonConstants.CLIENT_ORIGIN); // 프론트 IPv4 주소
         config.addAllowedMethod(""); // 모든 메소드 허용.
         config.addAllowedHeader("");

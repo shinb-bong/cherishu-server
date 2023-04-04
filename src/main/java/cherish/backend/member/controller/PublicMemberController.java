@@ -13,7 +13,6 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -27,7 +26,7 @@ public class PublicMemberController {
     //회원 회원가입
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    public String register(@RequestBody @Valid MemberFormDto memberFormDto){
+    public Long register(@RequestBody @Valid MemberFormDto memberFormDto){
         return memberService.join(memberFormDto);
     }
 
@@ -36,7 +35,7 @@ public class PublicMemberController {
     public TokenInfo login(@RequestBody @Valid MemberLoginRequestDto memberLoginRequestDto) {
         TokenInfo token = memberService.login(memberLoginRequestDto.getEmail(),
                 memberLoginRequestDto.getPassword(),
-                memberLoginRequestDto.getIsPersist());
+                memberLoginRequestDto.isPersist());
         log.info("member_login = {}", memberLoginRequestDto.getEmail());
         return token;
     }
@@ -51,20 +50,17 @@ public class PublicMemberController {
     // 기존비밀번호 확인이 체크가 되어있거나
     // 혹은 현재 로그인한 사용자가 바꾸길 원하는 이메일과 같은 경우
     @PostMapping("/change-password")
-    public ResponseEntity changePwd(@RequestBody @Valid ChangePwdRequest request){
+    public void changePwd(@RequestBody @Valid ChangePwdRequest request){
         memberService.changePwd(request.getEmail(),request.getPassword());
-        return new ResponseEntity(HttpStatus.OK);
     }
     // 이메일 코드 발송
     @PostMapping("/code-send")
-    public ResponseEntity sendEmailCode(@RequestBody @Valid EmailRequest emailRequest){
-        String code = memberService.sendEmailCode(emailRequest.getEmail());
-        return ResponseEntity.status(HttpStatus.OK).body(code);
+    public String sendEmailCode(@RequestBody @Valid EmailRequest emailRequest){
+        return memberService.sendEmailCode(emailRequest.getEmail());
     }
     // 이메일 코드 검증
     @PostMapping("/code-valid")
-    public ResponseEntity validEmailCode(@RequestBody @Valid EmailCodeValidationRequest request){
+    public void validEmailCode(@RequestBody @Valid EmailCodeValidationRequest request){
         memberService.validEmailCode(request.getEmail(), request.getCode());
-        return new ResponseEntity(HttpStatus.OK);
     }
 }
