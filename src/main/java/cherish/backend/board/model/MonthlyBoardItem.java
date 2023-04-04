@@ -1,8 +1,11 @@
-package cherish.backend.item.model;
+package cherish.backend.board.model;
 
-import cherish.backend.board.model.MonthlyBoard;
+import cherish.backend.item.model.Item;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @AllArgsConstructor
