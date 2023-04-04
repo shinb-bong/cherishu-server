@@ -22,7 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cherish.backend.member.model.enums.Role.ADMIN;
+import static cherish.backend.member.model.enums.Role.ROLE_ADMIN;
 
 @Slf4j
 @Service
@@ -66,7 +66,7 @@ public class MemberService {
     public void delete(String email, String nowUserEmail) {
         Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
         Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-        if ( (nowMember.getRoles().equals(ADMIN)) || (changeMember.equals(nowMember))){
+        if ( (nowMember.getRoles().equals(ROLE_ADMIN)) || (changeMember.equals(nowMember))){
             Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
             memberRepository.delete(member);
         }
