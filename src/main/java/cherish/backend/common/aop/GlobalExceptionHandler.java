@@ -71,8 +71,8 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ErrorResponseDto handleMethodNotAllowed() {
-        return createError("잘못된 요청입니다.");
+    public ErrorResponseDto handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
+        return createError(e, "잘못된 요청입니다.");
     }
 
     // 공통 예외 처리
