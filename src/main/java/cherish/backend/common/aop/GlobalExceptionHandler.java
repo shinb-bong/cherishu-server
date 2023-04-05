@@ -6,11 +6,10 @@ import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.util.ObjectUtils;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,8 +33,8 @@ public class GlobalExceptionHandler {
 
     // 자바 빈 검증 예외 처리
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponseDto handleValidException(MethodArgumentNotValidException e) {
+    @ExceptionHandler(BindException.class)
+    public ErrorResponseDto handleBindException(BindException e) {
         BindingResult bindingResult = e.getBindingResult();
 
         StringBuilder builder = new StringBuilder();
@@ -43,7 +42,12 @@ public class GlobalExceptionHandler {
             builder.append("[");
             builder.append(fieldError.getField());
             builder.append("](은)는 ");
-            builder.append(fieldError.getDefaultMessage());
+            // type mismatch exception
+            if (fieldError.getCode() != null && fieldError.getCode().contains("type")) {
+                builder.append("타입이 잘못 되었습니다.");
+            } else {
+                builder.append(fieldError.getDefaultMessage());
+            }
             builder.append(" 입력된 값: [");
             builder.append(fieldError.getRejectedValue());
             builder.append("]");
@@ -51,6 +55,7 @@ public class GlobalExceptionHandler {
 
         return createError(e, builder.toString());
     }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({TypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorResponseDto handleTypeException(Exception e){
