@@ -24,7 +24,7 @@ public class ItemService {
         Page<ItemSearchQueryDto> content = itemFilterRepository.searchItem(searchCondition, pageable);
         List<ItemSearchResponseDto.ResponseSearchItem> response = content.stream()
                 .map(itemSearchQueryDto -> itemMidMapper.toResponseSearchItem(itemSearchQueryDto))
-                .collect(Collectors.toList());
+                .toList();
 
         return new PageImpl<>(response, pageable, content.getTotalElements());
     }
