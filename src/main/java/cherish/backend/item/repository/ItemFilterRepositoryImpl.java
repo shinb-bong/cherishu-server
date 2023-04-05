@@ -4,11 +4,14 @@ import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -133,7 +136,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                         keywordEq(searchCondition.getKeyword(), searchCondition.getTarget())
                 );
 
-        long total = countQuery.fetchCount();
+        long total = countQuery.fetch().size();
         return new PageImpl<>(content, pageable, total);
     }
 
@@ -142,16 +145,16 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
         return StringUtils.hasText(categoryParent) ? category.parent.name.eq(categoryParent) : null;
     }
 
-    private BooleanExpression categoryChildrenEq(String categoryChildren) {
-        return StringUtils.hasText(categoryChildren) ? category.children.any().name.eq(categoryChildren) : null;
+    private BooleanExpression categoryChildrenEq(List<String> categoryChildren) {
+        return !CollectionUtils.isEmpty(categoryChildren) ? category.children.any().name.in(categoryChildren) : null;
     }
 
     private BooleanExpression jobParentEq(String jobParent) {
         return StringUtils.hasText(jobParent) ? job.parent.name.eq(jobParent) : null;
     }
 
-    private BooleanExpression jobChildrenEq(String jobChildren) {
-        return StringUtils.hasText(jobChildren) ? job.children.any().name.eq(jobChildren) : null;
+    private BooleanExpression jobChildrenEq(List<String> jobChildren) {
+        return !CollectionUtils.isEmpty(jobChildren) ? job.children.any().name.in(jobChildren) : null;
     }
 
     private BooleanExpression itemNameEq(String itemName) {
@@ -171,8 +174,9 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     }
 
     private BooleanExpression filterNameEq(String filterName) {
-        return hasText(String.valueOf(filterName)) ? filter.name.eq(filterName) : null;
+        return hasText(filterName) ? filter.name.eq(filterName) : null;
     }
+
     private BooleanExpression ageGoe(Integer ageGoe) {
         return ageGoe != null ? item.maxAge.goe(ageGoe) : null;
     }

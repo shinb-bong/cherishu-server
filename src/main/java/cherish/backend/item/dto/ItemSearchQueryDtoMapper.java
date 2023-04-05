@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -28,60 +28,65 @@ public interface ItemSearchQueryDtoMapper {
             @Mapping(source = "itemJobId", target = "itemJob.id"),
             @Mapping(source = "itemUrlId", target = "itemUrl.id")
     })
-    ItemSearchDto.ResponseSearchItem toResponseSearchItem(ItemSearchQueryDto itemSearchQueryDto);
+    ItemSearchResponseDto.ResponseSearchItem toResponseSearchItem(ItemSearchQueryDto itemSearchQueryDto);
 
-    default ItemSearchDto.FilterDto toFilterDto(Long filterId, String filterName) {
-        return ItemSearchDto.FilterDto.builder()
+    default ItemSearchResponseDto.FilterDto toFilterDto(Long filterId, String filterName) {
+        return ItemSearchResponseDto.FilterDto.builder()
                 .id(filterId)
                 .name(filterName)
                 .build();
     }
 
-
     default ItemFilter mapItemFilter(Long itemFilterId, String itemFilterName) {
-        ItemFilter itemFilter = ItemFilter.builder().id(itemFilterId).name(itemFilterName).build();
-        return itemFilter;
-    }
-
-    default ItemSearchDto.ItemDto toItemDto(Long id, String name, String brand) {
-        return ItemSearchDto.ItemDto.builder()
-                .id(id)
-                .name(name)
-                .brand(brand)
+        return ItemFilter.builder()
+                .id(itemFilterId)
+                .name(itemFilterName)
                 .build();
     }
 
-    default ItemSearchDto.CategoryDto mapCategory(Long categoryId, String categoryParent, String categoryChildren) {
-        return ItemSearchDto.CategoryDto.builder()
+    default ItemSearchResponseDto.ItemDto toItemDto(Long id, int price, int minAge, int maxAge) {
+        return ItemSearchResponseDto.ItemDto.builder()
+                .id(id)
+                .price(price)
+                .minAge(minAge)
+                .maxAge(maxAge)
+                .build();
+    }
+    default ItemSearchResponseDto.CategoryDto mapCategory(Long categoryId, String categoryParent, String categoryChildren) {
+        List<String> children = new ArrayList<>();
+        if (categoryChildren != null) {
+            for (String child : categoryChildren.split(",")) {
+                children.add(child);
+            }
+        }
+        return ItemSearchResponseDto.CategoryDto.builder()
                 .id(categoryId)
-                .parent(ItemSearchDto.CategoryDto.builder().name(categoryParent).build())
-                .children(categoryChildren != null ? mapCategoryChildren(categoryChildren) : Collections.emptyList()) // null 인 경우 빈 리스트 반환
+                .parent(ItemSearchResponseDto.CategoryDto.builder().name(categoryParent).build())
+                .children(children)
                 .build();
     }
 
-    default ItemSearchDto.JobDto toJobDto(Long id, String name, ItemSearchDto.JobDto parent, String jobChildren) {
-        return ItemSearchDto.JobDto.builder()
-                .id(id)
-                .name(name)
-                .parent(parent)
-                .children(jobChildren != null ? mapJobChildren(jobChildren) : Collections.emptyList()) // null 인 경우 빈 리스트 반환
+
+    default ItemSearchResponseDto.JobDto toJobDto(Long jobId, String jobParent, String jobChildren) {
+        List<String> children = new ArrayList<>();
+        if (jobChildren != null) {
+            for (String child : jobChildren.split(",")) {
+                children.add(child);
+            }
+        }
+        return ItemSearchResponseDto.JobDto.builder()
+                .id(jobId)
+                .parent(ItemSearchResponseDto.JobDto.builder().name(jobParent).build())
+                .children(children)
                 .build();
     }
 
-    default ItemSearchDto.ItemUrlDto toItemUrlDto(Long id, String url, String platform) {
-        return ItemSearchDto.ItemUrlDto.builder()
+    default ItemSearchResponseDto.ItemUrlDto toItemUrlDto(Long id, String url, String platform) {
+        return ItemSearchResponseDto.ItemUrlDto.builder()
                 .id(id)
                 .url(url)
                 .platform(platform)
                 .build();
-    }
-
-    default List<ItemSearchDto.CategoryDto> mapCategoryChildren(String categoryChildren) {
-        return Collections.singletonList(ItemSearchDto.CategoryDto.builder().name(categoryChildren).build());
-    }
-
-    default List<ItemSearchDto.JobDto> mapJobChildren(String jobChildren) {
-        return Collections.singletonList(ItemSearchDto.JobDto.builder().name(jobChildren).build());
     }
 
 }

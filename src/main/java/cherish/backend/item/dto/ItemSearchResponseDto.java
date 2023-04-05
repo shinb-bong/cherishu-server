@@ -4,7 +4,7 @@ import lombok.*;
 
 import java.util.List;
 
-public class ItemSearchDto {
+public class ItemSearchResponseDto {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -40,6 +40,8 @@ public class ItemSearchDto {
         private String description;
         private int price;
         private String imgUrl;
+        private int minAge;
+        private int maxAge;
     }
 
     @Data
@@ -50,7 +52,7 @@ public class ItemSearchDto {
         private Long id;
         private String name;
         private CategoryDto parent;
-        private List<CategoryDto> children;
+        private List<String> children;
     }
 
     @Data
@@ -61,7 +63,7 @@ public class ItemSearchDto {
         private Long id;
         private String name;
         private JobDto parent;
-        private List<JobDto> children;
+        private List<String> children;
     }
 
     @Data
@@ -73,4 +75,5 @@ public class ItemSearchDto {
         private String url;
         private String platform;
     }
+
 }

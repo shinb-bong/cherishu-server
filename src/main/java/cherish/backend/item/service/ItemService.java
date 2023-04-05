@@ -20,9 +20,9 @@ public class ItemService {
     private final ItemFilterRepository itemFilterRepository;
     private final ItemSearchQueryDtoMapper itemMidMapper;
 
-    public Page<ItemSearchDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
+    public Page<ItemSearchResponseDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
         Page<ItemSearchQueryDto> content = itemFilterRepository.searchItem(searchCondition, pageable);
-        List<ItemSearchDto.ResponseSearchItem> response = content.stream()
+        List<ItemSearchResponseDto.ResponseSearchItem> response = content.stream()
                 .map(itemSearchQueryDto -> itemMidMapper.toResponseSearchItem(itemSearchQueryDto))
                 .collect(Collectors.toList());
 

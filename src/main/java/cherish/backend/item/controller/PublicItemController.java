@@ -1,10 +1,9 @@
 package cherish.backend.item.controller;
 
 import cherish.backend.item.dto.ItemSearchCondition;
-import cherish.backend.item.dto.ItemSearchDto;
+import cherish.backend.item.dto.ItemSearchResponseDto;
 import cherish.backend.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,9 +21,8 @@ public class PublicItemController {
 
     private final ItemService itemService;
 
-    @Profile("put-data")
     @GetMapping("/search")
-    public ResponseEntity<Page<ItemSearchDto.ResponseSearchItem>> searchItemWithFilter(
+    public ResponseEntity<Page<ItemSearchResponseDto.ResponseSearchItem>> searchItemWithFilter(
             @RequestParam(value = "keyword") String keyword,
             @RequestParam(value = "target") String target,
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -33,7 +31,7 @@ public class PublicItemController {
         condition.setKeyword(keyword);
         condition.setTarget(target);
 
-        Page<ItemSearchDto.ResponseSearchItem> items = itemService.searchItem(condition, pageable);
+        Page<ItemSearchResponseDto.ResponseSearchItem> items = itemService.searchItem(condition, pageable);
         return ResponseEntity.ok(items);
     }
 

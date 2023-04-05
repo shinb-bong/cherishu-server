@@ -22,7 +22,4 @@ public class ItemUrl {
 
     private String platform;
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
 }

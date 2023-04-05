@@ -3,6 +3,8 @@ package cherish.backend.item.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ItemSearchQueryDto {
     private Long filterId;
@@ -16,14 +18,14 @@ public class ItemSearchQueryDto {
     private String filterName;
     private String itemFilterName;
     private String categoryParent;
-    private String categoryChildren;
+    private List<String> categoryChildren;
     private String jobParent;
-    private String jobChildren;
+    private List<String> jobChildren;
     private String itemName;
     private String itemBrand;
 
     @QueryProjection
-    public ItemSearchQueryDto(Long filterId, Long itemFilterId, Long itemId, Long categoryId, Long itemCategoryId, Long jobId, Long itemJobId, Long itemUrlId, String filterName, String itemFilterName, String categoryParent, String categoryChildren, String jobParent, String jobChildren, String itemName, String itemBrand) {
+    public ItemSearchQueryDto(Long filterId, Long itemFilterId, Long itemId, Long categoryId, Long itemCategoryId, Long jobId, Long itemJobId, Long itemUrlId, String filterName, String itemFilterName, String categoryParent, List<String> categoryChildren, String jobParent, List<String> jobChildren, String itemName, String itemBrand) {
         this.filterId = filterId;
         this.itemFilterId = itemFilterId;
         this.itemId = itemId;
