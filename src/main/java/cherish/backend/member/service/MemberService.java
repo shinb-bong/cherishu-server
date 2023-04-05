@@ -4,7 +4,7 @@ import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.auth.jwt.TokenInfo;
 import cherish.backend.common.service.RedisService;
 import cherish.backend.member.dto.MemberInfoResponse;
-import cherish.backend.member.email.EmailCode;
+import cherish.backend.member.email.EmailCodeGenerator;
 import cherish.backend.member.email.EmailService;
 import cherish.backend.member.model.Job;
 import cherish.backend.member.repository.JobRepository;
@@ -53,10 +53,9 @@ public class MemberService {
     @Transactional
     public Long join(MemberFormDto memberFormDto) {
         boolean isAlready = memberRepository.existsByEmail(memberFormDto.getEmail());
-        if (isAlready){
+        if (isAlready) {
             throw new IllegalStateException(Constants.EMAIL_ALREADY);
-        }
-        else {
+        } else {
             Member savedMember = memberRepository.save(Member.createMember(memberFormDto, passwordEncoder));
             return savedMember.getId();
         }
@@ -66,7 +65,7 @@ public class MemberService {
     public void delete(String email, String nowUserEmail) {
         Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
         Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-        if ( (nowMember.getRoles().equals(ROLE_ADMIN)) || (changeMember.equals(nowMember))){
+        if ((nowMember.getRoles().equals(ROLE_ADMIN)) || (changeMember.equals(nowMember))) {
             Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
             memberRepository.delete(member);
         }
@@ -78,31 +77,31 @@ public class MemberService {
     }
 
     @Transactional
-    public void changePwd(String email,String pwd) {
+    public void changePwd(String email, String pwd) {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-        member.changePwd(pwd,passwordEncoder);
+        member.changePwd(pwd, passwordEncoder);
     }
 
-    public String sendEmailCode(String email){
-        if(!isMember(email)){
-            String code = EmailCode.createCode().getCode();
-            log.info("make code =  {}", code);
+    public String sendEmailCode(String email) {
+        if (!isMember(email)) {
+            String code = EmailCodeGenerator.generateCode();
+            redisService.setRedisCode(email, code, 5 * 60 + 1);
             emailService.sendMessage(email, code);
-            redisService.setRedisCode(email,code,30L);
+            log.info("code {} has been sent to {}", code, email);
             return code;
         } else
             throw new IllegalStateException(Constants.EMAIL_ALREADY);
     }
 
-    public boolean validEmailCode(String email, String inputCode){
-        return redisService.validCode(email,inputCode);
+    public boolean validEmailCode(String email, String inputCode) {
+        return redisService.validCode(email, inputCode);
     }
 
     @Transactional
     public Long changeInfo(String nickName, String jobName, String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
         Job job = jobRepository.findByName(jobName).orElseThrow(() -> new IllegalStateException("해당 직업이 존재하지 않습니다."));
-        member.changeInfo(nickName,job);
+        member.changeInfo(nickName, job);
         return member.getId();
     }
 

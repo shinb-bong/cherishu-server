@@ -1,6 +1,7 @@
 package cherish.backend.test;
 
 import cherish.backend.common.service.RedisService;
+import cherish.backend.member.dto.redis.EmailVerificationInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -30,8 +31,22 @@ public class TestRestController {
     @GetMapping("/redis")
     public String testRedis() {
         String uid = UUID.randomUUID().toString().substring(0, 7);
-        redisService.setRedisCode("test",uid,10L);
+        redisService.setRedisCode("test",uid,10);
         return uid;
+    }
+
+    @PostMapping("/redis/info")
+    public void testInfo() {
+        EmailVerificationInfoDto dto = EmailVerificationInfoDto.builder()
+            .code("111111")
+            .verified(false)
+            .build();
+        redisService.setRedisKeyValue("test", dto, 30);
+    }
+
+    @GetMapping("/redis/info")
+    public EmailVerificationInfoDto getTestInfo() {
+        return redisService.getValue("test", EmailVerificationInfoDto.class);
     }
 
     @GetMapping
