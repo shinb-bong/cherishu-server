@@ -63,9 +63,9 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalStateException.class)
-    public ErrorResponseDto handleIllegalStateException(IllegalStateException e){
-        return createError(e);
+    @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
+    public ErrorResponseDto handleIllegalStateException(RuntimeException e){
+        return createError(e, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
