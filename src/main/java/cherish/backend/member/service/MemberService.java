@@ -83,7 +83,7 @@ public class MemberService {
     public String sendEmailCode(String email) {
         if (!isMember(email)) {
             String code = EmailCodeGenerator.generateCode();
-            emailService.sendMessage(email, code);
+            emailService.sendMessage(email, "인증번호 : " + code);
             setRedisCode(email, code, 5 * 60);
             log.info("code {} has been sent to {}", code, email);
             return code;

@@ -28,7 +28,7 @@ public class GoogleEmailService implements EmailService {
         message.setFrom(from);
         message.setTo(to);
         message.setSubject(title);
-        message.setText("인증번호 : " + content);
+        message.setText(content);
         mailSender.send(message);
     }
 }
