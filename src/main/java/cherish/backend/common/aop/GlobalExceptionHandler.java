@@ -1,6 +1,7 @@
 package cherish.backend.common.aop;
 
 import cherish.backend.common.dto.ErrorResponseDto;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
@@ -78,6 +79,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ErrorResponseDto handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
         return createError(e, "잘못된 요청입니다.");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(JwtException.class)
+    public ErrorResponseDto handleJwtException(JwtException e) {
+        return createError(e, e.getMessage());
     }
 
     // 공통 예외 처리

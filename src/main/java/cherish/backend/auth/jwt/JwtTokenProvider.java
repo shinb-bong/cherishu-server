@@ -1,12 +1,11 @@
 package cherish.backend.auth.jwt;
 
+import cherish.backend.common.service.RedisService;
 import cherish.backend.member.service.CustomUserDetailService;
-import cherish.backend.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,49 +20,55 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
+@EnableConfigurationProperties(JwtProperties.class)
 @Component
 public class JwtTokenProvider {
 
     private final Key key;
     private final CustomUserDetailService service;
-
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, CustomUserDetailService service) {
-        this.service = service;
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-    }
+    private final RedisService redisService;
+    private final JwtConfig jwtConfig;
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public TokenInfo generateToken(Authentication authentication, boolean isPersist) {
+    public TokenInfo generateToken(Authentication authentication) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        if (isPersist){
-            now += 9999999999999999L;
-        }
         // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + 86400000);
-        String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
+        String accessToken = generateAccessToken(authentication, authorities, now);
         // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 86400000))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        String refreshToken = generateRefreshToken(authentication, now);
+
+        redisService.setRedisKeyValue(refreshToken, authentication.getName(), jwtConfig.getRefreshTokenExpireMillis() / 1000);
 
         return TokenInfo.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    private String generateAccessToken(Authentication authentication, String authorities, long now) {
+        return Jwts.builder()
+            .setSubject(authentication.getName())
+            .claim("auth", authorities)
+            .setIssuedAt(new Date(now))
+            .setExpiration(new Date(now + jwtConfig.getAccessTokenExpireMillis()))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+    private String generateRefreshToken(Authentication authentication, long now) {
+        return Jwts.builder()
+            .setSubject(authentication.getName())
+            .setIssuedAt(new Date(now))
+            .setExpiration(new Date(now + jwtConfig.getRefreshTokenExpireMillis()))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
@@ -94,15 +99,14 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
+            throw new JwtException("Invalid token");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
+            throw new JwtException("Token has been expired");
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
+            throw new JwtException("Unsupported jwt token");
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+            throw new JwtException("JWT claims string is empty.");
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {

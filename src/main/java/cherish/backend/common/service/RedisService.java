@@ -16,7 +16,7 @@ import java.time.Duration;
 @Service
 public class RedisService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
 
     public boolean hasKey(String key) {
@@ -35,7 +35,7 @@ public class RedisService {
             throw new RedisKeyNotFoundException();
         }
 
-        String jsonValue = (String) redisTemplate.opsForValue().get(key);
+        String jsonValue = redisTemplate.opsForValue().get(key);
         try {
             return objectMapper.readValue(jsonValue, type);
         } catch (JacksonException e) {
@@ -51,10 +51,12 @@ public class RedisService {
      * @param value Redis value object
      * @param second 지속시간 (초)
      */
-    public void setRedisKeyValue(String key, Object value, int second) {
-        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+    public void setRedisKeyValue(String key, Object value, long second) {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
         try {
-            operations.set(key, objectMapper.writeValueAsString(value), Duration.ofSeconds(second));
+            String valueJsonString = objectMapper.writeValueAsString(value);
+            operations.set(key, valueJsonString, Duration.ofSeconds(second));
+            log.info("set redis during {} seconds.\n{} : {}", second, key, valueJsonString);
         } catch (JacksonException e) {
             log.error(e.getMessage(), e);
             throw new IllegalStateException();
