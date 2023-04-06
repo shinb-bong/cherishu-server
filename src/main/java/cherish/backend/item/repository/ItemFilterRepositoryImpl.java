@@ -223,20 +223,17 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
         return queryDslConfig.jpaQueryFactory()
                 .select(qCateParent)
                 .from(category)
-                .join(category.parent, qCateParent).fetchJoin()
-                .where(qCateParent.children.contains(category))
-                .select(qCateParent)
-                .fetchJoin();
+                .join(category.parent, qCateParent)
+                .where(qCateParent.children.contains(category));
     }
 
     private Expression findChild(QCategory category) {
         QCategory qCateChild = new QCategory("qCategory");
 
         return queryDslConfig.jpaQueryFactory()
-                .select(qCateChild.name)
+                .select(Expressions.asString(qCateChild.name).as("cateChild"))
                 .from(qCateChild)
                 .where(qCateChild.parent.eq(category))
-                .select(Expressions.asString(qCateChild.name).as("cateChild"))
                 .fetchJoin();
     }
 
@@ -246,21 +243,17 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
         return queryDslConfig.jpaQueryFactory()
                 .select(jParent)
                 .from(job)
-                .join(job.parent, jParent).fetchJoin()
-                .where(jParent.children.contains(job))
-                .select(jParent)
-                .fetchJoin();
+                .join(job.parent, jParent)
+                .where(jParent.children.contains(job));
     }
 
     private Expression findJobChild(QJob job) {
         QJob jChildren = new QJob("jChildren");
 
         return queryDslConfig.jpaQueryFactory()
-                .select(jChildren.name.as("jChildren"))
+                .select(Expressions.asString(jChildren.name).as("cateChild"))
                 .from(jChildren)
                 .join(jChildren.parent, jChildren)
-                .where(jChildren.parent.eq(job))
-                .select(Expressions.asString(jChildren.name).as("cateChild"))
-                .fetchJoin();
+                .where(jChildren.parent.eq(job));
     }
 }
