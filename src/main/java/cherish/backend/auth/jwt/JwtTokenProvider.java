@@ -29,15 +29,17 @@ public class JwtTokenProvider {
 
     private final Key key;
     private final CustomUserDetailService service;
-    private final JwtProperties jwtProperties;
     private final RedisService redisService;
+    private final long accessTokenExpireTime;
+    private final long refreshTokenExpireTime;
 
     public JwtTokenProvider(CustomUserDetailService service, JwtProperties jwtProperties, RedisService redisService) {
         this.service = service;
-        this.jwtProperties = jwtProperties;
         this.redisService = redisService;
         byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecret());
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.accessTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getAccessTokenExpireTime());
+        this.refreshTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getRefreshTokenExpireTime());
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
@@ -49,24 +51,9 @@ public class JwtTokenProvider {
 
         long now = (new Date()).getTime();
         // Access Token 생성
-        long accessTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getAccessTokenExpireTime());
-        String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
-                .setIssuedAt(new Date(now))
-                .setExpiration(new Date(now + accessTokenExpireTime))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
+        String accessToken = generateAccessToken(authentication, authorities, now);
         // Refresh Token 생성
-        long refreshTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getRefreshTokenExpireTime());
-        String refreshToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
-                .setIssuedAt(new Date(now))
-                .setExpiration(new Date(now + refreshTokenExpireTime))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        String refreshToken = generateRefreshToken(authentication, authorities, now);
 
         redisService.setRedisKeyValue(
             CommonConstants.REDIS_REFRESH_TOKEN_PREFIX + authentication.getName(),
@@ -78,6 +65,24 @@ public class JwtTokenProvider {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    private String generateAccessToken(Authentication authentication, String authorities, long now) {
+        return generateJwtToken(authentication, authorities, now, accessTokenExpireTime);
+    }
+
+    private String generateRefreshToken(Authentication authentication, String authorities, long now) {
+        return generateJwtToken(authentication, authorities, now, refreshTokenExpireTime);
+    }
+
+    private String generateJwtToken(Authentication authentication, String authorities, long now, long expireTime) {
+        return Jwts.builder()
+            .setSubject(authentication.getName())
+            .claim("auth", authorities)
+            .setIssuedAt(new Date(now))
+            .setExpiration(new Date(now + expireTime))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
@@ -108,15 +113,14 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
+            throw new JwtException("Invalid token");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
+            throw new JwtException("Token has been expired");
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
+            throw new JwtException("Unsupported jwt token");
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+            throw new JwtException("JWT claims string is empty.");
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {

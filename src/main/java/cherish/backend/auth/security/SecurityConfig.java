@@ -1,6 +1,7 @@
 package cherish.backend.auth.security;
 
 import cherish.backend.auth.jwt.JwtAuthenticationFilter;
+import cherish.backend.auth.jwt.JwtExceptionFilter;
 import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.common.constant.CommonConstants;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtExceptionFilter jwtExceptionFilter;
     // 현재 화이트 리스트 모두 열어 놓음
     private static final String[] PUBLIC_WHITELIST = {
             "/public/**", "/test/**"
@@ -60,6 +62,7 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
                 .build();
     }
     @Bean
