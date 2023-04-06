@@ -22,7 +22,7 @@ public class MemberInfoResponse {
                 .email(member.getEmail())
                 .gender(member.getGender().toString())
                 .birth(member.getBirth())
-                .job(member.getJob().getName())
+                .job((member.getJob() == null) ? "입력 사항 없음" : member.getJob().getName())
                 .build();
     }
 }

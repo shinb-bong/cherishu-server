@@ -23,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cherish.backend.member.model.enums.Role.ROLE_ADMIN;
 
 @Slf4j
 @Service
@@ -66,14 +65,9 @@ public class MemberService {
     }
 
     @Transactional
-    public void delete(String email, String nowUserEmail) {
-        Member changeMember = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-        Member nowMember = memberRepository.findByEmail(nowUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-        if ((nowMember.getRoles().equals(ROLE_ADMIN)) || (changeMember.equals(nowMember))) {
-            Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
-            memberRepository.delete(member);
-        }
-
+    public void delete(String loginUserEmail) {
+        Member member = memberRepository.findByEmail(loginUserEmail).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
+        memberRepository.delete(member);
     }
 
     public boolean isMember(String email) {
@@ -106,7 +100,6 @@ public class MemberService {
             .verified(false)
             .build();
         redisService.setRedisKeyValue(key, infoDto, second);
-
         log.info("input = {} ", validCode);
     }
 
@@ -125,15 +118,15 @@ public class MemberService {
     }
 
     @Transactional
-    public Long changeInfo(String nickName, String jobName, String email) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
+    public Long changeInfo(String nickName, String jobName, String loginUserEmail) {
+        Member member = memberRepository.findByEmail(loginUserEmail).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
         Job job = jobRepository.findByName(jobName).orElseThrow(() -> new IllegalStateException("해당 직업이 존재하지 않습니다."));
         member.changeInfo(nickName, job);
         return member.getId();
     }
 
-    public MemberInfoResponse getInfo(String email) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
+    public MemberInfoResponse getInfo(String loginUserEmail) {
+        Member member = memberRepository.findByEmail(loginUserEmail).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
         return MemberInfoResponse.of(member);
 
     }
