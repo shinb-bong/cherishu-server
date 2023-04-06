@@ -1,5 +1,7 @@
 package cherish.backend.auth.jwt;
 
+import cherish.backend.common.constant.CommonConstants;
+import cherish.backend.common.service.RedisService;
 import cherish.backend.common.util.DurationShortFormUtils;
 import cherish.backend.member.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
@@ -28,10 +30,12 @@ public class JwtTokenProvider {
     private final Key key;
     private final CustomUserDetailService service;
     private final JwtProperties jwtProperties;
+    private final RedisService redisService;
 
-    public JwtTokenProvider(CustomUserDetailService service, JwtProperties jwtProperties) {
+    public JwtTokenProvider(CustomUserDetailService service, JwtProperties jwtProperties, RedisService redisService) {
         this.service = service;
         this.jwtProperties = jwtProperties;
+        this.redisService = redisService;
         byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecret());
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -49,6 +53,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
+                .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + accessTokenExpireTime))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -56,9 +61,17 @@ public class JwtTokenProvider {
         // Refresh Token 생성
         long refreshTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getRefreshTokenExpireTime());
         String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim("auth", authorities)
+                .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + refreshTokenExpireTime))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        redisService.setRedisKeyValue(
+            CommonConstants.REDIS_REFRESH_TOKEN_PREFIX + authentication.getName(),
+            refreshToken,
+            refreshTokenExpireTime / 1000);
 
         return TokenInfo.builder()
                 .grantType("Bearer")
