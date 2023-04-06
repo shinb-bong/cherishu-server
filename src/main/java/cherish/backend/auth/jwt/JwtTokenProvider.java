@@ -53,12 +53,9 @@ public class JwtTokenProvider {
         // Access Token 생성
         String accessToken = generateAccessToken(authentication, authorities, now);
         // Refresh Token 생성
-        String refreshToken = generateRefreshToken(authentication, authorities, now);
+        String refreshToken = generateRefreshToken(now);
 
-        redisService.setRedisKeyValue(
-            CommonConstants.REDIS_REFRESH_TOKEN_PREFIX + authentication.getName(),
-            refreshToken,
-            refreshTokenExpireTime / 1000);
+        redisService.setRedisKeyValue(refreshToken, authentication.getName(), refreshTokenExpireTime / 1000);
 
         return TokenInfo.builder()
                 .grantType("Bearer")
@@ -68,19 +65,19 @@ public class JwtTokenProvider {
     }
 
     private String generateAccessToken(Authentication authentication, String authorities, long now) {
-        return generateJwtToken(authentication, authorities, now, accessTokenExpireTime);
-    }
-
-    private String generateRefreshToken(Authentication authentication, String authorities, long now) {
-        return generateJwtToken(authentication, authorities, now, refreshTokenExpireTime);
-    }
-
-    private String generateJwtToken(Authentication authentication, String authorities, long now, long expireTime) {
         return Jwts.builder()
             .setSubject(authentication.getName())
             .claim("auth", authorities)
             .setIssuedAt(new Date(now))
-            .setExpiration(new Date(now + expireTime))
+            .setExpiration(new Date(now + accessTokenExpireTime))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+    private String generateRefreshToken(long now) {
+        return Jwts.builder()
+            .setIssuedAt(new Date(now))
+            .setExpiration(new Date(now + refreshTokenExpireTime))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
     }
