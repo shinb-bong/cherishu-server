@@ -1,13 +1,12 @@
 package cherish.backend.member.controller;
 
-import cherish.backend.auth.security.SecurityUser;
+import cherish.backend.auth.security.CurrentUser;
+import cherish.backend.member.model.Member;
 import cherish.backend.member.dto.ChangeInfoRequest;
 import cherish.backend.member.dto.MemberInfoResponse;
 import cherish.backend.member.service.MemberService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,14 +16,14 @@ public class MemberController {
     private final MemberService memberService;
     // 회원 삭제
     @DeleteMapping("/delete")
-    public void delete(@RequestParam("email") @Email String email, @AuthenticationPrincipal SecurityUser securityUser){
-        memberService.delete(email,securityUser.getMember().getEmail());
+    public void delete(@CurrentUser Member member){
+        memberService.delete(member.getEmail());
     }
 
     // 회원 수정
     @PatchMapping("/change-info")
-    public Long changeInfo(@RequestBody @Valid ChangeInfoRequest request){
-        return memberService.changeInfo(request.getNickName(), request.getJobName(), request.getEmail());
+    public Long changeInfo(@RequestBody @Valid ChangeInfoRequest request, @CurrentUser Member member){
+        return memberService.changeInfo(request.getNickName(), request.getJobName(), member.getEmail());
     }
     // 유틸 테스트
     // 객체로 받아오는 것
@@ -35,8 +34,8 @@ public class MemberController {
 
     // 내정보
     @GetMapping("/info")
-    public MemberInfoResponse memberInfo(@RequestParam("email") @Email String email){
-        return memberService.getInfo(email);
+    public MemberInfoResponse memberInfo(@CurrentUser Member member){
+        return memberService.getInfo(member.getEmail());
     }
 }
 

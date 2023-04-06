@@ -28,5 +28,4 @@ public class MemberFormDto {
     private String gender; // 성별
     private LocalDate birth; // 생일
     private String job;
-
 }
