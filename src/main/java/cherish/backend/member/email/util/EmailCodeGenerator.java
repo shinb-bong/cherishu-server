@@ -1,4 +1,4 @@
-package cherish.backend.member.email;
+package cherish.backend.member.email.util;
 
 import lombok.experimental.UtilityClass;
 

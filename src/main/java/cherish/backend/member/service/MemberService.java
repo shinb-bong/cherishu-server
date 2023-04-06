@@ -7,8 +7,8 @@ import cherish.backend.member.constant.Constants;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.dto.MemberInfoResponse;
 import cherish.backend.member.dto.redis.EmailVerificationInfoDto;
-import cherish.backend.member.email.EmailCodeGenerator;
-import cherish.backend.member.email.EmailService;
+import cherish.backend.member.email.util.EmailCodeGenerator;
+import cherish.backend.member.email.service.EmailService;
 import cherish.backend.member.model.Job;
 import cherish.backend.member.model.Member;
 import cherish.backend.member.repository.JobRepository;
@@ -83,8 +83,8 @@ public class MemberService {
     public String sendEmailCode(String email) {
         if (!isMember(email)) {
             String code = EmailCodeGenerator.generateCode();
-            setRedisCode(email, code, 5 * 60 + 1);
-            emailService.sendMessage(email, code);
+            emailService.sendMessage(email, "인증번호 : " + code);
+            setRedisCode(email, code, 5 * 60);
             log.info("code {} has been sent to {}", code, email);
             return code;
         } else
