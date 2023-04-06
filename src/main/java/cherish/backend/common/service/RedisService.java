@@ -23,6 +23,12 @@ public class RedisService {
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
+    /**
+     * Redis에서 가져온 JSON string을 객체로 변환해주는 util method.
+     * @param key Redis key
+     * @param type 변환할 클래스
+     * @return {@code T type} 클래스로 변환된 Redis value
+     */
     public <T> T getValue(String key, Class<T> type) {
         if (!hasKey(key)) {
             log.error("키 {}는 존재하지 않습니다", key);
@@ -38,6 +44,13 @@ public class RedisService {
         }
     }
 
+    /**
+     * Redis에 키와 값 세팅
+     *
+     * @param key Redis key
+     * @param value Redis value object
+     * @param second 지속시간 (초)
+     */
     public void setRedisKeyValue(String key, Object value, int second) {
         ValueOperations<String, Object> operations = redisTemplate.opsForValue();
         try {
