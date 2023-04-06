@@ -32,7 +32,7 @@ public class DurationShortFormUtils {
      * @param shortForm a shortened form of duration e.g. 30s, 1m, 5d, etc.
      * @return milliseconds as long
      */
-    public static long convertShortFormToMilliSeconds(String shortForm) throws DurationFormatException {
+    public static long convertShortFormToMillis(String shortForm) throws DurationFormatException {
         try {
             if (shortForm.contains("s")) {
                 return Integer.parseInt(shortForm.substring(0, shortForm.indexOf("s"))) * SECOND;

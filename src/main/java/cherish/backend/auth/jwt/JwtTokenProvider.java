@@ -1,12 +1,9 @@
 package cherish.backend.auth.jwt;
 
-import cherish.backend.common.constant.CommonConstants;
 import cherish.backend.common.service.RedisService;
-import cherish.backend.common.util.DurationShortFormUtils;
 import cherish.backend.member.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +20,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
 @EnableConfigurationProperties(JwtProperties.class)
 @Component
 public class JwtTokenProvider {
@@ -30,17 +28,7 @@ public class JwtTokenProvider {
     private final Key key;
     private final CustomUserDetailService service;
     private final RedisService redisService;
-    private final long accessTokenExpireTime;
-    private final long refreshTokenExpireTime;
-
-    public JwtTokenProvider(CustomUserDetailService service, JwtProperties jwtProperties, RedisService redisService) {
-        this.service = service;
-        this.redisService = redisService;
-        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecret());
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getAccessTokenExpireTime());
-        this.refreshTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getRefreshTokenExpireTime());
-    }
+    private final JwtConfig jwtConfig;
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
     public TokenInfo generateToken(Authentication authentication) {
@@ -53,9 +41,9 @@ public class JwtTokenProvider {
         // Access Token 생성
         String accessToken = generateAccessToken(authentication, authorities, now);
         // Refresh Token 생성
-        String refreshToken = generateRefreshToken(now);
+        String refreshToken = generateRefreshToken(authentication, now);
 
-        redisService.setRedisKeyValue(refreshToken, authentication.getName(), refreshTokenExpireTime / 1000);
+        redisService.setRedisKeyValue(refreshToken, authentication.getName(), jwtConfig.getRefreshTokenExpireMillis() / 1000);
 
         return TokenInfo.builder()
                 .grantType("Bearer")
@@ -69,15 +57,16 @@ public class JwtTokenProvider {
             .setSubject(authentication.getName())
             .claim("auth", authorities)
             .setIssuedAt(new Date(now))
-            .setExpiration(new Date(now + accessTokenExpireTime))
+            .setExpiration(new Date(now + jwtConfig.getAccessTokenExpireMillis()))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
     }
 
-    private String generateRefreshToken(long now) {
+    private String generateRefreshToken(Authentication authentication, long now) {
         return Jwts.builder()
+            .setSubject(authentication.getName())
             .setIssuedAt(new Date(now))
-            .setExpiration(new Date(now + refreshTokenExpireTime))
+            .setExpiration(new Date(now + jwtConfig.getRefreshTokenExpireMillis()))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
     }
