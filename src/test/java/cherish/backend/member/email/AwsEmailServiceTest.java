@@ -1,5 +1,6 @@
 package cherish.backend.member.email;
 
+import cherish.backend.member.email.service.AwsEmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +10,16 @@ import java.util.UUID;
 
 @Slf4j
 @SpringBootTest
-class SendEmailServiceTest {
+class AwsEmailServiceTest {
     @Autowired
-    SendEmailService emailService;
+    AwsEmailService emailService;
 
     @Test
     void AWS_SES_TEST(){
         //given
         String id = "cherishu.fullstack@gmail.com";
         //when
-        String code = "";
+        String code;
         try {
             code = emailService.sendMessage(id, UUID.randomUUID().toString().substring(6));
         } catch (Exception e) {

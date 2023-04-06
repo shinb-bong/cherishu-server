@@ -1,17 +1,19 @@
-package cherish.backend.member.email;
+package cherish.backend.member.email.service;
 
 import cherish.backend.member.dto.EmailSenderDto;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
+@Profile("aws")
 @Service
 @RequiredArgsConstructor
-public class SendEmailService implements EmailService{
+public class AwsEmailService implements EmailService {
     private final AmazonSimpleEmailService amazonSimpleEmailService;
     @Override
     public String sendMessage(String to, String content){
