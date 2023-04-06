@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -18,14 +16,12 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemFilterRepository itemFilterRepository;
-    private final ItemSearchQueryDtoMapper itemMidMapper;
 
     public Page<ItemSearchResponseDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
-        Page<ItemSearchQueryDto> content = itemFilterRepository.searchItem(searchCondition, pageable);
-        List<ItemSearchResponseDto.ResponseSearchItem> response = content.stream()
-                .map(itemSearchQueryDto -> itemMidMapper.toResponseSearchItem(itemSearchQueryDto))
-                .toList();
+        Page<ItemSearchResponseDto.ResponseSearchItem> response = itemFilterRepository.searchItem(searchCondition, pageable);
+        long total = response.getTotalElements();
 
-        return new PageImpl<>(response, pageable, content.getTotalElements());
+        return new PageImpl<>(response.getContent(), pageable, total);
     }
+
 }

@@ -12,6 +12,6 @@ public interface ItemFilterRepositoryCustom {
 
     List<AgeFilterQueryDto> findItemFilterByAge(AgeFilterCondition ageCondition);
 
-    Page<ItemSearchQueryDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable);
+    Page<ItemSearchResponseDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable);
 
 }
