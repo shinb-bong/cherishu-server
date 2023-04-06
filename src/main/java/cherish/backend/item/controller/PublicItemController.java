@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/public/item")
@@ -27,8 +30,9 @@ public class PublicItemController {
             @RequestParam(value = "target") String target,
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
+        String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
         ItemSearchCondition condition = new ItemSearchCondition();
-        condition.setKeyword(keyword);
+        condition.setKeyword(encodedKeyword);
         condition.setTarget(target);
 
         Page<ItemSearchResponseDto.ResponseSearchItem> items = itemService.searchItem(condition, pageable);

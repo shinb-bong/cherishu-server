@@ -5,8 +5,8 @@ import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
 import cherish.backend.member.model.QJob;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -18,7 +18,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Map;
 
 import static cherish.backend.category.model.QCategory.*;
 import static cherish.backend.category.model.QFilter.*;
@@ -81,66 +80,60 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
     @Override
     public Page<ItemSearchResponseDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
-
-        Map<Long, ItemSearchResponseDto.ResponseSearchItem> searchItemMap = queryDslConfig.jpaQueryFactory()
-                .selectFrom(item)
-                .leftJoin(item.itemFilters, itemFilter).fetchJoin()
-                .leftJoin(item.itemJobs, itemJob).fetchJoin()
-                .leftJoin(item.itemCategories, itemCategory).fetchJoin()
-                .leftJoin(itemUrl).on(itemUrl.item.id.eq(item.id)).fetchJoin()
-                .leftJoin(itemFilter.filter, filter).fetchJoin()
-                .leftJoin(itemJob.job, job).fetchJoin()
-                .leftJoin(itemCategory.category, category).fetchJoin()
-                .where(
-                        itemFilterNameEq(searchCondition.getItemFilterName()),
-                        filterNameEq(searchCondition.getFilterName()),
-                        categoryParentEq(searchCondition.getItemCategoryParent()),
-                        categoryChildrenEq(searchCondition.getItemCategoryChildren()),
-                        jobParentEq(searchCondition.getItemJobParent()),
-                        jobChildrenEq(searchCondition.getItemJobChildren()),
-                        itemNameEq(searchCondition.getItemName()),
-                        itemBrandEq(searchCondition.getItemBrand()),
-                        keywordEq(searchCondition.getKeyword(), searchCondition.getTarget())
-                )
-                .transform(groupBy(item.id).as(new QItemSearchResponseDto_ResponseSearchItem(
+        List<ItemSearchResponseDto.ResponseSearchItem> content = queryDslConfig.jpaQueryFactory()
+                .select(new QItemSearchResponseDto_ResponseSearchItem(
                         new QItemSearchResponseDto_FilterDto(filter.id, filter.name),
                         new QItemSearchResponseDto_FilterDto(itemFilter.id, itemFilter.name),
-                        new QItemSearchResponseDto_ItemDto(item.id, item.name, item.brand, item.description, item.price, item.imgUrl, item.minAge, item.maxAge), // item 필드 매핑
+                        new QItemSearchResponseDto_ItemDto(item.id, item.name, item.brand, item.description, item.price, item.imgUrl, item.minAge, item.maxAge),
                         new QItemSearchResponseDto_CategoryDto(category.id, category.name, findParent(category), findChild(category)),
                         new QItemSearchResponseDto_CategoryDto(itemCategory.id, itemCategory.category.name, findParent(itemCategory.category), findChild(itemCategory.category)),
                         new QItemSearchResponseDto_JobDto(job.id, job.name, findJobParent(job), findJobChild(job)),
                         new QItemSearchResponseDto_JobDto(itemJob.id, itemJob.job.name, findJobParent(itemJob.job), findJobChild(itemJob.job)),
-                        new QItemSearchResponseDto_ItemUrlDto(itemUrl.id, itemUrl.url, itemUrl.platform) // itemUrl 필드 매핑
-                )));
+                        new QItemSearchResponseDto_ItemUrlDto(itemUrl.id, itemUrl.url, itemUrl.platform)
+                ))
+                .from(item)
+                .leftJoin(item.itemFilters, itemFilter)
+                .leftJoin(item.itemJobs, itemJob)
+                .leftJoin(item.itemCategories, itemCategory)
+                .leftJoin(itemUrl).on(itemUrl.item.id.eq(item.id))
+                .leftJoin(itemFilter.filter, filter)
+                .leftJoin(itemJob.job, job)
+                .leftJoin(itemCategory.category, category)
+                .where(getSearchCondition(searchCondition))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         JPAQuery<Item> countQuery = queryDslConfig.jpaQueryFactory()
                 .selectFrom(item)
-                .leftJoin(item.itemFilters, itemFilter).fetchJoin()
-                .leftJoin(item.itemJobs, itemJob).fetchJoin()
-                .leftJoin(item.itemCategories, itemCategory).fetchJoin()
-                .leftJoin(itemUrl).on(itemUrl.item.id.eq(item.id)).fetchJoin()
-                .leftJoin(itemFilter.filter, filter).fetchJoin()
-                .leftJoin(itemJob.job, job).fetchJoin()
-                .leftJoin(itemCategory.category, category).fetchJoin()
-                .where(
-                        itemFilterNameEq(searchCondition.getItemFilterName()),
-                        filterNameEq(searchCondition.getFilterName()),
-                        categoryParentEq(searchCondition.getItemCategoryParent()),
-                        categoryChildrenEq(searchCondition.getItemCategoryChildren()),
-                        jobParentEq(searchCondition.getItemJobParent()),
-                        jobChildrenEq(searchCondition.getItemJobChildren()),
-                        itemNameEq(searchCondition.getItemName()),
-                        itemBrandEq(searchCondition.getItemBrand()),
-                        keywordEq(searchCondition.getKeyword(), searchCondition.getTarget())
-                );
+                .leftJoin(item.itemFilters, itemFilter)
+                .leftJoin(item.itemJobs, itemJob)
+                .leftJoin(item.itemCategories, itemCategory)
+                .leftJoin(itemUrl).on(itemUrl.item.id.eq(item.id))
+                .leftJoin(itemFilter.filter, filter)
+                .leftJoin(itemJob.job, job)
+                .leftJoin(itemCategory.category, category)
+                .where(getSearchCondition(searchCondition))
+                .distinct()
+                .select(item);
 
         long total = countQuery.fetch().size();
 
-        List<ItemSearchResponseDto.ResponseSearchItem> content = searchItemMap.keySet().stream()
-                .map(searchItemMap::get)
-                .toList();
-
         return new PageImpl<>(content, pageable, total);
+    }
+
+    private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(itemNameEq(searchCondition.getItemName()));
+        builder.and(itemBrandEq(searchCondition.getItemBrand()));
+        builder.and(keywordEq(searchCondition.getKeyword(), searchCondition.getTarget()));
+        builder.and(categoryParentEq(searchCondition.getItemCategoryParent()));
+        builder.and(categoryChildrenEq(searchCondition.getItemCategoryChildren()));
+        builder.and(jobParentEq(searchCondition.getItemJobParent()));
+        builder.and(jobChildrenEq(searchCondition.getItemJobChildren()));
+        builder.and(itemFilterNameEq(searchCondition.getItemFilterName()));
+        builder.and(filterNameEq(searchCondition.getFilterName()));
+        return builder;
     }
 
     private BooleanExpression categoryParentEq(String categoryParent) {
