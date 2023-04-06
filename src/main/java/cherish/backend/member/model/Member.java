@@ -39,13 +39,20 @@ public class Member extends BaseTimeEntity {
     private Role roles;
 
     public static Member createMember(MemberFormDto formDto, PasswordEncoder passwordEncoder){
+        Gender _gender;
+        try {
+            _gender = Gender.valueOf(formDto.getGender());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            _gender = Gender.NONE;
+        }
+
         return Member.builder()
                 .name(formDto.getName())
                 .nickName(formDto.getNickName())
                 .email(formDto.getEmail())
                 .password(passwordEncoder.encode(formDto.getPassword()))
                 .informationCheck(formDto.isInfoCheck())
-                .gender(Gender.valueOf(formDto.getGender()))
+                .gender(_gender)
                 .birth(formDto.getBirth())
                 .roles(Role.ROLE_USER)
                 .build();
