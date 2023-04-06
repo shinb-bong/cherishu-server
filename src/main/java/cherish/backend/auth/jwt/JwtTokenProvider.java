@@ -1,12 +1,12 @@
 package cherish.backend.auth.jwt;
 
+import cherish.backend.common.util.DurationShortFormUtils;
 import cherish.backend.member.service.CustomUserDetailService;
-import cherish.backend.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,41 +21,42 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
+@EnableConfigurationProperties(JwtProperties.class)
 @Component
 public class JwtTokenProvider {
 
     private final Key key;
     private final CustomUserDetailService service;
+    private final JwtProperties jwtProperties;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, CustomUserDetailService service) {
+    public JwtTokenProvider(CustomUserDetailService service, JwtProperties jwtProperties) {
         this.service = service;
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        this.jwtProperties = jwtProperties;
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecret());
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public TokenInfo generateToken(Authentication authentication, boolean isPersist) {
+    public TokenInfo generateToken(Authentication authentication) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        if (isPersist){
-            now += 9999999999999999L;
-        }
         // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + 86400000);
+        long accessTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getAccessTokenExpireTime());
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
-                .setExpiration(accessTokenExpiresIn)
+                .setExpiration(new Date(now + accessTokenExpireTime))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         // Refresh Token 생성
+        long refreshTokenExpireTime = DurationShortFormUtils.convertShortFormToMilliSeconds(jwtProperties.getRefreshTokenExpireTime());
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 86400000))
+                .setExpiration(new Date(now + refreshTokenExpireTime))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

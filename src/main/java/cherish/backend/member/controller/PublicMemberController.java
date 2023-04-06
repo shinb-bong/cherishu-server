@@ -33,9 +33,7 @@ public class PublicMemberController {
     // 회원 로그인
     @PostMapping("/login")
     public TokenInfo login(@RequestBody @Valid MemberLoginRequestDto memberLoginRequestDto) {
-        TokenInfo token = memberService.login(memberLoginRequestDto.getEmail(),
-                memberLoginRequestDto.getPassword(),
-                memberLoginRequestDto.isPersist());
+        TokenInfo token = memberService.login(memberLoginRequestDto.getEmail(), memberLoginRequestDto.getPassword());
         log.info("member_login = {}", memberLoginRequestDto.getEmail());
         return token;
     }

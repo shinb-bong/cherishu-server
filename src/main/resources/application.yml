@@ -39,6 +39,8 @@ aws:
 
 jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
+  access-token-expire-time: 30m
+  refresh-token-expire-time: 30d
 ---
 spring:
   config:
