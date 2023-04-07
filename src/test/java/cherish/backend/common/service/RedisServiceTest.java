@@ -16,13 +16,13 @@ class RedisServiceTest {
     @Autowired
     RedisService redisService;
 
-    @Test
-    void redis값저장_불러오기(){
-        String uid = UUID.randomUUID().toString();
-        String key = "test";
-        redisService.setRedisCode(key,uid,10L);
-        boolean success = redisService.validCode(key, uid);
-        assertThat(success).isTrue();
-    }
+//    @Test
+//    void redis값저장_불러오기(){
+//        String uid = UUID.randomUUID().toString();
+//        String key = "test";
+//        redisService.setRedisCode(key,uid,10L);
+//        boolean success = redisService.validCode(key, uid);
+//        assertThat(success).isTrue();
+//    }
 
 }

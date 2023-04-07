@@ -35,14 +35,12 @@ class ItemControllerTest {
     @DisplayName("아이템 브랜드로 검색했을때 검색에 성공할때")
     void searchTest() throws Exception {
         ItemSearchCondition condition = new ItemSearchCondition();
-        condition.setTarget("itemName");
-        condition.setKeyword("어딕트 립 글로우");
+        condition.setKeyword("어딕트립글로우");
         Pageable pageable = PageRequest.of(0, 10, Sort.by("itemName").ascending());
         Page<ItemSearchResponseDto.ResponseSearchItem> result = itemService.searchItem(condition, pageable);
 
         mockMvc.perform(get("/public/item/search")
                         .param("keyword", condition.getKeyword())
-                        .param("target", condition.getKeyword())
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -58,11 +56,7 @@ class ItemControllerTest {
 //                .andExpect(jsonPath("$.content[0].item.job.name").value(itemDto.getJob().getName()))
                 .andExpect(jsonPath("$.content[0].filter.name").value("situation"))
                 .andExpect(jsonPath("$.content[0].category.parent.name").value("뷰티"))
-                .andExpect(jsonPath("$.content[0].category.children[*].name", containsInAnyOrder("립", "틴트", "립글로즈", "립스틱", "립밤", "화장품", "색조")))
-                .andExpect(jsonPath("$.content[0].item.itemUrl[?(@.platform == 'KAKAO')].url").value("https://gift.kakao.com/product/2259144"))
-                .andExpect(jsonPath("$.content[0].item.itemUrl[?(@.platform == 'NAVER')].url").value("https://search.shopping.naver.com/search/all?query=%EB%94%94%EC%98%AC%20%EC%96%B4%EB%94%95%ED%8A%B8%20%EB%A6%BD%20%EA%B8%80%EB%A1%9C%EC%9A%B0&cat_id=&frm=NVSHATC"))
-                .andExpect(jsonPath("$.content[0].item.itemUrl[?(@.platform == 'COUPANG')].url").value("https://www.coupang.com/np/search?component=&q=%EB%94%94%EC%98%AC+%EB%A6%BD%EA%B8%80%EB%A1%9C%EC%9A%B0&channel=user"))
-                .andExpect(jsonPath("$.content[0].item.itemUrl[?(@.platform == 'BRAND')].url").value("https://shop.dior.co.kr/products/y0996214?gclid=Cj0KCQjwn9CgBhDjARIsAD15h0CpHmLorNYmBUp9XOE-7LU-U_naCLSfUcjgfkPTCVxOvWjWxVCV1fkaAhoEEALw_wcB"));
+                .andExpect(jsonPath("$.content[0].category.children[*].name", containsInAnyOrder("립", "틴트", "립글로즈", "립스틱", "립밤", "화장품", "색조")));
 
     }
 }

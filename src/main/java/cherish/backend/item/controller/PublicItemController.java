@@ -27,13 +27,11 @@ public class PublicItemController {
     @GetMapping("/search")
     public ResponseEntity<Page<ItemSearchResponseDto.ResponseSearchItem>> searchItemWithFilter(
             @RequestParam(value = "keyword") String keyword,
-            @RequestParam(value = "target") String target,
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
         String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
         ItemSearchCondition condition = new ItemSearchCondition();
         condition.setKeyword(encodedKeyword);
-        condition.setTarget(target);
 
         Page<ItemSearchResponseDto.ResponseSearchItem> items = itemService.searchItem(condition, pageable);
         return ResponseEntity.ok(items);
