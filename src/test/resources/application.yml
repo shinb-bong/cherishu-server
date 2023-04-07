@@ -24,7 +24,7 @@ aws:
 jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
 
-
-
-
+context:
+  component-scan:
+    base-package: cherish.backend.test.data
 

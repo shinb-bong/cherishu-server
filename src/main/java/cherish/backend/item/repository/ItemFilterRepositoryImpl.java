@@ -107,6 +107,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     }
 
     private Predicate getSearchCondition(ItemSearchCondition searchCondition) {
+        if (searchCondition.getKeyword() == null) { return null; }
         return itemNameEq(searchCondition.getKeyword())
                 .or(itemBrandEq(searchCondition.getKeyword()))
                 .or(itemFilterNameEq(searchCondition.getKeyword()))
