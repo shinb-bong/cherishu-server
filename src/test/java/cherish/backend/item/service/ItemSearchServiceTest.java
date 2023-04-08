@@ -59,8 +59,7 @@ public class ItemSearchServiceTest {
             System.out.println("Result" + result.getContent().get(0));
         }
 
-        List<ItemSearchResponseDto.ResponseSearchItem> items = result.getContent();
-        for (ItemSearchResponseDto.ResponseSearchItem searchItem : items) {
+        for (ItemSearchResponseDto.ResponseSearchItem searchItem : result.getContent()) {
             assertTrue(searchItem.getItem().getBrand().toLowerCase().contains("test1"));
         }
     }

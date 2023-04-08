@@ -5,6 +5,7 @@ import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -74,7 +75,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     @Override
     public Page<ItemSearchResponseDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
         List<ItemSearchResponseDto.ResponseSearchItem> content = queryDslConfig.jpaQueryFactory()
-                .select(new QItemSearchResponseDto_ResponseSearchItem(
+                .selectDistinct(new QItemSearchResponseDto_ResponseSearchItem(
                         new QItemSearchResponseDto_ItemDto(item.id, item.name, item.brand, item.description, item.price, item.imgUrl)
                 ))
                 .from(item)
@@ -131,15 +132,15 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     }
 
     private BooleanExpression itemNameEq(String itemName) {
-        return StringUtils.hasText(itemName) ? item.name.eq(itemName) : null;
+        return StringUtils.hasText(itemName) ? item.name.eq(itemName) : Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression itemFilterNameEq(String itemFilterName) {
-        return hasText(itemFilterName) ? itemFilter.name.eq(itemFilterName) : null;
+        return hasText(itemFilterName) ? itemFilter.name.eq(itemFilterName) : Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression itemBrandEq(String itemBrand) {
-        return hasText(itemBrand) ? item.brand.eq(itemBrand) : null;
+        return hasText(itemBrand) ? item.brand.eq(itemBrand) : Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression filterIdEq(Long filterId) {
@@ -147,7 +148,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     }
 
     private BooleanExpression filterNameEq(String filterName) {
-        return hasText(filterName) ? filter.name.eq(filterName) : null;
+        return hasText(filterName) ? filter.name.eq(filterName) : Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression ageGoe(Integer ageGoe) {
