@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -17,8 +16,8 @@ public class ItemService {
 
     private final ItemFilterRepository itemFilterRepository;
 
-    public Page<ItemSearchResponseDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
-        Page<ItemSearchResponseDto.ResponseSearchItem> response = itemFilterRepository.searchItem(searchCondition, pageable);
+    public Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
+        Page<ItemSearchResponseDto> response = itemFilterRepository.searchItem(searchCondition, pageable);
         long total = response.getTotalElements();
 
         return new PageImpl<>(response.getContent(), pageable, total);

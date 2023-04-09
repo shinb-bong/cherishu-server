@@ -51,7 +51,7 @@ public class ItemSearchServiceTest {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
 
-        Page<ItemSearchResponseDto.ResponseSearchItem> result = itemService.searchItem(condition, pageable);
+        Page<ItemSearchResponseDto> result = itemService.searchItem(condition, pageable);
         if (result == null) {
             System.out.println("Search result is null");
         } else {
@@ -59,8 +59,8 @@ public class ItemSearchServiceTest {
             System.out.println("Result" + result.getContent().get(0));
         }
 
-        for (ItemSearchResponseDto.ResponseSearchItem searchItem : result.getContent()) {
-            assertTrue(searchItem.getItem().getBrand().toLowerCase().contains("test1"));
+        for (ItemSearchResponseDto searchItem : result.getContent()) {
+            assertTrue(searchItem.getBrand().toLowerCase().contains("test1"));
         }
     }
 

@@ -3,6 +3,7 @@ package cherish.backend.item.repository;
 import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -73,11 +74,10 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     }
 
     @Override
-    public Page<ItemSearchResponseDto.ResponseSearchItem> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
-        List<ItemSearchResponseDto.ResponseSearchItem> content = queryDslConfig.jpaQueryFactory()
-                .selectDistinct(new QItemSearchResponseDto_ResponseSearchItem(
-                        new QItemSearchResponseDto_ItemDto(item.id, item.name, item.brand, item.description, item.price, item.imgUrl)
-                ))
+    public Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
+        List<ItemSearchResponseDto> content = queryDslConfig.jpaQueryFactory()
+                .selectDistinct(new QItemSearchResponseDto(
+                        item.id, item.name, item.brand, item.description, item.price, item.imgUrl))
                 .from(item)
                 .leftJoin(item.itemFilters, itemFilter)
                 .leftJoin(item.itemJobs, itemJob)
@@ -107,48 +107,34 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
         return new PageImpl<>(content, pageable, total);
     }
 
-    private Predicate getSearchCondition(ItemSearchCondition searchCondition) {
-        if (searchCondition.getKeyword() == null) { return null; }
-        return itemNameEq(searchCondition.getKeyword())
-                .or(itemBrandEq(searchCondition.getKeyword()))
-                .or(itemFilterNameEq(searchCondition.getKeyword()))
-                .or(filterNameEq(searchCondition.getKeyword()))
-                .or(categoryNameEq(searchCondition.getKeyword()))
-                .or(jobNameEq(searchCondition.getKeyword()));
-    }
-
-    private BooleanExpression categoryNameEq(String keyword) {
-        return category.name.containsIgnoreCase(keyword)
-                .or(category.children.any().name.containsIgnoreCase(keyword))
-                .or(itemCategory.category.name.containsIgnoreCase(keyword))
-                .or(itemCategory.category.children.any().name.containsIgnoreCase(keyword));
-    }
-
-    private BooleanExpression jobNameEq(String keyword) {
-        return job.name.containsIgnoreCase(keyword)
-                .or(job.children.any().name.containsIgnoreCase(keyword))
-                .or(itemJob.job.name.containsIgnoreCase(keyword))
-                .or(itemJob.job.children.any().name.containsIgnoreCase(keyword));
-    }
-
-    private BooleanExpression itemNameEq(String itemName) {
-        return StringUtils.hasText(itemName) ? item.name.eq(itemName) : Expressions.asBoolean(true).isTrue();
+    private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (hasText(searchCondition.getKeyword())) {
+            String keyword = searchCondition.getKeyword();
+            booleanBuilder.or(
+                    item.name.contains(keyword)
+                            .or(item.brand.contains(keyword))
+                            .or(category.name.contains(keyword))
+                            .or(category.children.any().name.contains(keyword))
+                            .or(itemCategory.category.name.contains(keyword))
+                            .or(itemCategory.category.children.any().name.contains(keyword))
+                            .or(job.name.contains(keyword))
+                            .or(job.children.any().name.contains(keyword))
+                            .or(itemJob.job.name.contains(keyword))
+                            .or(itemJob.job.children.any().name.contains(keyword))
+                            .or(filter.name.contains(keyword))
+                            .or(itemFilter.filter.name.contains(keyword))
+            );
+        }
+        return booleanBuilder;
     }
 
     private BooleanExpression itemFilterNameEq(String itemFilterName) {
-        return hasText(itemFilterName) ? itemFilter.name.eq(itemFilterName) : Expressions.asBoolean(true).isTrue();
-    }
-
-    private BooleanExpression itemBrandEq(String itemBrand) {
-        return hasText(itemBrand) ? item.brand.eq(itemBrand) : Expressions.asBoolean(true).isTrue();
+        return hasText(itemFilterName) ? itemFilter.name.containsIgnoreCase(itemFilterName) : null;
     }
 
     private BooleanExpression filterIdEq(Long filterId) {
         return hasText(String.valueOf(filterId)) ? filter.id.eq(filterId) : null;
-    }
-
-    private BooleanExpression filterNameEq(String filterName) {
-        return hasText(filterName) ? filter.name.eq(filterName) : Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression ageGoe(Integer ageGoe) {

@@ -1,4 +1,4 @@
-package cherish.backend.test;
+package cherish.backend.item.controller;
 
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchResponseDto;
@@ -21,14 +21,12 @@ public class PublicItemController {
     private final ItemService itemService;
 
     @GetMapping("/search")
-    public Page<ItemSearchResponseDto.ResponseSearchItem> searchItemWithFilter(
-            @RequestParam(value = "keyword") String keyword,
-            @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+    public Page<ItemSearchResponseDto> searchItemWithFilter(
+            @RequestParam(value = "keyword") String keyword, Pageable pageable) {
 
         ItemSearchCondition condition = new ItemSearchCondition();
         condition.setKeyword(keyword);
         return itemService.searchItem(condition, pageable);
-
     }
 
 }
