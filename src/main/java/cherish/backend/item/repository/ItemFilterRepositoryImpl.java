@@ -1,28 +1,38 @@
 package cherish.backend.item.repository;
 
+import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
+import cherish.backend.item.model.*;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+import static cherish.backend.category.model.QCategory.*;
 import static cherish.backend.category.model.QFilter.*;
 import static cherish.backend.item.model.QItem.*;
+import static cherish.backend.item.model.QItemCategory.*;
 import static cherish.backend.item.model.QItemFilter.*;
+import static cherish.backend.item.model.QItemJob.itemJob;
+import static cherish.backend.member.model.QJob.job;
 import static org.springframework.util.StringUtils.*;
 
+@RequiredArgsConstructor
 public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
-    private final JPAQueryFactory queryFactory;
-
-    public ItemFilterRepositoryImpl(EntityManager em) {
-        this.queryFactory = new JPAQueryFactory(em);
-    }
+    private final QueryDslConfig queryDslConfig;
 
     @Override
     public List<ItemFilterQueryDto> findItemFilterByNameAndId(ItemFilterCondition filterCondition) {
-        return queryFactory
+        return queryDslConfig.jpaQueryFactory()
                 .select(new QItemFilterQueryDto(
                         item.id.as("itemId"),
                         filter.id.as("filterId"),
@@ -42,7 +52,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
     @Override
     public List<AgeFilterQueryDto> findItemFilterByAge(AgeFilterCondition ageCondition) {
-        return queryFactory
+        return queryDslConfig.jpaQueryFactory()
                 .select(new QAgeFilterQueryDto(
                         item.id.as("itemId"),
                         filter.id.as("filterId"),
@@ -63,8 +73,64 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .fetch();
     }
 
+    @Override
+    public Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
+        List<ItemSearchResponseDto> content = queryDslConfig.jpaQueryFactory()
+                .selectDistinct(new QItemSearchResponseDto(
+                        item.id, item.name, item.brand, item.description, item.price, item.imgUrl))
+                .from(item)
+                .leftJoin(item.itemFilters, itemFilter)
+                .leftJoin(item.itemJobs, itemJob)
+                .leftJoin(item.itemCategories, itemCategory)
+                .leftJoin(itemFilter.filter, filter)
+                .leftJoin(itemJob.job, job)
+                .leftJoin(itemCategory.category, category)
+                .where(getSearchCondition(searchCondition))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Item> countQuery = queryDslConfig.jpaQueryFactory()
+                .selectFrom(item)
+                .leftJoin(item.itemFilters, itemFilter)
+                .leftJoin(item.itemJobs, itemJob)
+                .leftJoin(item.itemCategories, itemCategory)
+                .leftJoin(itemFilter.filter, filter)
+                .leftJoin(itemJob.job, job)
+                .leftJoin(itemCategory.category, category)
+                .where(getSearchCondition(searchCondition))
+                .distinct()
+                .select(item);
+
+        long total = countQuery.fetch().size();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (hasText(searchCondition.getKeyword())) {
+            String keyword = searchCondition.getKeyword();
+            booleanBuilder.or(
+                    item.name.contains(keyword)
+                            .or(item.brand.contains(keyword))
+                            .or(category.name.contains(keyword))
+                            .or(category.children.any().name.contains(keyword))
+                            .or(itemCategory.category.name.contains(keyword))
+                            .or(itemCategory.category.children.any().name.contains(keyword))
+                            .or(job.name.contains(keyword))
+                            .or(job.children.any().name.contains(keyword))
+                            .or(itemJob.job.name.contains(keyword))
+                            .or(itemJob.job.children.any().name.contains(keyword))
+                            .or(filter.name.contains(keyword))
+                            .or(itemFilter.filter.name.contains(keyword))
+            );
+        }
+        return booleanBuilder;
+    }
+
     private BooleanExpression itemFilterNameEq(String itemFilterName) {
-        return hasText(itemFilterName) ? itemFilter.name.eq(itemFilterName) : null;
+        return hasText(itemFilterName) ? itemFilter.name.containsIgnoreCase(itemFilterName) : null;
     }
 
     private BooleanExpression filterIdEq(Long filterId) {
