@@ -35,7 +35,7 @@ class ItemLikeControllerTest {
     public void 아이템_좋아요() throws Exception {
         //given
         given(service.likeItem(any(),any())).willReturn(3L);
-        String content = objectMapper.writeValueAsString(new ItemLikeRequest("test@naver.com", 3L));
+        String content = objectMapper.writeValueAsString(new ItemLikeRequest(3L));
         //when
         mvc.perform(post("/item/like")
                 .content(content)
