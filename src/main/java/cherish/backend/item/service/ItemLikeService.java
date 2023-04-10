@@ -6,16 +6,13 @@ import cherish.backend.item.model.Item;
 import cherish.backend.item.model.ItemLike;
 import cherish.backend.item.repository.ItemLikeRepository;
 import cherish.backend.item.repository.ItemRepository;
-import cherish.backend.member.constant.Constants;
 import cherish.backend.member.model.Member;
-import cherish.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
