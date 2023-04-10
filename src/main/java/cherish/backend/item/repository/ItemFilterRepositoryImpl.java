@@ -120,21 +120,21 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
             BooleanExpression categoryExpression = null;
             for (String categoryName : searchCondition.getCategoryName()) {
                 if (categoryExpression == null) {
-                    categoryExpression = category.name.contains(categoryName);
+                    categoryExpression = category.name.contains(categoryName).or(category.children.any().name.contains(categoryName));
                 } else {
-                    categoryExpression = categoryExpression.or(category.name.contains(categoryName));
+                    categoryExpression = categoryExpression.or(category.name.contains(categoryName)).or(category.children.any().name.contains(categoryName));
                 }
             }
 
             booleanBuilder.and(categoryExpression)
-                    .and(job.name.contains(searchCondition.getJobName()))
-                    .and(itemFilter.filter.name.contains(searchCondition.getSituationName()))
-                    .and(itemFilter.filter.name.contains(searchCondition.getEmotionName()))
+                    .and(job.name.eq(searchCondition.getJobName()))
+                    .and(itemFilter.filter.name.eq(searchCondition.getSituationName()))
+                    .and(itemFilter.filter.name.eq(searchCondition.getEmotionName()))
                     .and(item.minAge.between(searchCondition.getMinAge(), searchCondition.getMaxAge()))
                     .and(item.maxAge.between(searchCondition.getMinAge(), searchCondition.getMaxAge()));
         }
 
-        if (hasText(searchCondition.getKeyword())) {
+        if (searchCondition.getKeyword() != null || !searchCondition.getKeyword().isEmpty()) {
             String keyword = searchCondition.getKeyword();
             booleanBuilder.or(
                     item.name.contains(keyword)
@@ -150,6 +150,9 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                             .or(filter.name.contains(keyword))
                             .or(itemFilter.filter.name.contains(keyword))
             );
+        }
+        else {
+            return booleanBuilder;
         }
         return booleanBuilder;
     }

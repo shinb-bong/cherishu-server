@@ -1,9 +1,13 @@
 package cherish.backend.item.service;
 
+import cherish.backend.category.model.Filter;
+import cherish.backend.category.repository.FilterRepository;
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchResponseDto;
 import cherish.backend.item.model.Item;
+import cherish.backend.item.model.ItemFilter;
 import cherish.backend.item.model.ItemJob;
+import cherish.backend.item.repository.ItemFilterRepository;
 import cherish.backend.item.repository.ItemJobRepository;
 import cherish.backend.item.repository.ItemRepository;
 import cherish.backend.member.model.Job;
@@ -29,9 +33,13 @@ public class ItemSearchServiceTest {
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
-    private ItemJobRepository itemJobRepository;
-    @Autowired
     private JobRepository jobRepository;
+    @Autowired
+    private FilterRepository filterRepository;
+    @Autowired
+    private ItemFilterRepository itemFilterRepository;
+    @Autowired
+    private ItemJobRepository itemJobRepository;
 
     @Test
     public void testSearchItem() throws Exception {
@@ -39,15 +47,20 @@ public class ItemSearchServiceTest {
 
         Item item = Item.builder().id(1L).name("test").brand("test1").price(1).build();
         Item item2 = Item.builder().id(2L).name("test2").brand("test3").price(2).build();
-        Job job = Job.builder().id(1L).name("firstJob").build();
-        ItemJob itemJob = ItemJob.builder().id(1L).item(item).job(job).build();
+        Job job = Job.builder().id(7L).name("학생").build();
+        ItemJob itemJob = ItemJob.builder().job(job).item(item2).build();
+        Filter filter = Filter.builder().id(2L).build();
+        ItemFilter itemFilter = ItemFilter.createItemFilter(filter, item2, "이사");
 
         itemRepository.saveAll(List.of(item, item2));
         jobRepository.save(job);
+        filterRepository.save(filter);
+        itemFilterRepository.save(itemFilter);
         itemJobRepository.save(itemJob);
 
         ItemSearchCondition condition = new ItemSearchCondition();
         condition.setKeyword(keyword);
+        condition.setEmotionName(itemFilter.getName());
 
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
 
@@ -60,7 +73,7 @@ public class ItemSearchServiceTest {
         }
 
         for (ItemSearchResponseDto searchItem : result.getContent()) {
-            assertTrue(searchItem.getBrand().toLowerCase().contains("test1"));
+            assertTrue(searchItem.getBrand().toLowerCase().contains("test3"));
         }
     }
 
