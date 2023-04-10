@@ -1,9 +1,11 @@
 package cherish.backend.item.repository;
 
+import cherish.backend.category.model.QCategory;
 import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -109,6 +111,29 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
     private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        // 필터링 조건 추가
+        if (!searchCondition.getCategoryName().isEmpty() || searchCondition.getJobName() != null ||
+                searchCondition.getSituationName() != null || searchCondition.getEmotionName() != null ||
+                (searchCondition.getMinAge() != null && searchCondition.getMaxAge() != null)) {
+
+            BooleanExpression categoryExpression = null;
+            for (String categoryName : searchCondition.getCategoryName()) {
+                if (categoryExpression == null) {
+                    categoryExpression = category.name.contains(categoryName);
+                } else {
+                    categoryExpression = categoryExpression.or(category.name.contains(categoryName));
+                }
+            }
+
+            booleanBuilder.and(categoryExpression)
+                    .and(job.name.contains(searchCondition.getJobName()))
+                    .and(itemFilter.filter.name.contains(searchCondition.getSituationName()))
+                    .and(itemFilter.filter.name.contains(searchCondition.getEmotionName()))
+                    .and(item.minAge.between(searchCondition.getMinAge(), searchCondition.getMaxAge()))
+                    .and(item.maxAge.between(searchCondition.getMinAge(), searchCondition.getMaxAge()));
+        }
+
         if (hasText(searchCondition.getKeyword())) {
             String keyword = searchCondition.getKeyword();
             booleanBuilder.or(
