@@ -6,9 +6,8 @@ import cherish.backend.common.service.RedisService;
 import cherish.backend.member.constant.Constants;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.dto.MemberInfoResponse;
-import cherish.backend.member.dto.redis.EmailVerificationInfoDto;
-import cherish.backend.member.email.util.EmailCodeGenerator;
 import cherish.backend.member.email.service.EmailService;
+import cherish.backend.member.email.util.EmailCodeGenerator;
 import cherish.backend.member.model.Job;
 import cherish.backend.member.model.Member;
 import cherish.backend.member.repository.JobRepository;
@@ -23,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -37,6 +35,7 @@ public class MemberService {
     private final EmailService emailService;
     private final RedisService redisService;
     private final JobRepository jobRepository;
+
 
     @Transactional
     public TokenInfo login(String email, String password) {
@@ -58,7 +57,7 @@ public class MemberService {
         }
         // 회원가입 시 인증된 이메일인지 검증하는 로직 추가
         if (!isVerifiedEmail(memberFormDto.getEmail())) {
-            throw new IllegalArgumentException("이메일 인증 정보가 없거나 만료되었습니다. 이메일 인증을 다시 해주세요");
+            throw new IllegalArgumentException(Constants.EMAIL_VERIFICATION_EXPIRED);
         }
         Member savedMember = memberRepository.save(Member.createMember(memberFormDto, passwordEncoder));
         return savedMember.getId();
@@ -76,37 +75,50 @@ public class MemberService {
 
     @Transactional
     public void changePwd(String email, String pwd) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(Constants.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
+        // 비밀번호 변경 시 인증된 이메일인지 검증하는 로직 추가
+        if (!isVerifiedEmail(email)) {
+            throw new IllegalArgumentException(Constants.EMAIL_VERIFICATION_EXPIRED);
+        }
         member.changePwd(pwd, passwordEncoder);
     }
 
     public String sendEmailCode(String email) {
-        if (!isMember(email)) {
-            String code = EmailCodeGenerator.generateCode();
-            emailService.sendMessage(email, "인증번호 : " + code);
-            setRedisCode(email, code, 5 * 60);
-            log.info("code {} has been sent to {}", code, email);
-            return code;
-        } else
+        if (redisService.hasEmailCodeKey(email)) {
+            throw new IllegalStateException(Constants.TIME_LIMIT);
+        }
+        int dailyCount = redisService.getEmailCount(email);
+        if (dailyCount >= 3) {
+            throw new IllegalStateException(Constants.DAILY_COUNT_EXCEEDED);
+        }
+        if (isMember(email)) {
             throw new IllegalStateException(Constants.EMAIL_ALREADY);
+        }
+        String code = EmailCodeGenerator.generateCode();
+        emailService.sendMessage(email, "인증번호 : " + code);
+        setRedisCode(email, code);
+        log.info("code {} has been sent to {}", code, email);
+        return code;
     }
 
-    public void setRedisCode(String email, String validCode, int second) {
-        if (redisService.hasEmailCodeKey(email))
-            throw new IllegalStateException(second + "초 내에 이메일을 재전송 할 수 없습니다.");
-
-        redisService.setEmailCode(email, validCode, second);
-        redisService.setEmailVerified(email, false, second);
-        log.info("input = {} ", validCode);
+    private void setRedisCode(String email, String validCode) {
+        int emailTimeLimit = 5 * 60;
+        // redis에 인증번호 set
+        redisService.setEmailCode(email, validCode, emailTimeLimit);
+        // redis에 verified false로 set
+        redisService.setEmailVerified(email, false, emailTimeLimit);
+        // 하루 인증 횟수 1 증가
+        redisService.incrementEmailCount(email);
     }
 
     public boolean validEmailCode(String email, String inputCode) {
         if (!redisService.hasEmailCodeKey(email))
-            throw new IllegalStateException("이메일 인증 코드를 발송한 내역이 없습니다.");
+            throw new IllegalStateException(Constants.EMAIL_CODE_NOT_FOUND);
 
         String validCode = redisService.getEmailCode(email);
         if (!inputCode.equals(validCode))
-            throw new IllegalStateException("입력한 입력코드가 다릅니다.");
+            throw new IllegalStateException(Constants.EMAIL_CODE_NOT_EQUAL);
         // redis에 인증 완료된 상태로 10분간 저장
         redisService.setEmailVerified(email, true, 10 * 60);
         return true;
@@ -127,9 +139,24 @@ public class MemberService {
     }
 
     private boolean isVerifiedEmail(String email) {
-        if (!redisService.hasVerifiedKey(email)) {
-            return false;
+        return redisService.hasVerifiedKey(email) && redisService.isEmailVerified(email);
+    }
+
+    public String setEmailCodeForPasswordReset(String email) {
+        if (redisService.hasEmailCodeKey(email)) {
+            throw new IllegalStateException(Constants.TIME_LIMIT);
         }
-        return redisService.isEmailVerified(email);
+        int dailyCount = redisService.getEmailCount(email);
+        if (dailyCount >= 3) {
+            throw new IllegalStateException(Constants.DAILY_COUNT_EXCEEDED);
+        }
+        if (!isMember(email)) {
+            throw new IllegalStateException(Constants.MEMBER_NOT_FOUND);
+        }
+        String code = EmailCodeGenerator.generateCode();
+        emailService.sendMessage(email, "인증번호 : " + code);
+        setRedisCode(email, code);
+        log.info("code {} has been sent to {}", code, email);
+        return code;
     }
 }

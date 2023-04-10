@@ -81,7 +81,16 @@ public class RedisService {
     }
 
     public int getEmailCount(String email) {
-        return Integer.parseInt(get(DAILY_COUNT_PREFIX + email));
+        try {
+            return Integer.parseInt(get(DAILY_COUNT_PREFIX + email));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    public void incrementEmailCount(String email) {
+        int old = hasCountKey(email) ? getEmailCount(email) : 0;
+        setDailyCount(email, old + 1);
     }
 
     private void deleteKey(String key) {

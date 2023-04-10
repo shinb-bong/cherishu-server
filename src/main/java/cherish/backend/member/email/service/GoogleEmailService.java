@@ -29,5 +29,6 @@ public class GoogleEmailService implements EmailService {
         message.setSubject(title);
         message.setText(content);
         mailSender.send(message);
+        log.info("A mail has been sent to {}\ncontent : {}", to, content);
     }
 }
