@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @RequiredArgsConstructor
-@Profile("google")
 @Service
 public class GoogleEmailService implements EmailService {
 
@@ -30,5 +29,6 @@ public class GoogleEmailService implements EmailService {
         message.setSubject(title);
         message.setText(content);
         mailSender.send(message);
+        log.info("A mail has been sent to {}\ncontent : {}", to, content);
     }
 }
