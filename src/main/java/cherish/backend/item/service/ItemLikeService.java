@@ -39,8 +39,8 @@ public class ItemLikeService {
     }
 
     // 회원별 좋아하는 아이템 가져오기
-    public List<ItemLikeDto> getLikeItem(String email){
-        List<Item> itemLike = itemLikeRepository.findItemLike(email);
+    public List<ItemLikeDto> getLikeItem(Member member) {
+        List<Item> itemLike = itemLikeRepository.findItemLike(member);
         return itemLike.stream().map(ItemLikeDto::of).toList();
     }
 }

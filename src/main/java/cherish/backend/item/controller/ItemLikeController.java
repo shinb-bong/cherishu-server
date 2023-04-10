@@ -31,6 +31,6 @@ public class ItemLikeController {
 
     @GetMapping("/like")
     public List<ItemLikeDto> getItemLike(@CurrentUser Member member){
-        return itemLikeService.getLikeItem(member.getEmail());
+        return itemLikeService.getLikeItem(member);
     }
 }
