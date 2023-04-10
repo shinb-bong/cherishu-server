@@ -6,6 +6,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -55,8 +58,10 @@ public class RedisService {
         this.set(EMAIL_VERIFIED_PREFIX + email, value ? "y" : "n", time);
     }
 
-    public void setDailyCount(String email, int value, long time) {
-        this.set(REFRESH_TOKEN_PREFIX + email, String.valueOf(value), time);
+    public void setDailyCount(String email, int value) {
+        LocalDateTime date = LocalDate.now().plusDays(1).atStartOfDay();
+        long secondsLeftToday = ChronoUnit.SECONDS.between(LocalDateTime.now(), date);
+        this.set(REFRESH_TOKEN_PREFIX + email, String.valueOf(value), secondsLeftToday);
     }
 
     private String get(String key) {
@@ -79,11 +84,15 @@ public class RedisService {
         return Integer.parseInt(get(DAILY_COUNT_PREFIX + email));
     }
 
-    private boolean deleteKey(String key) {
-        return Boolean.TRUE.equals(redisTemplate.delete(key));
+    private void deleteKey(String key) {
+        if (Boolean.TRUE.equals(redisTemplate.delete(key))) {
+            log.info("Deleted key {} from redis", key);
+        } else {
+            log.error("Key {} has not been deleted. There might be no key", key);
+        }
     }
 
-    public boolean deleteRefreshTokenKey(String email) {
-        return deleteKey(REFRESH_TOKEN_PREFIX + email);
+    public void deleteRefreshTokenKey(String email) {
+        deleteKey(REFRESH_TOKEN_PREFIX + email);
     }
 }
