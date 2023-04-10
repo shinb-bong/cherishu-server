@@ -2,14 +2,12 @@ package cherish.backend.member.controller;
 
 import cherish.backend.auth.jwt.TokenInfo;
 import cherish.backend.member.dto.ChangePwdRequest;
-import cherish.backend.member.dto.MemberEmailResponse;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.dto.MemberLoginRequestDto;
 import cherish.backend.member.dto.email.EmailCodeValidationRequest;
 import cherish.backend.member.dto.email.EmailRequest;
 import cherish.backend.member.service.MemberService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -46,14 +44,14 @@ public class PublicMemberController {
     }
     // 회원가입 시 코드 발송
     @PostMapping("/register/code")
-    public String sendEmailCodeForRegistration(@RequestBody @Valid EmailRequest emailRequest){
-        return memberService.sendEmailCode(emailRequest.getEmail());
+    public void sendEmailCodeForRegistration(@RequestBody @Valid EmailRequest emailRequest){
+        memberService.sendEmailCode(emailRequest.getEmail());
     }
 
     // 비밀번호 재설정 시 코드 발송
     @PostMapping("/change-password/code")
-    public String sendEmailCodeForPasswordReset(@RequestBody @Valid EmailRequest emailRequest) {
-        return memberService.setEmailCodeForPasswordReset(emailRequest.getEmail());
+    public void sendEmailCodeForPasswordReset(@RequestBody @Valid EmailRequest emailRequest) {
+        memberService.setEmailCodeForPasswordReset(emailRequest.getEmail());
     }
     // 이메일 코드 검증
     @PostMapping("/code-valid")
