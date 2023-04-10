@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @RequiredArgsConstructor
-@Profile("google")
 @Service
 public class GoogleEmailService implements EmailService {
 
