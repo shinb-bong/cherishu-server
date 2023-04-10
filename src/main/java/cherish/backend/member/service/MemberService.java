@@ -91,29 +91,24 @@ public class MemberService {
             throw new IllegalStateException(Constants.EMAIL_ALREADY);
     }
 
-    public void setRedisCode(String key, String validCode, int second) {
-        if (redisService.hasKey(key))
+    public void setRedisCode(String email, String validCode, int second) {
+        if (redisService.hasEmailCodeKey(email))
             throw new IllegalStateException(second + "초 내에 이메일을 재전송 할 수 없습니다.");
 
-        EmailVerificationInfoDto infoDto = EmailVerificationInfoDto.builder()
-            .code(validCode)
-            .verified(false)
-            .build();
-        redisService.setRedisKeyValue(key, infoDto, second);
+        redisService.setEmailCode(email, validCode, second);
+        redisService.setEmailVerified(email, false, second);
         log.info("input = {} ", validCode);
     }
 
-    public boolean validEmailCode(String key, String inputCode) {
-        if (!redisService.hasKey(key))
+    public boolean validEmailCode(String email, String inputCode) {
+        if (!redisService.hasEmailCodeKey(email))
             throw new IllegalStateException("이메일 인증 코드를 발송한 내역이 없습니다.");
 
-        EmailVerificationInfoDto infoDto = redisService.getValue(key, EmailVerificationInfoDto.class);
-        if (!inputCode.equals(infoDto.getCode()))
+        String validCode = redisService.getEmailCode(email);
+        if (!inputCode.equals(validCode))
             throw new IllegalStateException("입력한 입력코드가 다릅니다.");
-        // 인증되었다는 정보를 true로 세팅
-        infoDto.setVerified(true);
         // redis에 인증 완료된 상태로 10분간 저장
-        redisService.setRedisKeyValue(key, infoDto, 10 * 60);
+        redisService.setEmailVerified(email, true, 10 * 60);
         return true;
     }
 
@@ -132,10 +127,9 @@ public class MemberService {
     }
 
     private boolean isVerifiedEmail(String email) {
-        if (!redisService.hasKey(email)) {
+        if (!redisService.hasVerifiedKey(email)) {
             return false;
         }
-        var emailVerificationDto = redisService.getValue(email, EmailVerificationInfoDto.class);
-        return emailVerificationDto.isVerified();
+        return redisService.isEmailVerified(email);
     }
 }

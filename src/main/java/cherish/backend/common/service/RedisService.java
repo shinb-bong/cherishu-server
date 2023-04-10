@@ -1,11 +1,8 @@
 package cherish.backend.common.service;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -20,44 +17,9 @@ public class RedisService {
     private static final String DAILY_COUNT_PREFIX = "_cnt_";
 
     private final RedisTemplate<String, String> redisTemplate;
-    private final ObjectMapper objectMapper;
 
-    public boolean hasKey(String key) {
+    private boolean hasKey(String key) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
-    }
-
-    public <T> T getValue(String key, Class<T> type) {
-        if (!hasKey(key)) {
-            log.error("키 {}는 존재하지 않습니다", key);
-            throw new RuntimeException();
-        }
-
-        String jsonValue = redisTemplate.opsForValue().get(key);
-        try {
-            return objectMapper.readValue(jsonValue, type);
-        } catch (JacksonException e) {
-            log.error(e.getMessage(), e);
-            throw new IllegalStateException();
-        }
-    }
-
-    /**
-     * Redis에 키와 값 세팅
-     *
-     * @param key    Redis key
-     * @param value  Redis value object
-     * @param second 지속시간 (초)
-     */
-    public void setRedisKeyValue(String key, Object value, long second) {
-        ValueOperations<String, String> operations = redisTemplate.opsForValue();
-        try {
-            String valueJsonString = objectMapper.writeValueAsString(value);
-            operations.set(key, valueJsonString, Duration.ofSeconds(second));
-            log.info("set redis during {} seconds.\n{} : {}", second, key, valueJsonString);
-        } catch (JacksonException e) {
-            log.error(e.getMessage(), e);
-            throw new IllegalStateException();
-        }
     }
 
     public boolean hasRefreshTokenKey(String email) {
@@ -115,5 +77,13 @@ public class RedisService {
 
     public int getEmailCount(String email) {
         return Integer.parseInt(get(DAILY_COUNT_PREFIX + email));
+    }
+
+    private boolean deleteKey(String key) {
+        return Boolean.TRUE.equals(redisTemplate.delete(key));
+    }
+
+    public boolean deleteRefreshTokenKey(String email) {
+        return deleteKey(REFRESH_TOKEN_PREFIX + email);
     }
 }

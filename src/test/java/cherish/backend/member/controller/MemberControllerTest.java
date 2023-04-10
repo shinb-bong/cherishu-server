@@ -72,13 +72,13 @@ class MemberControllerTest {
     void 로그인_테스트() throws Exception {
         //given
         Member member = Member.builder().id(1L).name("test").email("test@naver.com").password("12345").build();
-        given(memberService.login(member.getEmail(), member.getPassword(),false )).willReturn(
+        given(memberService.login(member.getEmail(), member.getPassword())).willReturn(
                 TokenInfo.builder()
                 .grantType("Bearer").refreshToken("abc").accessToken("cde").build()
         );
         //when
         //then
-        String content = objectMapper.writeValueAsString(new MemberLoginRequestDto("test@naver.com", "12345", false));
+        String content = objectMapper.writeValueAsString(new MemberLoginRequestDto("test@naver.com", "12345"));
         mvc.perform(post("/public/member/login")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON)
