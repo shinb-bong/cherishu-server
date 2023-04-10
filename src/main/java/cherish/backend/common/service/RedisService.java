@@ -61,7 +61,7 @@ public class RedisService {
     public void setDailyCount(String email, int value) {
         LocalDateTime date = LocalDate.now().plusDays(1).atStartOfDay();
         long secondsLeftToday = ChronoUnit.SECONDS.between(LocalDateTime.now(), date);
-        this.set(REFRESH_TOKEN_PREFIX + email, String.valueOf(value), secondsLeftToday);
+        this.set(DAILY_COUNT_PREFIX + email, String.valueOf(value), secondsLeftToday);
     }
 
     private String get(String key) {
