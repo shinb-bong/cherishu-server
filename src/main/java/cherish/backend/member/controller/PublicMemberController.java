@@ -37,24 +37,23 @@ public class PublicMemberController {
         log.info("member_login = {}", memberLoginRequestDto.getEmail());
         return token;
     }
-
-    // 비밀번호 찾기 (해당 아이디가 있는지 부터 검사)
-    @GetMapping("/is-member")
-    public MemberEmailResponse isMember(@RequestParam("email") @NotEmpty String email){
-        boolean isMember = memberService.isMember(email);
-        return new MemberEmailResponse(email,isMember);
-    }
     // 비밀번호 수정
     // 기존비밀번호 확인이 체크가 되어있거나
     // 혹은 현재 로그인한 사용자가 바꾸길 원하는 이메일과 같은 경우
     @PostMapping("/change-password")
     public void changePwd(@RequestBody @Valid ChangePwdRequest request){
-        memberService.changePwd(request.getEmail(),request.getPassword());
+        memberService.changePwd(request.getEmail(), request.getPassword());
     }
-    // 이메일 코드 발송
-    @PostMapping("/code-send")
-    public String sendEmailCode(@RequestBody @Valid EmailRequest emailRequest){
+    // 회원가입 시 코드 발송
+    @PostMapping("/register/code")
+    public String sendEmailCodeForRegistration(@RequestBody @Valid EmailRequest emailRequest){
         return memberService.sendEmailCode(emailRequest.getEmail());
+    }
+
+    // 비밀번호 재설정 시 코드 발송
+    @PostMapping("/change-password/code")
+    public String sendEmailCodeForPasswordReset(@RequestBody @Valid EmailRequest emailRequest) {
+        return memberService.setEmailCodeForPasswordReset(emailRequest.getEmail());
     }
     // 이메일 코드 검증
     @PostMapping("/code-valid")

@@ -43,7 +43,7 @@ public class JwtTokenProvider {
         // Refresh Token 생성
         String refreshToken = generateRefreshToken(authentication, now);
 
-        redisService.setRedisKeyValue(refreshToken, authentication.getName(), jwtConfig.getRefreshTokenExpireMillis() / 1000);
+        redisService.setRefreshToken(authentication.getName(), refreshToken, jwtConfig.getRefreshTokenExpireMillis() / 1000);
 
         return TokenInfo.builder()
                 .grantType("Bearer")

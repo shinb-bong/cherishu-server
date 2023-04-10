@@ -28,25 +28,14 @@ public class TestRestController {
         return "Process Success !!";
     }
 
+    @PostMapping("/redis")
+    public void testRedisPost() {
+        redisService.setEmailVerified("test", true, 500);
+    }
+
     @GetMapping("/redis")
-    public String testRedis() {
-        String uid = UUID.randomUUID().toString().substring(0, 7);
-        redisService.setRedisKeyValue("test",uid,10);
-        return uid;
-    }
-
-    @PostMapping("/redis/info")
-    public void testInfo() {
-        EmailVerificationInfoDto dto = EmailVerificationInfoDto.builder()
-            .code("111111")
-            .verified(false)
-            .build();
-        redisService.setRedisKeyValue("test", dto, 30);
-    }
-
-    @GetMapping("/redis/info")
-    public EmailVerificationInfoDto getTestInfo() {
-        return redisService.getValue("test", EmailVerificationInfoDto.class);
+    public boolean testRedis() {
+        return redisService.isEmailVerified("test");
     }
 
     @GetMapping
