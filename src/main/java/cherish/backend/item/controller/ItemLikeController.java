@@ -1,8 +1,10 @@
 package cherish.backend.item.controller;
 
+import cherish.backend.auth.security.CurrentUser;
 import cherish.backend.item.dto.ItemLikeDto;
 import cherish.backend.item.dto.ItemLikeRequest;
 import cherish.backend.item.service.ItemLikeService;
+import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,17 +21,17 @@ public class ItemLikeController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/like")
-    public Long itemLike(@RequestBody ItemLikeRequest request){
-        return itemLikeService.likeItem(request.getEmail(), request.getItemId());
+    public Long itemLike(@RequestBody ItemLikeRequest request, @CurrentUser Member member){
+        return itemLikeService.likeItem(member, request.getItemId());
     }
 
     @DeleteMapping("/like")
-    public void deleteItemLike(@RequestBody ItemLikeRequest request){
-        itemLikeService.deleteLikeItem(request.getItemId(), request.getEmail());
+    public void deleteItemLike(@RequestBody ItemLikeRequest request, @CurrentUser Member member){
+        itemLikeService.deleteLikeItem(request.getItemId(), member.getEmail());
     }
 
-    @GetMapping("/like/{email}")
-    public List<ItemLikeDto> getItemLike(@PathVariable("email") String email){
-        return itemLikeService.getLikeItem(email);
+    @GetMapping("/like")
+    public List<ItemLikeDto> getItemLike(@CurrentUser Member member){
+        return itemLikeService.getLikeItem(member.getEmail());
     }
 }

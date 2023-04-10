@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemLikeRequest {
-    private String email;
     private Long itemId;
 }
