@@ -2,7 +2,6 @@ package cherish.backend.item.controller;
 
 import cherish.backend.auth.security.CurrentUser;
 import cherish.backend.item.dto.ItemLikeDto;
-import cherish.backend.item.dto.ItemLikeRequest;
 import cherish.backend.item.service.ItemLikeService;
 import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +19,14 @@ public class ItemLikeController {
     private final ItemLikeService itemLikeService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/like")
-    public Long itemLike(@RequestBody ItemLikeRequest request, @CurrentUser Member member){
-        return itemLikeService.likeItem(member, request.getItemId());
+    @PostMapping("/like/{itemId}")
+    public Long itemLike(@PathVariable Long itemId, @CurrentUser Member member){
+        return itemLikeService.likeItem(member, itemId);
     }
 
-    @DeleteMapping("/like")
-    public void deleteItemLike(@RequestBody ItemLikeRequest request, @CurrentUser Member member){
-        itemLikeService.deleteLikeItem(request.getItemId(), member.getEmail());
+    @DeleteMapping("/like/{itemId}")
+    public void deleteItemLike(@PathVariable Long itemId, @CurrentUser Member member){
+        itemLikeService.deleteLikeItem(itemId, member.getEmail());
     }
 
     @GetMapping("/like")
