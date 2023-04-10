@@ -43,7 +43,7 @@ class ItemLikeServiceTest {
         memberRepository.save(member);
         itemRepository.save(item);
         //when
-        Long likeItemId = service.likeItem(email, 3L);
+        Long likeItemId = service.likeItem(member, 3L);
         //when
         ItemLike itemLike = repository.findById(likeItemId).orElseThrow(() -> new IllegalStateException());
         //then
@@ -62,7 +62,7 @@ class ItemLikeServiceTest {
         memberRepository.save(member);
         itemRepository.save(item);
         //when
-        Long itemLikeId = service.likeItem(email, 3L);
+        Long itemLikeId = service.likeItem(member, 3L);
         service.deleteLikeItem(item.getId(),email);
         assertThatThrownBy(()->repository.findById(itemLikeId).get()).isInstanceOf(NoSuchElementException.class);
     }
@@ -79,10 +79,10 @@ class ItemLikeServiceTest {
         memberRepository.save(member);
         itemRepository.save(item);
         //when
-        Long itemLikeId = service.likeItem(email, item.getId());
+        Long itemLikeId = service.likeItem(member, item.getId());
         List<ItemLikeDto> likeItem = service.getLikeItem(email);
         //then
-        assertThat(likeItem.get(0).isItemLike()).isTrue();
+        assertThat(likeItem.get(0).isLike()).isTrue();
         assertThat(likeItem.get(0).getBrand()).isEqualTo(item.getBrand());
     }
 }
