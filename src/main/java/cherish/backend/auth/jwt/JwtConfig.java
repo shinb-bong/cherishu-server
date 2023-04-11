@@ -32,4 +32,8 @@ public class JwtConfig {
         this.accessTokenExpireMillis = DurationShortFormUtils.convertShortFormToMillis(jwtProperties.getAccessTokenExpireTime());
         this.refreshTokenExpireMillis = DurationShortFormUtils.convertShortFormToMillis(jwtProperties.getRefreshTokenExpireTime());
     }
+
+    public long getRefreshTokenExpireSeconds() {
+        return this.refreshTokenExpireMillis / 1000;
+    }
 }
