@@ -1,5 +1,7 @@
 package cherish.backend.item.service;
 
+import cherish.backend.auth.jwt.JwtConfig;
+import cherish.backend.auth.jwt.JwtProperties;
 import cherish.backend.category.model.Filter;
 import cherish.backend.category.repository.FilterRepository;
 import cherish.backend.item.dto.ItemSearchCondition;
@@ -14,7 +16,9 @@ import cherish.backend.member.model.Job;
 import cherish.backend.member.repository.JobRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

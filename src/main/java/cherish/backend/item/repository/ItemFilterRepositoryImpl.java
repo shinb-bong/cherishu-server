@@ -112,31 +112,9 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        // 필터링 조건 추가
-        if (!searchCondition.getCategoryName().isEmpty() || searchCondition.getJobName() != null ||
-                searchCondition.getSituationName() != null || searchCondition.getEmotionName() != null ||
-                (searchCondition.getMinAge() != null && searchCondition.getMaxAge() != null)) {
-
-            BooleanExpression categoryExpression = null;
-            for (String categoryName : searchCondition.getCategoryName()) {
-                if (categoryExpression == null) {
-                    categoryExpression = category.name.contains(categoryName).or(category.children.any().name.contains(categoryName));
-                } else {
-                    categoryExpression = categoryExpression.or(category.name.contains(categoryName)).or(category.children.any().name.contains(categoryName));
-                }
-            }
-
-            booleanBuilder.and(categoryExpression)
-                    .and(job.name.eq(searchCondition.getJobName()))
-                    .and(itemFilter.filter.name.eq(searchCondition.getSituationName()))
-                    .and(itemFilter.filter.name.eq(searchCondition.getEmotionName()))
-                    .and(item.minAge.between(searchCondition.getMinAge(), searchCondition.getMaxAge()))
-                    .and(item.maxAge.between(searchCondition.getMinAge(), searchCondition.getMaxAge()));
-        }
-
         if (searchCondition.getKeyword() != null || !searchCondition.getKeyword().isEmpty()) {
             String keyword = searchCondition.getKeyword();
-            booleanBuilder.or(
+            booleanBuilder = booleanBuilder.or(
                     item.name.contains(keyword)
                             .or(item.brand.contains(keyword))
                             .or(category.name.contains(keyword))
@@ -151,9 +129,37 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                             .or(itemFilter.filter.name.contains(keyword))
             );
         }
-        else {
-            return booleanBuilder;
+
+        // 필터링 조건 추가
+        if (!searchCondition.getCategoryName().isEmpty() && searchCondition.getCategoryName() != null) {
+            BooleanExpression categoryExpression = null;
+            for (String categoryName : searchCondition.getCategoryName()) {
+                if (categoryExpression == null) {
+                    categoryExpression = category.name.contains(categoryName).or(category.children.any().name.contains(categoryName));
+                } else {
+                    categoryExpression = categoryExpression.or(category.name.contains(categoryName)).or(category.children.any().name.contains(categoryName));
+                }
+            }
+            booleanBuilder.and(categoryExpression);
         }
+
+        if (searchCondition.getJobName() != null) {
+            booleanBuilder.and(job.name.eq(searchCondition.getJobName()));
+        }
+
+        if (searchCondition.getSituationName() != null) {
+            booleanBuilder.and(itemFilter.filter.name.eq(searchCondition.getSituationName()));
+        }
+
+        if (searchCondition.getEmotionName() != null) {
+            booleanBuilder.and(itemFilter.filter.name.eq(searchCondition.getEmotionName()));
+        }
+
+        if (searchCondition.getMinAge() != null && searchCondition.getMaxAge() != null) {
+            booleanBuilder.and(item.minAge.between(searchCondition.getMinAge(), searchCondition.getMaxAge()))
+                    .and(item.maxAge.between(searchCondition.getMinAge(), searchCondition.getMaxAge()));
+        }
+
         return booleanBuilder;
     }
 
