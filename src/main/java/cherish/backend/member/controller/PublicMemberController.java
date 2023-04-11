@@ -1,17 +1,23 @@
 package cherish.backend.member.controller;
 
-import cherish.backend.auth.jwt.TokenInfo;
+import cherish.backend.auth.jwt.JwtConfig;
+import cherish.backend.auth.jwt.dto.TokenResponseDto;
 import cherish.backend.member.dto.ChangePwdRequest;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.dto.MemberLoginRequestDto;
 import cherish.backend.member.dto.email.EmailCodeValidationRequest;
 import cherish.backend.member.dto.email.EmailRequest;
 import cherish.backend.member.service.MemberService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
+
+import static cherish.backend.common.constant.CommonConstants.REFRESH_TOKEN_COOKIE_NAME;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class PublicMemberController {
 
     private final MemberService memberService;
+    private final JwtConfig jwtConfig;
 
     //회원 회원가입
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,10 +37,17 @@ public class PublicMemberController {
 
     // 회원 로그인
     @PostMapping("/login")
-    public TokenInfo login(@RequestBody @Valid MemberLoginRequestDto memberLoginRequestDto) {
-        TokenInfo token = memberService.login(memberLoginRequestDto.getEmail(), memberLoginRequestDto.getPassword());
-        log.info("member_login = {}", memberLoginRequestDto.getEmail());
-        return token;
+    public TokenResponseDto login(@RequestBody @Valid MemberLoginRequestDto memberLoginRequestDto, HttpServletResponse response) {
+        var token = memberService.login(memberLoginRequestDto.getEmail(), memberLoginRequestDto.getPassword());
+        log.info("member login = {}", memberLoginRequestDto.getEmail());
+        ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, token.getRefreshToken())
+            .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
+            .path("/")
+            .secure(true)
+            .httpOnly(true)
+            .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return token.toResponseDto();
     }
     // 비밀번호 수정
     // 기존비밀번호 확인이 체크가 되어있거나
