@@ -6,12 +6,9 @@ import cherish.backend.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,10 +19,27 @@ public class PublicItemController {
 
     @GetMapping("/search")
     public Page<ItemSearchResponseDto> searchItemWithFilter(
-            @RequestParam(value = "keyword") String keyword, Pageable pageable) {
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String jobName,
+            @RequestParam(required = false) String situationName,
+            @RequestParam(required = false) String emotionName,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            Pageable pageable) {
 
         ItemSearchCondition condition = new ItemSearchCondition();
         condition.setKeyword(keyword);
+        if (categoryName != null && !categoryName.isEmpty()) {
+            List<String> categories = List.of(categoryName.split(","));
+            condition.setCategoryName(categories);
+        }
+        condition.setJobName(jobName);
+        condition.setSituationName(situationName);
+        condition.setEmotionName(emotionName);
+        condition.setMinAge(minAge);
+        condition.setMaxAge(maxAge);
+
         return itemService.searchItem(condition, pageable);
     }
 

@@ -4,15 +4,12 @@ import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -23,6 +20,7 @@ import static cherish.backend.item.model.QItemCategory.*;
 import static cherish.backend.item.model.QItemFilter.*;
 import static cherish.backend.item.model.QItemJob.itemJob;
 import static cherish.backend.member.model.QJob.job;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.StringUtils.*;
 
 @RequiredArgsConstructor
@@ -109,9 +107,10 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
     private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (hasText(searchCondition.getKeyword())) {
+
+        if (isNotEmpty(searchCondition.getKeyword())) {
             String keyword = searchCondition.getKeyword();
-            booleanBuilder.or(
+            booleanBuilder = booleanBuilder.or(
                     item.name.contains(keyword)
                             .or(item.brand.contains(keyword))
                             .or(category.name.contains(keyword))
@@ -126,6 +125,37 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                             .or(itemFilter.filter.name.contains(keyword))
             );
         }
+
+        // 필터링 조건 추가
+        if (searchCondition.getCategoryName() != null && !searchCondition.getCategoryName().isEmpty()) {
+            BooleanExpression categoryExpression = null;
+            for (String categoryName : searchCondition.getCategoryName()) {
+                if (categoryExpression == null) {
+                    categoryExpression = category.name.contains(categoryName).or(category.children.any().name.contains(categoryName));
+                } else {
+                    categoryExpression = categoryExpression.or(category.name.contains(categoryName)).or(category.children.any().name.contains(categoryName));
+                }
+            }
+            booleanBuilder.and(categoryExpression);
+        }
+
+        if (searchCondition.getJobName() != null) {
+            booleanBuilder.and(job.name.eq(searchCondition.getJobName()));
+        }
+
+        if (searchCondition.getSituationName() != null) {
+            booleanBuilder.and(itemFilter.filter.name.eq(searchCondition.getSituationName()));
+        }
+
+        if (searchCondition.getEmotionName() != null) {
+            booleanBuilder.and(itemFilter.filter.name.eq(searchCondition.getEmotionName()));
+        }
+
+        if (searchCondition.getMinAge() != null && searchCondition.getMaxAge() != null) {
+            booleanBuilder.and(item.minAge.goe(searchCondition.getMinAge()))
+                    .and(item.maxAge.loe(searchCondition.getMaxAge()));
+        }
+
         return booleanBuilder;
     }
 

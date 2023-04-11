@@ -80,7 +80,7 @@ class ItemLikeServiceTest {
         itemRepository.save(item);
         //when
         Long itemLikeId = service.likeItem(member, item.getId());
-        List<ItemLikeDto> likeItem = service.getLikeItem(email);
+        List<ItemLikeDto> likeItem = service.getLikeItem(member);
         //then
         assertThat(likeItem.get(0).isLike()).isTrue();
         assertThat(likeItem.get(0).getBrand()).isEqualTo(item.getBrand());
