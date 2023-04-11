@@ -41,7 +41,7 @@ public class PublicMemberController {
         var token = memberService.login(memberLoginRequestDto.getEmail(), memberLoginRequestDto.getPassword());
         log.info("member login = {}", memberLoginRequestDto.getEmail());
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, token.getRefreshToken())
-            .maxAge(jwtConfig.getRefreshTokenExpireSeconds() / 1000)
+            .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
             .path("/")
             .secure(true)
             .httpOnly(true)

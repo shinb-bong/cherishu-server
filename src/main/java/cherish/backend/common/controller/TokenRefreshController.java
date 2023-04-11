@@ -29,7 +29,7 @@ public class TokenRefreshController {
         HttpServletResponse response) {
         var token = tokenRefreshService.refreshToken(refreshTokenCookie.getValue());
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, token.getRefreshToken())
-            .maxAge(jwtConfig.getRefreshTokenExpireSeconds() / 1000)
+            .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
             .path("/")
             .secure(true)
             .httpOnly(true)
