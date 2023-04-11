@@ -112,7 +112,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        if (searchCondition.getKeyword() != null || !searchCondition.getKeyword().isEmpty()) {
+        if (searchCondition.getKeyword() != null && !searchCondition.getKeyword().isEmpty()) {
             String keyword = searchCondition.getKeyword();
             booleanBuilder = booleanBuilder.or(
                     item.name.contains(keyword)
@@ -131,7 +131,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
         }
 
         // 필터링 조건 추가
-        if (!searchCondition.getCategoryName().isEmpty() && searchCondition.getCategoryName() != null) {
+        if (searchCondition.getCategoryName() != null && !searchCondition.getCategoryName().isEmpty()) {
             BooleanExpression categoryExpression = null;
             for (String categoryName : searchCondition.getCategoryName()) {
                 if (categoryExpression == null) {

@@ -10,6 +10,18 @@ spring:
     redis:
       host: localhost
       port: 6379
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
 
 logging:
   level:
@@ -23,8 +35,6 @@ aws:
 
 jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
-
-context:
-  component-scan:
-    base-package: cherish.backend.test.data
+  access-token-expire-time: 30m
+  refresh-token-expire-time: 14d
 
