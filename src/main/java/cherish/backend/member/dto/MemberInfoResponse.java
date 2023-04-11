@@ -18,7 +18,7 @@ public class MemberInfoResponse {
 
     public static MemberInfoResponse of(Member member){
         return MemberInfoResponse.builder().name(member.getName())
-                .nickName(member.getNickName())
+                .nickName(member.getNickname())
                 .email(member.getEmail())
                 .gender(member.getGender().toString())
                 .birth(member.getBirth())

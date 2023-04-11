@@ -11,7 +11,7 @@ public class ItemLikeDto {
     private final String name;
     private final String imgUrl;
     private final int price;
-    private final boolean isItemLike;
+    private final boolean like;
     private final String brand;
 
 
@@ -23,7 +23,7 @@ public class ItemLikeDto {
                 .brand(item.getBrand())
                 .imgUrl(item.getImgUrl())
                 .price(item.getPrice())
-                .isItemLike(true).build();
+                .like(true).build();
 
     }
 }

@@ -2,6 +2,10 @@ server:
   shutdown: graceful # 정상적인 종료
 
 spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu?stringtype=unspecified
+    username: postgres
   lifecycle:
     timeout-per-shutdown-phase: 35s
   jpa:
@@ -59,12 +63,6 @@ spring:
     activate:
       on-profile: local
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu
-    username: postgres
-    password: ${PASSWORD}
-
 decorator:
   datasource:
     p6spy:
@@ -74,12 +72,6 @@ spring:
   config:
     activate:
       on-profile: dev
-
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu
-    username: postgres
-    password: ${PASSWORD}
 ---
 spring:
   config:

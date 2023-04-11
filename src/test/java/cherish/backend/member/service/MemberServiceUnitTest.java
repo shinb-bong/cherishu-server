@@ -2,7 +2,6 @@ package cherish.backend.member.service;
 
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.model.Member;
-import cherish.backend.member.model.enums.Gender;
 import cherish.backend.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,7 +45,7 @@ public class MemberServiceUnitTest {
                 .password("123456")
                 .nickName("test-man")
                 .infoCheck(true)
-                .gender(String.valueOf(Gender.MALE))
+                .gender(String.valueOf(Member.Gender.MALE))
                 .build();
     }
 

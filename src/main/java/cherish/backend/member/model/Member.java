@@ -2,8 +2,6 @@ package cherish.backend.member.model;
 
 import cherish.backend.common.model.BaseTimeEntity;
 import cherish.backend.member.dto.MemberFormDto;
-import cherish.backend.member.model.enums.Gender;
-import cherish.backend.member.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +20,7 @@ public class Member extends BaseTimeEntity {
     @Id
     private Long id;
     private String name; // 이름
-    private String nickName; // 닉네임
+    private String nickname; // 닉네임
     private String email; // 이메일
     private String password; // 패스워드
     private boolean informationCheck; // 광고성 동의
@@ -38,6 +36,14 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role roles;
 
+    public enum Gender {
+        MALE, FEMALE, NONE;
+    }
+
+    public enum Role {
+        ROLE_USER, ROLE_ADMIN;
+    }
+
     public static Member createMember(MemberFormDto formDto, PasswordEncoder passwordEncoder){
         Gender _gender;
         try {
@@ -48,7 +54,7 @@ public class Member extends BaseTimeEntity {
 
         return Member.builder()
                 .name(formDto.getName())
-                .nickName(formDto.getNickName())
+                .nickname(formDto.getNickName())
                 .email(formDto.getEmail())
                 .password(passwordEncoder.encode(formDto.getPassword()))
                 .informationCheck(formDto.isInfoCheck())
@@ -65,7 +71,7 @@ public class Member extends BaseTimeEntity {
     }
 
     public void changeInfo(String nickName, Job job){
-        this.nickName = nickName;
+        this.nickname = nickName;
         this.job = job;
     }
 }

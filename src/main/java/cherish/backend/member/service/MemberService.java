@@ -84,7 +84,7 @@ public class MemberService {
         member.changePwd(pwd, passwordEncoder);
     }
 
-    public String sendEmailCode(String email) {
+    public void sendEmailCode(String email) {
         if (redisService.hasEmailCodeKey(email)) {
             throw new IllegalStateException(Constants.TIME_LIMIT);
         }
@@ -99,7 +99,6 @@ public class MemberService {
         emailService.sendMessage(email, "인증번호 : " + code);
         setRedisCode(email, code);
         log.info("code {} has been sent to {}", code, email);
-        return code;
     }
 
     private void setRedisCode(String email, String validCode) {
@@ -142,7 +141,7 @@ public class MemberService {
         return redisService.hasVerifiedKey(email) && redisService.isEmailVerified(email);
     }
 
-    public String setEmailCodeForPasswordReset(String email) {
+    public void setEmailCodeForPasswordReset(String email) {
         if (redisService.hasEmailCodeKey(email)) {
             throw new IllegalStateException(Constants.TIME_LIMIT);
         }
@@ -157,6 +156,5 @@ public class MemberService {
         emailService.sendMessage(email, "인증번호 : " + code);
         setRedisCode(email, code);
         log.info("code {} has been sent to {}", code, email);
-        return code;
     }
 }

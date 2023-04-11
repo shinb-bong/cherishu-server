@@ -1,27 +1,28 @@
 package cherish.backend.item.repository;
 
 import cherish.backend.item.model.Item;
-import cherish.backend.item.model.QItem;
-import cherish.backend.item.model.QItemLike;
+import cherish.backend.member.model.Member;
+import cherish.backend.member.model.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import static cherish.backend.item.model.QItem.item;
+import static cherish.backend.item.model.QItemLike.itemLike;
+
 @RequiredArgsConstructor
 public class ItemLikeRepositoryImpl implements ItemLikeRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
-    QItemLike itemLike = QItemLike.itemLike;
-    QItem item = QItem.item;
     @Override
-    public List<Item> findItemLike(String email) {
+    public List<Item> findItemLike(Member member) {
         return queryFactory.select(item)
                 .from(itemLike)
-                .join(item)
-                .where(itemLike.member.email.eq(email))
+                .leftJoin(itemLike.item, item)
+                .leftJoin(itemLike.member, QMember.member)
+                .where(itemLike.member.eq(member))
                 .fetch();
-
     }
 
     @Override
