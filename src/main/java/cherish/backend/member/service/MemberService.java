@@ -74,14 +74,14 @@ public class MemberService {
     }
 
     @Transactional
-    public void changePwd(String email, String pwd) {
+    public void changePwd(String email, String password) {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
         // 비밀번호 변경 시 인증된 이메일인지 검증하는 로직 추가
         if (!isVerifiedEmail(email)) {
             throw new IllegalArgumentException(Constants.EMAIL_VERIFICATION_EXPIRED);
         }
-        member.changePwd(pwd, passwordEncoder);
+        member.changePwd(passwordEncoder.encode(password));
     }
 
     public void sendEmailCode(String email) {
@@ -124,17 +124,14 @@ public class MemberService {
     }
 
     @Transactional
-    public Long changeInfo(String nickName, String jobName, String loginUserEmail) {
-        Member member = memberRepository.findByEmail(loginUserEmail).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
+    public void changeInfo(String nickName, String jobName, Member member) {
         Job job = jobRepository.findByName(jobName).orElseThrow(() -> new IllegalStateException("해당 직업이 존재하지 않습니다."));
         member.changeInfo(nickName, job);
-        return member.getId();
+        memberRepository.save(member);
     }
 
-    public MemberInfoResponse getInfo(String loginUserEmail) {
-        Member member = memberRepository.findByEmail(loginUserEmail).orElseThrow(() -> new IllegalStateException(Constants.MEMBER_NOT_FOUND));
-        return MemberInfoResponse.of(member);
-
+    public MemberInfoResponse getInfo(Member member) {
+        return MemberInfoResponse.of(memberRepository.findMemberById(member.getId()));
     }
 
     private boolean isVerifiedEmail(String email) {

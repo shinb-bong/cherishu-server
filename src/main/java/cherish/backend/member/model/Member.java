@@ -37,11 +37,11 @@ public class Member extends BaseTimeEntity {
     private Role roles;
 
     public enum Gender {
-        MALE, FEMALE, NONE;
+        MALE, FEMALE, NONE
     }
 
     public enum Role {
-        ROLE_USER, ROLE_ADMIN;
+        ROLE_USER, ROLE_ADMIN
     }
 
     public static Member createMember(MemberFormDto formDto, PasswordEncoder passwordEncoder){
@@ -66,8 +66,8 @@ public class Member extends BaseTimeEntity {
 
     // 유틸 메소드
     // 비밀번호 변경
-    public void changePwd(String pwd, PasswordEncoder passwordEncoder){
-        this.password = passwordEncoder.encode(pwd);
+    public void changePwd(String password) {
+        this.password = password;
     }
 
     public void changeInfo(String nickName, Job job){
