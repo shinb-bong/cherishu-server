@@ -82,6 +82,7 @@ public class MemberService {
             throw new IllegalArgumentException(Constants.EMAIL_VERIFICATION_EXPIRED);
         }
         member.changePwd(passwordEncoder.encode(password));
+        memberRepository.save(member);
     }
 
     public void sendEmailCode(String email) {
