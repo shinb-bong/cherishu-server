@@ -22,20 +22,14 @@ public class MemberController {
 
     // 회원 수정
     @PatchMapping("/change-info")
-    public Long changeInfo(@RequestBody @Valid ChangeInfoRequest request, @CurrentUser Member member){
-        return memberService.changeInfo(request.getNickName(), request.getJobName(), member.getEmail());
+    public void changeInfo(@RequestBody @Valid ChangeInfoRequest request, @CurrentUser Member member){
+        memberService.changeInfo(request.getNickName(), request.getJobName(), member);
     }
-    // 유틸 테스트
-    // 객체로 받아오는 것
-//    @GetMapping("/info")
-//    public String info(@AuthenticationPrincipal SecurityUser member){
-//        return member.getMember().getEmail();
-//    }
 
     // 내정보
     @GetMapping("/info")
     public MemberInfoResponse memberInfo(@CurrentUser Member member){
-        return memberService.getInfo(member.getEmail());
+        return memberService.getInfo(member);
     }
 }
 
