@@ -28,6 +28,6 @@ public interface ItemUrlRepository extends JpaRepository<ItemUrl, Long> {
         return findByItemAndPlatform(item, ItemUrlPlatforms.KAKAO);
     }
 
-    @Query("select iu from ItemUrl iu join iu.item i where i.id = :itemId")
-    Optional<ItemUrl> findByItemId(@Param("itemId") Long itemId);
+    @Query("select iU.url from ItemUrl iU join iU.item i where iU.platform = :platform and iU.item.id = :itemId")
+    String findByPlatform(@Param("platform") String platform, @Param("itemId") Long itemId);
 }
