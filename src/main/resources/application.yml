@@ -57,6 +57,11 @@ jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
   access-token-expire-time: 30m
   refresh-token-expire-time: 14d
+cors:
+  allowed-origins:
+    - http://127.0.0.1:5173
+    - https://127.0.0.1:5173
+    - https://rococo-paprenjak-9b8d81.netlify.app
 ---
 spring:
   config:

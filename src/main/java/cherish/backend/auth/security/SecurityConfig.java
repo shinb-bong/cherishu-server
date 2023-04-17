@@ -3,8 +3,9 @@ package cherish.backend.auth.security;
 import cherish.backend.auth.jwt.JwtAuthenticationFilter;
 import cherish.backend.auth.jwt.JwtExceptionFilter;
 import cherish.backend.auth.jwt.JwtTokenProvider;
-import cherish.backend.common.constant.CommonConstants;
+import cherish.backend.common.config.cors.CorsProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,12 +22,14 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+@EnableConfigurationProperties(CorsProperties.class)
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final CorsProperties corsProperties;
     // 현재 화이트 리스트 모두 열어 놓음
     private static final String[] PUBLIC_WHITELIST = {
             "/public/**", "/test/**"
@@ -69,8 +72,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOrigin(CommonConstants.LOCALHOST);
-        config.addAllowedOrigin(CommonConstants.CLIENT_ORIGIN); // 프론트 IPv4 주소
+        corsProperties.getAllowedOrigins().forEach(config::addAllowedOrigin);
         config.addAllowedMethod(""); // 모든 메소드 허용.
         config.addAllowedHeader("");
         config.setAllowCredentials(true);
