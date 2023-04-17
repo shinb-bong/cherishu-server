@@ -59,6 +59,12 @@ jwt:
   access-token-expire-time: 30m
   refresh-token-expire-time: 14d
 cors:
+  allowed-methods:
+    - GET
+    - POST
+    - PATCH
+    - DELETE
+    - OPTIONS
   allowed-origins:
     - http://127.0.0.1:5173
     - https://127.0.0.1:5173

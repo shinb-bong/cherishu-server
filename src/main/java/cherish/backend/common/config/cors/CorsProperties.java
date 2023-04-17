@@ -10,5 +10,6 @@ import java.util.Set;
 public class CorsProperties {
     public static final String CORS_PREFIX = "cors";
 
+    private Set<String> allowedMethods;
     private Set<String> allowedOrigins;
 }
