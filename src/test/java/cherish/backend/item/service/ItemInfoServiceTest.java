@@ -20,7 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @RequiredArgsConstructor
@@ -66,5 +70,11 @@ public class ItemInfoServiceTest {
 
         assertEquals(response.getItemId(), 2003);
         assertEquals(response.getBrandUrl(), itemUrlRepository.findByPlatform("brand", 2003L));
+
+        List<Long> categoryIds = itemCategoryRepository.findCategoryIdByItem(item.getId());
+        Long categoryId = categoryIds.stream().findFirst().orElse(null);
+        Optional<Category> categoryRepositoryById = categoryRepository.findById(categoryId);
+
+        assertTrue(response.getTagList().contains(categoryRepositoryById.get().getName()));
     }
 }

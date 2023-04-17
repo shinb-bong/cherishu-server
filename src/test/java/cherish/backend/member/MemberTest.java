@@ -50,7 +50,7 @@ class MemberTest {
         Member member = Member.createMember(memberFormDto,passwordEncoder);
         Member savedMember = memberRepository.save(member);
 //        Long id = savedMember.getId();
-        member.changePwd("12345",passwordEncoder);
+        member.changePwd("12345");
         Assertions.assertThat(member.getPassword()).isEqualTo(savedMember.getPassword());
     }
 
