@@ -6,13 +6,11 @@ import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.ItemInfoResponseDto;
 import cherish.backend.item.dto.QItemInfoResponseDto;
 import cherish.backend.item.model.*;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static cherish.backend.item.model.QItemUrl.*;
 import static org.springframework.util.StringUtils.hasText;
@@ -50,10 +48,12 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
                 .where(itemIdEq(itemId))
                 .fetchFirst();
 
-        content.setBrandUrl(itemUrlByPlatform("brand", itemId));
-        content.setKakaoUrl(itemUrlByPlatform("kakao", itemId));
-        content.setCoupangUrl(itemUrlByPlatform("coupang", itemId));
-        content.setNaverUrl(itemUrlByPlatform("naver", itemId));
+        Map<String, String> itemUrls = itemUrls(itemId);
+        content.setBrandUrl(itemUrls.get("brand"));
+        content.setKakaoUrl(itemUrls.get("kakao"));
+        content.setCoupangUrl(itemUrls.get("coupang"));
+        content.setNaverUrl(itemUrls.get("naver"));
+
         content.setTagList(getTagList(itemId));
 
         return content;
@@ -80,7 +80,21 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
         return hasText(String.valueOf(itemId)) ? QItem.item.id.eq(itemId) : null;
     }
 
-    private String itemUrlByPlatform(String platform, Long itemId) {
-        return itemUrlRepository.findByPlatform(platform, itemId);
+    private Map<String, String> itemUrls(Long itemId) {
+        Map<String, String> itemUrls = new HashMap<>();
+
+        List<Tuple> results = queryDslConfig.jpaQueryFactory()
+                .select(itemUrl.platform, itemUrl.url)
+                .from(itemUrl)
+                .where(itemUrl.item.id.eq(itemId))
+                .fetch();
+
+        for (Tuple result : results) {
+            String platform = result.get(itemUrl.platform);
+            String url = result.get(itemUrl.url);
+            itemUrls.put(platform, url);
+        }
+
+        return itemUrls;
     }
 }
