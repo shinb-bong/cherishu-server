@@ -84,6 +84,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .leftJoin(itemJob.job, job)
                 .leftJoin(itemCategory.category, category)
                 .where(getSearchCondition(searchCondition))
+                .orderBy(item.id.asc()) // 기본 정렬
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -131,10 +132,9 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
             BooleanExpression categoryExpression = null;
             for (String categoryName : searchCondition.getCategoryName()) {
                 if (categoryExpression == null) {
-                    categoryExpression = category.name.contains(categoryName).or(category.children.any().name.contains(categoryName));
+                    categoryExpression = category.name.contains(categoryName);
                 } else {
-                    categoryExpression = categoryExpression.or(category.name.contains(categoryName)).or(category.children.any().name.contains(categoryName));
-                }
+                    categoryExpression = categoryExpression.or(category.name.contains(categoryName));                }
             }
             booleanBuilder.and(categoryExpression);
         }

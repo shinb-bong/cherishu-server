@@ -1,5 +1,6 @@
 package cherish.backend.item.controller;
 
+import cherish.backend.item.dto.ItemInfoResponseDto;
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchResponseDto;
 import cherish.backend.item.service.ItemService;
@@ -41,6 +42,12 @@ public class PublicItemController {
         condition.setMaxAge(maxAge);
 
         return itemService.searchItem(condition, pageable);
+    }
+
+    @GetMapping("/{itemId}")
+    public ItemInfoResponseDto findItemInformation(@PathVariable Long itemId) {
+        itemService.increaseViews(itemId);
+        return itemService.findItemInfo(itemId);
     }
 
 }

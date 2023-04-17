@@ -36,4 +36,11 @@ public class Item extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "item", fetch= FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ItemUrl> itemUrls = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", fetch= FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ItemLike> itemLikes = new ArrayList<>();
+
+    public void increaseViews() {
+        this.views += 1;
+    }
 }
