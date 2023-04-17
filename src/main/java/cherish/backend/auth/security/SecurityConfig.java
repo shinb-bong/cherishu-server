@@ -73,8 +73,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         corsProperties.getAllowedOrigins().forEach(config::addAllowedOrigin);
-        config.addAllowedMethod(""); // 모든 메소드 허용.
-        config.addAllowedHeader("");
+        corsProperties.getAllowedMethods().forEach(config::addAllowedMethod);
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
