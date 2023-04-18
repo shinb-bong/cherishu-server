@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -16,16 +17,13 @@ public class ItemInfoResponseDto {
     private int price;
     private String imgUrl;
     private int views;
-    private String brandUrl;
-    private String kakaoUrl;
-    private String coupangUrl;
-    private String naverUrl;
     private List<String> tagList;
-
-    private Long itemLikeId;
+    private Map<String, String> url;
+    private boolean isLiked;
+    private Long memberId;
 
     @QueryProjection
-    public ItemInfoResponseDto(Long itemId, String name, String brand, String description, int price, String imgUrl, int views, Long itemLikeId) {
+    public ItemInfoResponseDto(Long itemId, String name, String brand, String description, int price, String imgUrl, int views, boolean isLiked, Long memberId) {
         this.itemId = itemId;
         this.name = name;
         this.brand = brand;
@@ -33,6 +31,7 @@ public class ItemInfoResponseDto {
         this.price = price;
         this.imgUrl = imgUrl;
         this.views = views;
-        this.itemLikeId = itemLikeId;
+        this.isLiked = isLiked;
+        this.memberId = memberId;
     }
 }

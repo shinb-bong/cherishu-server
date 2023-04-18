@@ -1,13 +1,17 @@
 package cherish.backend.item.repository;
 
 import cherish.backend.category.model.Category;
-import cherish.backend.category.repository.CategoryRepository;
+import cherish.backend.category.model.QCategory;
+import cherish.backend.category.model.QFilter;
 import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.ItemInfoResponseDto;
-import cherish.backend.item.dto.QItemInfoResponseDto;
 import cherish.backend.item.model.*;
+import cherish.backend.member.model.Member;
+import cherish.backend.member.model.QMember;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.*;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.JPAExpressions;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
@@ -18,43 +22,34 @@ import static org.springframework.util.StringUtils.hasText;
 @RequiredArgsConstructor
 public class ItemRepositoryImpl implements ItemRepositoryCustom{
     private final QueryDslConfig queryDslConfig;
-    private final ItemCategoryRepository itemCategoryRepository;
-    private final ItemFilterRepository itemFilterRepository;
-    private final CategoryRepository categoryRepository;
-    private final ItemUrlRepository itemUrlRepository;
+
+    // AliasCollisionException 방지
+    QItem qItem = QItem.item;
+    QItemUrl qItemUrl = itemUrl;
+    QItemLike qItemLike = QItemLike.itemLike;
+    QItemFilter qItemFilter = QItemFilter.itemFilter;
+    QItemCategory qItemCategory = QItemCategory.itemCategory;
 
     @Override
-    public ItemInfoResponseDto itemResponse(Long itemId) {
-        // AliasCollisionException 방지
-        QItem qItem = QItem.item;
-        QItemUrl qItemUrl = itemUrl;
-        QItemLike qItemLike = QItemLike.itemLike;
-        QItem qItemLikeItem = new QItem("itemLikeItem");
-        QItem qItemLikeUrl = new QItem("qItemLikeUrl");
-        QItemFilter qItemFilter = QItemFilter.itemFilter;
-        QItemCategory qItemCategory = QItemCategory.itemCategory;
+    public ItemInfoResponseDto itemResponse(Long itemId, Member member) {
+        BooleanExpression isLiked = new CaseBuilder().when(qItemLike.id.isNotNull()).then(true).otherwise(false);
 
-        ItemInfoResponseDto content = queryDslConfig.jpaQueryFactory().select(new QItemInfoResponseDto(
-                        qItem.id.as("itemId"), qItem.name.as("name"), qItem.brand.as("brand"), qItem.description.as("description"), qItem.price.as("price"),
+        ItemInfoResponseDto content = queryDslConfig.jpaQueryFactory()
+                .select(Projections.constructor(ItemInfoResponseDto.class,
+                        qItem.id.as("itemId"), qItem.name.as("name"), qItem.brand.as("brand"),
+                        qItem.description.as("description"), qItem.price.as("price"),
                         qItem.imgUrl.as("imgUrl"), qItem.views.as("views"),
-                        qItemLike.id.as("itemLikeId")))
+                        isLiked.as("isLiked"), QMember.member.id))
                 .from(qItem)
-                .leftJoin(qItem.itemUrls, qItemUrl)
-                .leftJoin(qItem.itemLikes, qItemLike)
                 .leftJoin(qItemFilter).on(qItem.id.eq(qItemFilter.item.id))
-                .leftJoin(qItemCategory).on(qItem.id.eq(qItemCategory.item.id))
-                .leftJoin(qItemLike.item, qItemLikeItem)
-                .leftJoin(qItemUrl.item, qItemLikeUrl)
-                .where(itemIdEq(itemId))
+                .leftJoin(qItemLike).on(qItem.id.eq(qItemLike.item.id))
+                .leftJoin(QMember.member).on(qItemLike.member.id.eq(QMember.member.id))
+                .where(itemIdEq(itemId),
+                        memberIdEq(member))
                 .fetchFirst();
 
-        Map<String, String> itemUrls = itemUrls(itemId);
-        content.setBrandUrl(itemUrls.get("brand"));
-        content.setKakaoUrl(itemUrls.get("kakao"));
-        content.setCoupangUrl(itemUrls.get("coupang"));
-        content.setNaverUrl(itemUrls.get("naver"));
-
         content.setTagList(getTagList(itemId));
+        content.setUrl(itemUrls(itemId));
 
         return content;
     }
@@ -62,22 +57,28 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
     private List<String> getTagList(Long itemId) {
         List<String> tagList = new ArrayList<>();
 
-        List<Long> categoryIds = itemCategoryRepository.findCategoryIdByItem(itemId);
-        Collections.shuffle(categoryIds);
-        Long categoryId = categoryIds.stream().findFirst().orElse(null);
-        Optional<Category> category = categoryRepository.findById(categoryId);
+        Category category = queryDslConfig.jpaQueryFactory()
+                .selectFrom(QCategory.category)
+                .where(QCategory.category.id.in(
+                        JPAExpressions.select(qItemCategory.category.id)
+                                .from(qItemCategory)
+                                .where(qItemCategory.item.id.eq(itemId))
+                ))
+                .fetchFirst();
 
-        List<String> itemFilters = itemFilterRepository.findItemFilterNameByFilterId(itemId, 5L); // preferenceId = 5L
-        Collections.shuffle(itemFilters);
-        List<String> categoryNameList = itemFilters.stream().limit(2).toList();
-        tagList.add(0, category.get().getName());
+        List<String> categoryNameList = queryDslConfig.jpaQueryFactory()
+                .select(qItemFilter.name)
+                .from(qItemFilter)
+                .join(qItemFilter.item.itemCategories, qItemCategory)
+                .where(qItemCategory.item.id.eq(itemId).and(QFilter.filter.id.eq(5L)))
+                .distinct()
+                .limit(2)
+                .fetch();
+
+        tagList.add(0, category.getName());
         tagList.add(1, String.valueOf(categoryNameList));
 
         return tagList;
-    }
-
-    private BooleanExpression itemIdEq(Long itemId) {
-        return hasText(String.valueOf(itemId)) ? QItem.item.id.eq(itemId) : null;
     }
 
     private Map<String, String> itemUrls(Long itemId) {
@@ -92,9 +93,19 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
         for (Tuple result : results) {
             String platform = result.get(itemUrl.platform);
             String url = result.get(itemUrl.url);
-            itemUrls.put(platform, url);
+            if (platform != null) {
+                itemUrls.put(platform, url != null ? url : "");
+            }
         }
 
         return itemUrls;
+    }
+
+    private BooleanExpression itemIdEq(Long itemId) {
+        return hasText(String.valueOf(itemId)) ? QItem.item.id.eq(itemId) : null;
+    }
+
+    private BooleanExpression memberIdEq(Member member) {
+        return member != null ? QMember.member.id.eq(member.getId()) : null;
     }
 }

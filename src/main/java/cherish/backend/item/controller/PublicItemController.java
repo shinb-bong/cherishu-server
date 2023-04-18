@@ -1,9 +1,11 @@
 package cherish.backend.item.controller;
 
+import cherish.backend.auth.security.CurrentUser;
 import cherish.backend.item.dto.ItemInfoResponseDto;
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchResponseDto;
 import cherish.backend.item.service.ItemService;
+import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,9 +47,8 @@ public class PublicItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemInfoResponseDto findItemInformation(@PathVariable Long itemId) {
+    public ItemInfoResponseDto findItemInformation(@PathVariable Long itemId, @CurrentUser Member member) {
         itemService.increaseViews(itemId);
-        return itemService.findItemInfo(itemId);
+        return itemService.findItemInfo(itemId, member);
     }
-
 }

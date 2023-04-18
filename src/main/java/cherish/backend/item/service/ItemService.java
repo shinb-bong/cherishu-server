@@ -4,6 +4,7 @@ import cherish.backend.item.dto.*;
 import cherish.backend.item.model.Item;
 import cherish.backend.item.repository.ItemFilterRepository;
 import cherish.backend.item.repository.ItemRepository;
+import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,8 +27,8 @@ public class ItemService {
         return new PageImpl<>(response.getContent(), pageable, total);
     }
 
-    public ItemInfoResponseDto findItemInfo(Long itemId) {
-        return itemRepository.itemResponse(itemId);
+    public ItemInfoResponseDto findItemInfo(Long itemId, Member member) {
+        return itemRepository.itemResponse(itemId, member);
     }
 
     @Transactional
