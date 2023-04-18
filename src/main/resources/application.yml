@@ -6,6 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu?stringtype=unspecified
     username: postgres
+    password: ${PASSWORD}
   lifecycle:
     timeout-per-shutdown-phase: 35s
   jpa:
@@ -57,6 +58,17 @@ jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
   access-token-expire-time: 30m
   refresh-token-expire-time: 14d
+cors:
+  allowed-methods:
+    - GET
+    - POST
+    - PATCH
+    - DELETE
+    - OPTIONS
+  allowed-origins:
+    - http://127.0.0.1:5173
+    - https://127.0.0.1:5173
+    - https://rococo-paprenjak-9b8d81.netlify.app
 ---
 spring:
   config:
