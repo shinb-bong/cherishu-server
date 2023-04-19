@@ -48,7 +48,6 @@ public class PublicItemController {
 
     @GetMapping("/{itemId}")
     public ItemInfoResponseDto findItemInformation(@PathVariable Long itemId, @CurrentUser Member member) {
-        itemService.increaseViews(itemId);
         return itemService.findItemInfo(itemId, member);
     }
 }

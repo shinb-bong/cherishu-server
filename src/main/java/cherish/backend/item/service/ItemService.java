@@ -5,6 +5,8 @@ import cherish.backend.item.model.Item;
 import cherish.backend.item.repository.ItemFilterRepository;
 import cherish.backend.item.repository.ItemRepository;
 import cherish.backend.member.model.Member;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -12,11 +14,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class ItemService {
-
+    @PersistenceContext
+    private EntityManager em;
     private final ItemFilterRepository itemFilterRepository;
     private final ItemRepository itemRepository;
 
@@ -28,13 +35,34 @@ public class ItemService {
     }
 
     public ItemInfoResponseDto findItemInfo(Long itemId, Member member) {
-        return itemRepository.itemResponse(itemId, member);
+        increaseViews(itemId);
+        List<ItemInfoResponseDto> itemResponses = itemRepository.itemResponse(itemId, member);
+
+        // platform과 url을 그룹핑하여 반환
+        Map<String, String> platforms = new HashMap<>();
+        for (ItemInfoResponseDto itemResponse : itemResponses) {
+            if (itemResponse.getPlatform() != null && itemResponse.getUrl() != null) {
+                platforms.put(itemResponse.getPlatform(), itemResponse.getUrl());
+            }
+        }
+
+        ItemInfoResponseDto itemInfoResponseDto = itemResponses.get(0);
+        itemInfoResponseDto.setUrl(platforms.toString());
+        itemInfoResponseDto.setPlatform(platforms.keySet().toString());
+
+        List<String> filterTags = itemResponses.stream()
+                .map(ItemInfoResponseDto::getFilterTag)
+                .distinct()
+                .limit(2)
+                .toList();
+
+        itemInfoResponseDto.setFilterTag(filterTags.toString());
+
+        return itemInfoResponseDto;
     }
 
-    @Transactional
     public void increaseViews(Long itemId) {
-        Item item = itemRepository.findItemById(itemId);
+        Item item = em.find(Item.class, itemId);
         item.increaseViews();
-        itemRepository.save(item);
     }
 }
