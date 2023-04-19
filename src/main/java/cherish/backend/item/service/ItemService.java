@@ -48,7 +48,7 @@ public class ItemService {
 
         ItemInfoResponseDto itemInfoResponseDto = itemResponses.get(0);
         itemInfoResponseDto.setUrl(platforms.toString());
-        itemInfoResponseDto.setPlatform(platforms.keySet().toString());
+        itemInfoResponseDto.setPlatform(String.join(", ", platforms.keySet()));
 
         List<String> filterTags = itemResponses.stream()
                 .map(ItemInfoResponseDto::getFilterTag)
