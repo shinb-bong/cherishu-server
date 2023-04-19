@@ -6,12 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public record CurationRequestParam (
 
-    @Pattern(regexp = "[남여]자")
+    @Pattern(regexp = "[남여]성")
     String gender,
 
     @NotNull
@@ -32,13 +30,8 @@ public record CurationRequestParam (
     @NotNull
     int maxPrice,
 
-    String category,
+    Set<String> category,
 
     String emotion
 
-) {
-
-    public Set<String> getJobs() {
-        return Stream.of(this.job.split(",")).collect(Collectors.toSet());
-    }
-}
+) {}
