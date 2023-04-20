@@ -1,7 +1,7 @@
 package cherish.backend.curation.service;
 
 import cherish.backend.curation.dto.CurationRequestParam;
-import cherish.backend.curation.dto.query.CurationQueryDto;
+import cherish.backend.curation.dto.CurationResponseDto;
 import cherish.backend.curation.repository.CurationRepository;
 import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,7 @@ import java.util.List;
 public class CurationService {
     private final CurationRepository curationRepository;
 
-    public List<CurationQueryDto> getCurationItems(CurationRequestParam param, Member member) {
-        // TODO: member id로 like 여부 가져오기
+    public List<CurationResponseDto> getCurationItems(CurationRequestParam param, Member member) {
         long memberId = member != null ? member.getId() : -1;
         var list = curationRepository.findCurationItemsBy(
             param.age(),
@@ -28,14 +27,12 @@ public class CurationService {
             param.gender(),
             param.purpose(),
             param.relation(),
-            param.emotion()
+            param.emotion(),
+            memberId
         );
 
         return list.stream()
-            .map(t -> new CurationQueryDto(
-                t.get(0, Long.class),
-                t.get(1, Long.class)
-            ))
+            .map(CurationResponseDto::ofTuple)
             .toList();
     }
 }
