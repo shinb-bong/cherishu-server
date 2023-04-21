@@ -19,10 +19,8 @@ public class ItemInfoResponseDto {
     private String filterTag;
     private String categoryTag;
     private boolean isLiked;
-    private Long memberId;
-
     @QueryProjection
-    public ItemInfoResponseDto(Long itemId, String name, String brand, String description, int price, String imgUrl, int views, String platform, String url, String filterTag, String categoryTag, boolean isLiked, Long memberId) {
+    public ItemInfoResponseDto(Long itemId, String name, String brand, String description, int price, String imgUrl, int views, String platform, String url, String filterTag, String categoryTag, boolean isLiked) {
         this.itemId = itemId;
         this.name = name;
         this.brand = brand;
@@ -35,6 +33,5 @@ public class ItemInfoResponseDto {
         this.filterTag = filterTag;
         this.categoryTag = categoryTag;
         this.isLiked = isLiked;
-        this.memberId = memberId;
     }
 }

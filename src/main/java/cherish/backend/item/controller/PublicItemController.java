@@ -1,7 +1,7 @@
 package cherish.backend.item.controller;
 
 import cherish.backend.auth.security.CurrentUser;
-import cherish.backend.item.dto.ItemInfoResponseDto;
+import cherish.backend.item.dto.ItemInfoViewDto;
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchResponseDto;
 import cherish.backend.item.service.ItemService;
@@ -47,7 +47,7 @@ public class PublicItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemInfoResponseDto findItemInformation(@PathVariable Long itemId, @CurrentUser Member member) {
+    public ItemInfoViewDto findItemInformation(@PathVariable Long itemId, @CurrentUser Member member) {
         return itemService.findItemInfo(itemId, member);
     }
 }

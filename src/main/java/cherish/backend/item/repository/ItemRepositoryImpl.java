@@ -35,7 +35,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
                         qItem.description.as("description"), qItem.price.as("price"),
                         qItem.imgUrl.as("imgUrl"), qItem.views.as("views"),
                         qItemUrl.platform.as("platform"), qItemUrl.url.as("url"),
-                        qItemFilter.name.as("filterTag"), qCategory.name.as("categoryTag"), isLiked.as("isLiked"), qMember.id.as("memberId")))
+                        qItemFilter.name.as("filterTag"), qCategory.name.as("categoryTag"), isLiked.as("isLiked")))
                 .from(qItem)
                 .innerJoin(qItemUrl).on(qItem.id.eq(qItemUrl.item.id))
                 .innerJoin(qItemCategory).on(qItem.id.eq(qItemCategory.item.id))

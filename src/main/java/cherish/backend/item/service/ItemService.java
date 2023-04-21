@@ -14,9 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -34,21 +34,23 @@ public class ItemService {
         return new PageImpl<>(response.getContent(), pageable, total);
     }
 
-    public ItemInfoResponseDto findItemInfo(Long itemId, Member member) {
+    public ItemInfoViewDto findItemInfo(Long itemId, Member member) {
         increaseViews(itemId);
         List<ItemInfoResponseDto> itemResponses = itemRepository.itemResponse(itemId, member);
+        ItemInfoResponseDto itemInfoResponseDto = itemResponses.get(0);
 
-        // platform과 url을 그룹핑하여 반환
-        Map<String, String> platforms = new HashMap<>();
+        Set<String> platforms = new HashSet<>();
+        Set<String> urls = new HashSet<>();
+
         for (ItemInfoResponseDto itemResponse : itemResponses) {
             if (itemResponse.getPlatform() != null && itemResponse.getUrl() != null) {
-                platforms.put(itemResponse.getPlatform(), itemResponse.getUrl());
+                platforms.add(itemResponse.getPlatform());
+                urls.add(itemResponse.getUrl());
             }
         }
 
-        ItemInfoResponseDto itemInfoResponseDto = itemResponses.get(0);
-        itemInfoResponseDto.setUrl(platforms.toString());
-        itemInfoResponseDto.setPlatform(String.join(", ", platforms.keySet()));
+        itemInfoResponseDto.setUrl(String.join(", ", urls));
+        itemInfoResponseDto.setPlatform(String.join(", ", platforms));
 
         List<String> filterTags = itemResponses.stream()
                 .map(ItemInfoResponseDto::getFilterTag)
@@ -57,8 +59,9 @@ public class ItemService {
                 .toList();
 
         itemInfoResponseDto.setFilterTag(filterTags.toString());
+        ItemInfoViewDto itemInfoViewDto = new ItemInfoViewDto(itemInfoResponseDto);
 
-        return itemInfoResponseDto;
+        return itemInfoViewDto;
     }
 
     public void increaseViews(Long itemId) {
