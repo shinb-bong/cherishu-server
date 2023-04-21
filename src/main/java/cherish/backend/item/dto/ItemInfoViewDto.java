@@ -3,9 +3,7 @@ package cherish.backend.item.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +16,7 @@ public class ItemInfoViewDto {
     private String imgUrl;
     private int views;
     private List<String> platforms;
-    private List<String> urls;
+    private Map<String, String> urls;
     private List<String> filterTags;
     private String categoryTag;
     private boolean isLiked;
@@ -32,7 +30,7 @@ public class ItemInfoViewDto {
         this.imgUrl = itemInfoResponseDto.getImgUrl();
         this.views = itemInfoResponseDto.getViews();
         this.platforms = new ArrayList<>(Arrays.asList(itemInfoResponseDto.getPlatform().split(", ")));
-        this.urls = new ArrayList<>(Arrays.asList(itemInfoResponseDto.getUrl().split(", ")));
+        this.urls = getUrls(itemInfoResponseDto);
         this.filterTags = Arrays.asList(itemInfoResponseDto.getFilterTag().split(", "));
         this.categoryTag = itemInfoResponseDto.getCategoryTag();
         this.isLiked = itemInfoResponseDto.isLiked();
@@ -43,4 +41,15 @@ public class ItemInfoViewDto {
                 .map(tag -> tag.replaceAll("\\[|\\]", "").trim())
                 .toList();
     }
+
+    public Map<String, String> getUrls(ItemInfoResponseDto itemInfoResponseDto) {
+        Map<String, String> urls = new HashMap<>();
+        String[] platforms = itemInfoResponseDto.getPlatform().split(", ");
+        String[] urlsArr = itemInfoResponseDto.getUrl().split(", ");
+        for (int i = 0; i < platforms.length; i++) {
+            urls.put(platforms[i], urlsArr[i]);
+        }
+        return urls;
+    }
+
 }
