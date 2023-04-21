@@ -37,8 +37,8 @@ public class ItemService {
         List<ItemInfoResponseDto> itemResponses = itemRepository.itemResponse(itemId, member);
         ItemInfoResponseDto itemInfoResponseDto = itemResponses.get(0);
 
-        Set<String> platforms = new HashSet<>();
-        Set<String> urls = new HashSet<>();
+        Set<String> platforms = new LinkedHashSet<>();
+        Set<String> urls = new LinkedHashSet<>();
 
         for (ItemInfoResponseDto itemResponse : itemResponses) {
             if (itemResponse.getPlatform() != null && itemResponse.getUrl() != null) {
