@@ -4,8 +4,6 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 public class ItemInfoResponseDto {
@@ -16,16 +14,13 @@ public class ItemInfoResponseDto {
     private int price;
     private String imgUrl;
     private int views;
-    private String brandUrl;
-    private String kakaoUrl;
-    private String coupangUrl;
-    private String naverUrl;
-    private List<String> tagList;
-
-    private Long itemLikeId;
-
+    private String platform;
+    private String url;
+    private String filterTag;
+    private String categoryTag;
+    private boolean isLiked;
     @QueryProjection
-    public ItemInfoResponseDto(Long itemId, String name, String brand, String description, int price, String imgUrl, int views, Long itemLikeId) {
+    public ItemInfoResponseDto(Long itemId, String name, String brand, String description, int price, String imgUrl, int views, String platform, String url, String filterTag, String categoryTag, boolean isLiked) {
         this.itemId = itemId;
         this.name = name;
         this.brand = brand;
@@ -33,6 +28,10 @@ public class ItemInfoResponseDto {
         this.price = price;
         this.imgUrl = imgUrl;
         this.views = views;
-        this.itemLikeId = itemLikeId;
+        this.platform = platform;
+        this.url = url;
+        this.filterTag = filterTag;
+        this.categoryTag = categoryTag;
+        this.isLiked = isLiked;
     }
 }
