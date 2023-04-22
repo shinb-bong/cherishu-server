@@ -139,21 +139,16 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
             booleanBuilder.and(categoryExpression);
         }
 
-        if (searchCondition.getJobName() != null) {
-            booleanBuilder.and(job.name.eq(searchCondition.getJobName()));
+        if (isNotEmpty(searchCondition.getJobName())) {
+            booleanBuilder.and(job.name.containsIgnoreCase(searchCondition.getJobName()));
         }
 
-        if (searchCondition.getSituationName() != null) {
-            booleanBuilder.and(itemFilter.filter.name.eq(searchCondition.getSituationName()));
+        if (isNotEmpty(searchCondition.getSituationName())) {
+            booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getSituationName()));
         }
 
-        if (searchCondition.getEmotionName() != null) {
-            booleanBuilder.and(itemFilter.filter.name.eq(searchCondition.getEmotionName()));
-        }
-
-        if (searchCondition.getMinAge() != null && searchCondition.getMaxAge() != null) {
-            booleanBuilder.and(item.minAge.goe(searchCondition.getMinAge()))
-                    .and(item.maxAge.loe(searchCondition.getMaxAge()));
+        if (isNotEmpty(searchCondition.getGender())) {
+            booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getGender()));
         }
 
         return booleanBuilder;
