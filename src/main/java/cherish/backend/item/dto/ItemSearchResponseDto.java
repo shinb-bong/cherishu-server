@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ItemSearchResponseDto {
-         private Long id;
+        private Long id;
         private String name;
         private String brand;
         private String description;

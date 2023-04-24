@@ -26,12 +26,10 @@ public class PublicItemController {
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) String jobName,
             @RequestParam(required = false) String situationName,
-            @RequestParam(required = false) String emotionName,
-            @RequestParam(required = false) Integer minAge,
-            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) String gender,
             Pageable pageable) {
-
         ItemSearchCondition condition = new ItemSearchCondition();
+
         condition.setKeyword(keyword);
         if (categoryName != null && !categoryName.isEmpty()) {
             List<String> categories = List.of(categoryName.split(","));
@@ -39,9 +37,7 @@ public class PublicItemController {
         }
         condition.setJobName(jobName);
         condition.setSituationName(situationName);
-        condition.setEmotionName(emotionName);
-        condition.setMinAge(minAge);
-        condition.setMaxAge(maxAge);
+        condition.setGender(gender);
 
         return itemService.searchItem(condition, pageable);
     }
