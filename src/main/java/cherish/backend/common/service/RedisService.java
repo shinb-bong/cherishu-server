@@ -18,6 +18,7 @@ public class RedisService {
     private static final String EMAIL_CODE_PREFIX = "_code_";
     private static final String EMAIL_VERIFIED_PREFIX = "_vrf_";
     private static final String DAILY_COUNT_PREFIX = "_cnt_";
+    private static final String LOGGED_OUT_PREFIX = "_out_";
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -41,6 +42,10 @@ public class RedisService {
         return hasKey(DAILY_COUNT_PREFIX + email);
     }
 
+    public boolean isLoggedOut(String token) {
+        return hasKey(LOGGED_OUT_PREFIX + token);
+    }
+
     private void set(String key, String value, long time) {
         redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(time));
         log.info("set redis value for {} sec\n{} : {}", time, key, value);
@@ -62,6 +67,10 @@ public class RedisService {
         LocalDateTime date = LocalDate.now().plusDays(1).atStartOfDay();
         long secondsLeftToday = ChronoUnit.SECONDS.between(LocalDateTime.now(), date);
         this.set(DAILY_COUNT_PREFIX + email, String.valueOf(value), secondsLeftToday);
+    }
+
+    public void blockAccessToken(String token, long time) {
+        this.set(LOGGED_OUT_PREFIX + token, "", time);
     }
 
     private String get(String key) {

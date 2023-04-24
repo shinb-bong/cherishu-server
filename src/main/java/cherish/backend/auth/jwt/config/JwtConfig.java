@@ -1,4 +1,4 @@
-package cherish.backend.auth.jwt;
+package cherish.backend.auth.jwt.config;
 
 import cherish.backend.common.util.DurationShortFormUtils;
 import io.jsonwebtoken.io.Decoders;

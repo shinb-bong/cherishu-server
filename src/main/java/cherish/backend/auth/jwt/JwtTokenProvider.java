@@ -1,5 +1,7 @@
 package cherish.backend.auth.jwt;
 
+import cherish.backend.auth.jwt.config.JwtConfig;
+import cherish.backend.auth.jwt.config.JwtProperties;
 import cherish.backend.common.service.RedisService;
 import cherish.backend.member.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
@@ -77,7 +79,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("auth") == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new JwtException("권한 정보가 없는 토큰입니다.");
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -97,6 +99,9 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            if (redisService.isLoggedOut(token)) {
+                throw new JwtException("Invalid token");
+            }
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             throw new JwtException("Invalid token");
@@ -115,5 +120,20 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    /**
+     * 남은 유효기간 ms return
+     * @param accessToken
+     * @return
+     */
+    public long getExpiration(String accessToken) {
+        Date expiration = Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(accessToken)
+            .getBody().getExpiration();
+        // 만료기간 date에서 현재 date 뺀만큼 ms
+        return expiration.getTime() - new Date().getTime();
     }
 }

@@ -1,4 +1,4 @@
-package cherish.backend.auth.jwt;
+package cherish.backend.auth.jwt.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

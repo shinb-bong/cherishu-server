@@ -1,7 +1,7 @@
 package cherish.backend.auth.security;
 
-import cherish.backend.auth.jwt.JwtAuthenticationFilter;
-import cherish.backend.auth.jwt.JwtExceptionFilter;
+import cherish.backend.auth.jwt.filter.JwtAuthenticationFilter;
+import cherish.backend.auth.jwt.filter.JwtExceptionFilter;
 import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.common.config.cors.CorsProperties;
 import lombok.RequiredArgsConstructor;
