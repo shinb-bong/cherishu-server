@@ -25,8 +25,8 @@ public class ItemService {
     private final ItemFilterRepository itemFilterRepository;
     private final ItemRepository itemRepository;
 
-    public Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
-        Page<ItemSearchResponseDto> response = itemFilterRepository.searchItem(searchCondition, pageable);
+    public Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Member member, Pageable pageable) {
+        Page<ItemSearchResponseDto> response = itemFilterRepository.searchItem(searchCondition, member, pageable);
         long total = response.getTotalElements();
 
         return new PageImpl<>(response.getContent(), pageable, total);

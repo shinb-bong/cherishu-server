@@ -1,6 +1,7 @@
 package cherish.backend.item.repository;
 
 import cherish.backend.item.dto.*;
+import cherish.backend.member.model.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,6 +13,6 @@ public interface ItemFilterRepositoryCustom {
 
     List<AgeFilterQueryDto> findItemFilterByAge(AgeFilterCondition ageCondition);
 
-    Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable);
+    Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Member member, Pageable pageable);
 
 }

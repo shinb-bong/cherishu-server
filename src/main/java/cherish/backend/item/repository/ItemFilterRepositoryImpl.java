@@ -3,8 +3,13 @@ package cherish.backend.item.repository;
 import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.*;
+import cherish.backend.member.model.Member;
+import cherish.backend.member.model.QMember;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +24,7 @@ import static cherish.backend.item.model.QItem.*;
 import static cherish.backend.item.model.QItemCategory.*;
 import static cherish.backend.item.model.QItemFilter.*;
 import static cherish.backend.item.model.QItemJob.itemJob;
+import static cherish.backend.item.model.QItemLike.*;
 import static cherish.backend.member.model.QJob.job;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.StringUtils.*;
@@ -72,10 +78,12 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
     }
 
     @Override
-    public Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Pageable pageable) {
+    public Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Member member, Pageable pageable) {
+        BooleanExpression isLiked = member != null ? new CaseBuilder().when(itemLike.member.eq(member)).then(true).otherwise(false) : Expressions.asBoolean(false);
+
         List<ItemSearchResponseDto> content = queryDslConfig.jpaQueryFactory()
-                .selectDistinct(new QItemSearchResponseDto(
-                        item.id, item.name, item.brand, item.description, item.price, item.imgUrl))
+                .selectDistinct(Projections.constructor(ItemSearchResponseDto.class,
+                        item.id, item.name, item.brand, item.description, item.price, item.imgUrl, isLiked.as("isLiked")))
                 .from(item)
                 .leftJoin(item.itemFilters, itemFilter)
                 .leftJoin(item.itemJobs, itemJob)
@@ -83,6 +91,8 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .leftJoin(itemFilter.filter, filter)
                 .leftJoin(itemJob.job, job)
                 .leftJoin(itemCategory.category, category)
+                .leftJoin(itemLike).on(item.id.eq(itemLike.item.id).and(member != null ? itemLike.member.id.eq(member.getId()) : null))
+                .leftJoin(itemLike.member, QMember.member)
                 .where(getSearchCondition(searchCondition))
                 .orderBy(item.id.asc()) // 기본 정렬
                 .offset(pageable.getOffset())
@@ -97,6 +107,8 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .leftJoin(itemFilter.filter, filter)
                 .leftJoin(itemJob.job, job)
                 .leftJoin(itemCategory.category, category)
+                .leftJoin(itemLike).on(item.id.eq(itemLike.item.id).and(member != null ? itemLike.member.id.eq(member.getId()) : null))
+                .leftJoin(itemLike.member, QMember.member)
                 .where(getSearchCondition(searchCondition))
                 .distinct()
                 .select(item);
@@ -115,13 +127,9 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                     item.name.contains(keyword)
                             .or(item.brand.contains(keyword))
                             .or(category.name.contains(keyword))
-                            .or(category.children.any().name.contains(keyword))
                             .or(itemCategory.category.name.contains(keyword))
-                            .or(itemCategory.category.children.any().name.contains(keyword))
                             .or(job.name.contains(keyword))
-                            .or(job.children.any().name.contains(keyword))
                             .or(itemJob.job.name.contains(keyword))
-                            .or(itemJob.job.children.any().name.contains(keyword))
                             .or(filter.name.contains(keyword))
                             .or(itemFilter.filter.name.contains(keyword))
             );

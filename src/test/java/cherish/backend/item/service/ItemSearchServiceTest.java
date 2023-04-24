@@ -16,6 +16,7 @@ import cherish.backend.item.repository.ItemJobRepository;
 import cherish.backend.item.repository.ItemRepository;
 import cherish.backend.item.service.ItemService;
 import cherish.backend.member.model.Job;
+import cherish.backend.member.model.Member;
 import cherish.backend.member.repository.JobRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,7 @@ public class ItemSearchServiceTest {
     @DisplayName("keyword 와 categoryName 을 searchCondition 에 지정한 후 알맞은 데이터 반환")
     void testSearchItem() {
         String keyword = "test2";
+        Member member = Member.builder().id(1L).name("user").build();
         Item item = Item.builder().id(1L).name("test").brand("test1").price(1).build();
         Item item2 = Item.builder().id(2L).name("test2").brand("test3").price(2).build();
         Job job = Job.builder().id(1L).name("학생").build();
@@ -79,7 +81,7 @@ public class ItemSearchServiceTest {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
 
-        Page<ItemSearchResponseDto> result = itemService.searchItem(condition, pageable);
+        Page<ItemSearchResponseDto> result = itemService.searchItem(condition, member, pageable);
         if (result == null) {
             System.out.println("Search result is null");
         } else {
