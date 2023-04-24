@@ -66,9 +66,7 @@ cors:
     - DELETE
     - OPTIONS
   allowed-origins:
-    - http://127.0.0.1:5173
-    - https://127.0.0.1:5173
-    - https://rococo-paprenjak-9b8d81.netlify.app
+    - https://cherishu.firebaseapp.com
 ---
 spring:
   config:
