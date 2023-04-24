@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -79,6 +80,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ErrorResponseDto handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
         return createError(e, "잘못된 요청입니다.");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ErrorResponseDto handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException e) {
+        return createError(e, "아이디 또는 비밀번호가 틀립니다.");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

@@ -37,7 +37,7 @@ class MemberTest {
                 .name("testUser")
                 .email("test@naver.com")
                 .password("123456")
-                .nickName("test-man")
+                .nickname("test-man")
                 .infoCheck(true)
                 .build();
         return memberFormDto;

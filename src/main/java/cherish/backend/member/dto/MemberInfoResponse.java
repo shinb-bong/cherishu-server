@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Builder
 public class MemberInfoResponse {
     private String name; // 이름
-    private String nickName; // 닉네임
+    private String nickname; // 닉네임
     private String email; // 이메일
     private String gender; // 성별
     private LocalDate birth; // 생일
@@ -18,7 +18,7 @@ public class MemberInfoResponse {
 
     public static MemberInfoResponse of(Member member){
         return MemberInfoResponse.builder().name(member.getName())
-                .nickName(member.getNickname())
+                .nickname(member.getNickname())
                 .email(member.getEmail())
                 .gender(member.getGender().toString())
                 .birth(member.getBirth())

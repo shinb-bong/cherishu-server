@@ -54,7 +54,7 @@ public class Member extends BaseTimeEntity {
 
         return Member.builder()
                 .name(formDto.getName())
-                .nickname(formDto.getNickName())
+                .nickname(formDto.getNickname())
                 .email(formDto.getEmail())
                 .password(passwordEncoder.encode(formDto.getPassword()))
                 .informationCheck(formDto.isInfoCheck())
@@ -70,8 +70,8 @@ public class Member extends BaseTimeEntity {
         this.password = password;
     }
 
-    public void changeInfo(String nickName, Job job){
-        this.nickname = nickName;
+    public void changeInfo(String nickname, Job job){
+        this.nickname = nickname;
         this.job = job;
     }
 }
