@@ -2,6 +2,7 @@ package cherish.backend.member.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +32,7 @@ public class MemberFormDto {
     @NotEmpty
     private String password; // 패스워드
 
-    @NotEmpty
+    @NotNull
     private boolean infoCheck; // 광고성 동의
 
     // 추가 정보
