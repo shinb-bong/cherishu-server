@@ -4,6 +4,7 @@ import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.auth.jwt.TokenInfo;
 import cherish.backend.common.service.RedisService;
 import cherish.backend.member.constant.Constants;
+import cherish.backend.member.dto.ChangeInfoRequest;
 import cherish.backend.member.dto.MemberFormDto;
 import cherish.backend.member.dto.MemberInfoResponse;
 import cherish.backend.member.email.service.EmailService;
@@ -14,6 +15,8 @@ import cherish.backend.member.repository.JobRepository;
 import cherish.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -125,9 +128,17 @@ public class MemberService {
     }
 
     @Transactional
-    public void changeInfo(String nickName, String jobName, Member member) {
-        Job job = jobRepository.findByName(jobName).orElseThrow(() -> new IllegalStateException("해당 직업이 존재하지 않습니다."));
-        member.changeInfo(nickName, job);
+    public void changeInfo(ChangeInfoRequest request, Member member) {
+        // 비밀번호 변경
+        if (StringUtils.isNotBlank(request.getOldPassword())) {
+            if (!passwordEncoder.matches(request.getOldPassword(), member.getPassword())) {
+                throw new AuthenticationCredentialsNotFoundException(Constants.FAILED_TO_LOGIN);
+            }
+            member.changePwd(passwordEncoder.encode(request.getNewPassword()));
+        }
+        Job job = jobRepository.findByName(request.getJobName())
+            .orElseThrow(() -> new IllegalArgumentException(Constants.JOB_NOT_FOUND));
+        member.changeInfo(request.getNickname(), job);
         memberRepository.save(member);
     }
 

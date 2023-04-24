@@ -43,7 +43,7 @@ public class MemberServiceUnitTest {
                 .name("testUser")
                 .email("test@naver.com")
                 .password("123456")
-                .nickName("test-man")
+                .nickname("test-man")
                 .infoCheck(true)
                 .gender(String.valueOf(Member.Gender.MALE))
                 .build();

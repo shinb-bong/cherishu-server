@@ -1,11 +1,13 @@
 package cherish.backend.common.aop;
 
 import cherish.backend.common.dto.ErrorResponseDto;
+import cherish.backend.member.constant.Constants;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -72,13 +74,19 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadCredentialsException.class)
     public ErrorResponseDto handleCredential(BadCredentialsException e){
-        return createError(e, "로그인에 실패하였습니다.");
+        return createError(e, Constants.FAILED_TO_LOGIN);
     }
 
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ErrorResponseDto handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
         return createError(e, "잘못된 요청입니다.");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ErrorResponseDto handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException e) {
+        return createError(e, Constants.FAILED_TO_LOGIN);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
