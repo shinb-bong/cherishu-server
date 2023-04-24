@@ -1,6 +1,6 @@
 package cherish.backend.common.controller;
 
-import cherish.backend.auth.jwt.JwtConfig;
+import cherish.backend.auth.jwt.config.JwtConfig;
 import cherish.backend.auth.jwt.dto.TokenResponseDto;
 import cherish.backend.common.service.TokenRefreshService;
 import jakarta.servlet.http.Cookie;

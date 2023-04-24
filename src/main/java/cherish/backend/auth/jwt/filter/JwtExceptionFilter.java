@@ -1,4 +1,4 @@
-package cherish.backend.auth.jwt;
+package cherish.backend.auth.jwt.filter;
 
 import cherish.backend.common.dto.ErrorResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
