@@ -132,7 +132,7 @@ public class MemberService {
         // 비밀번호 변경
         if (StringUtils.isNotBlank(request.getOldPassword())) {
             if (!passwordEncoder.matches(request.getOldPassword(), member.getPassword())) {
-                throw new AuthenticationCredentialsNotFoundException("아이디 또는 비밀번호가 틀립니다.");
+                throw new AuthenticationCredentialsNotFoundException(Constants.FAILED_TO_LOGIN);
             }
             member.changePwd(passwordEncoder.encode(request.getNewPassword()));
         }

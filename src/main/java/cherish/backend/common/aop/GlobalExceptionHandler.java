@@ -1,6 +1,7 @@
 package cherish.backend.common.aop;
 
 import cherish.backend.common.dto.ErrorResponseDto;
+import cherish.backend.member.constant.Constants;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
@@ -73,7 +74,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadCredentialsException.class)
     public ErrorResponseDto handleCredential(BadCredentialsException e){
-        return createError(e, "로그인에 실패하였습니다.");
+        return createError(e, Constants.FAILED_TO_LOGIN);
     }
 
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
@@ -85,7 +86,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
     public ErrorResponseDto handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException e) {
-        return createError(e, "아이디 또는 비밀번호가 틀립니다.");
+        return createError(e, Constants.FAILED_TO_LOGIN);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
