@@ -2,6 +2,7 @@ package cherish.backend.curation.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.Set;
@@ -11,7 +12,7 @@ public record CurationRequestParam (
     @Pattern(regexp = "[남여]성")
     String gender,
 
-    @NotEmpty
+    @NotNull
     int age,
 
     String job,
@@ -23,10 +24,10 @@ public record CurationRequestParam (
     String relation,
 
     @Min(0)
-    @NotEmpty
+    @NotNull
     int minPrice,
 
-    @NotEmpty
+    @NotNull
     int maxPrice,
 
     Set<String> category,
