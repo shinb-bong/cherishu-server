@@ -27,7 +27,7 @@ public class PublicItemController {
             @RequestParam(required = false) String jobName,
             @RequestParam(required = false) String situationName,
             @RequestParam(required = false) String gender,
-            Pageable pageable) {
+            @CurrentUser Member member, Pageable pageable) {
         ItemSearchCondition condition = new ItemSearchCondition();
 
         condition.setKeyword(keyword);
@@ -39,7 +39,7 @@ public class PublicItemController {
         condition.setSituationName(situationName);
         condition.setGender(gender);
 
-        return itemService.searchItem(condition, pageable);
+        return itemService.searchItem(condition, member, pageable);
     }
 
     @GetMapping("/{itemId}")
