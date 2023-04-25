@@ -100,7 +100,7 @@ public class MemberService {
             throw new IllegalStateException(Constants.EMAIL_ALREADY);
         }
         String code = EmailCodeGenerator.generateCode();
-        emailService.sendMessage(email, "인증번호 : " + code);
+        emailService.sendMessage(email, code);
         setRedisCode(email, code);
         log.info("code {} has been sent to {}", code, email);
     }
@@ -162,7 +162,7 @@ public class MemberService {
             throw new IllegalStateException(Constants.MEMBER_NOT_FOUND);
         }
         String code = EmailCodeGenerator.generateCode();
-        emailService.sendMessage(email, "인증번호 : " + code);
+        emailService.sendMessage(email, code);
         setRedisCode(email, code);
         log.info("code {} has been sent to {}", code, email);
     }

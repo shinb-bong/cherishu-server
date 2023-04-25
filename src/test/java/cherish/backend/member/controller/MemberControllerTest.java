@@ -1,7 +1,7 @@
 package cherish.backend.member.controller;
 
-import cherish.backend.auth.jwt.JwtConfig;
 import cherish.backend.auth.jwt.TokenInfo;
+import cherish.backend.auth.jwt.config.JwtConfig;
 import cherish.backend.member.dto.ChangeInfoRequest;
 import cherish.backend.member.dto.MemberLoginRequestDto;
 import cherish.backend.member.dto.email.EmailCodeValidationRequest;
