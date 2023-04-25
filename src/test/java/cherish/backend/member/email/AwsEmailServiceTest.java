@@ -21,14 +21,13 @@ class AwsEmailServiceTest {
         //when
         String code;
         try {
-            code = emailService.sendMessage(id, UUID.randomUUID().toString().substring(6));
+            emailService.sendMessage(id, UUID.randomUUID().toString().substring(6));
         } catch (Exception e) {
             log.info("발송 오류 = {}", e.getMessage());
             throw new RuntimeException(e);
         }
 
         System.out.println("SendEmailServiceTest.AWS_SES_TEST");
-        System.out.println(code);
     }
 
 }

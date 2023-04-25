@@ -5,10 +5,8 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailSendException;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Profile("aws")
@@ -16,17 +14,16 @@ import org.springframework.stereotype.Service;
 public class AwsEmailService implements EmailService {
     private final AmazonSimpleEmailService amazonSimpleEmailService;
     @Override
-    public String sendMessage(String to, String content){
+    public void sendMessage(String to, String code) {
         final EmailSenderDto senderDto = EmailSenderDto.builder() // 1
                 .to(to)
-                .content(content)
+                .content(code)
                 .build();
 
         final SendEmailResult sendEmailResult = amazonSimpleEmailService // 2
                 .sendEmail(senderDto.toSendRequestDto());
 
         sendingResultMustSuccess(sendEmailResult); // 3
-        return content;
     }
 
     private void sendingResultMustSuccess(SendEmailResult sendEmailResult) {

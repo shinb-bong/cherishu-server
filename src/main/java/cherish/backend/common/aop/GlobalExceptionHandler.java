@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
@@ -93,6 +94,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JwtException.class)
     public ErrorResponseDto handleJwtException(JwtException e) {
         return createError(e, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(MailSendException.class)
+    public ErrorResponseDto handleMailSendException(MailSendException e) {
+        return createError(e, "메일 전송에 실패했습니다.");
     }
 
     // 공통 예외 처리
