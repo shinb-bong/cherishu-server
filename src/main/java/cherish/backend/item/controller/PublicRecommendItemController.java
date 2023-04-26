@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/public/recommendItem")
+@RequestMapping("/public/mainPage")
 public class PublicRecommendItemController {
     private final RecommendItemService recommendItemService;
 
