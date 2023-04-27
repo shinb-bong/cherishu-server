@@ -24,20 +24,18 @@ public class RecommendItemService {
 
         Map<Long, List<RecommendItemQueryDto>> recommendItemMap = recommendItemList.stream()
                 .collect(Collectors.groupingBy(RecommendItemQueryDto::getRecommendId));
-
         List<RecommendItemResponseDto> result = recommendItemMap.entrySet().stream()
                 .map(entry -> {
-                    RecommendItemResponseDto responseDto = new RecommendItemResponseDto();
-                    responseDto.setBannerUrl(entry.getValue().get(0).getBannerUrl());
-
-                    RecommendItemQueryDto itemQueryDto = entry.getValue().get(0);
-                    responseDto.setTitle(itemQueryDto.getTitle());
-                    responseDto.setSubtitle(itemQueryDto.getSubtitle());
-
                     List<RecommendItemResponseDto.RecommendItemDto> recommendItemDtos = entry.getValue().stream()
                             .map(RecommendItemResponseDto.RecommendItemDto::item)
                             .collect(Collectors.toList());
+
+                    RecommendItemQueryDto itemQueryDto = entry.getValue().get(0);
+                    RecommendItemResponseDto responseDto = new RecommendItemResponseDto();
+                    responseDto.setTitle(itemQueryDto.getTitle());
+                    responseDto.setSubtitle(itemQueryDto.getSubtitle());
                     responseDto.setRecommendItemList(recommendItemDtos);
+                    responseDto.setBannerUrl(entry.getValue().get(0).getBannerUrl());
 
                     return responseDto;
                 })
@@ -45,5 +43,4 @@ public class RecommendItemService {
 
         return result;
     }
-
 }
