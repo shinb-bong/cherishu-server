@@ -1,5 +1,6 @@
 package cherish.backend.item.model;
 
+import cherish.backend.board.model.MonthlyBoardItem;
 import cherish.backend.common.model.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,6 +40,9 @@ public class Item extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "item", fetch= FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ItemLike> itemLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", fetch= FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MonthlyBoardItem> monthlyBoardItems = new ArrayList<>();
 
     public void increaseViews() {
         this.views += 1;
