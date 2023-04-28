@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class RecommendItemQueryDto {
     private Long recommendId;
     private String bannerUrl;
+    private Long itemId;
     private String name;
     private String brand;
     private int price;
@@ -18,9 +19,10 @@ public class RecommendItemQueryDto {
     private String subtitle;
 
     @QueryProjection
-    public RecommendItemQueryDto(Long recommendId, String bannerUrl, String name, String brand, int price, String imgUrl, boolean like, String title, String subtitle) {
+    public RecommendItemQueryDto(Long recommendId, String bannerUrl, Long itemId, String name, String brand, int price, String imgUrl, boolean like, String title, String subtitle) {
         this.recommendId = recommendId;
         this.bannerUrl = bannerUrl;
+        this.itemId = itemId;
         this.name = name;
         this.brand = brand;
         this.price = price;

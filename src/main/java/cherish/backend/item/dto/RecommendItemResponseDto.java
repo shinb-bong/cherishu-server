@@ -17,6 +17,7 @@ public class RecommendItemResponseDto {
     @Builder
     @Data
     public static class RecommendItemDto {
+        private Long itemId;
         private String name;
         private String brand;
         private int price;
@@ -25,6 +26,7 @@ public class RecommendItemResponseDto {
 
         public static RecommendItemDto item(RecommendItemQueryDto itemQueryDto) {
             return RecommendItemDto.builder()
+                    .itemId(itemQueryDto.getItemId())
                     .name(itemQueryDto.getName())
                     .brand(itemQueryDto.getBrand())
                     .price(itemQueryDto.getPrice())

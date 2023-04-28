@@ -1,6 +1,5 @@
 package cherish.backend.item.repository;
 
-import cherish.backend.board.model.QRecommend;
 import cherish.backend.item.dto.*;
 import cherish.backend.member.model.Member;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -28,7 +27,7 @@ public class RecommendItemRepository {
         BooleanExpression like = member != null ? new CaseBuilder().when(itemLike.member.eq(member)).then(true).otherwise(false) : Expressions.asBoolean(false);
         return queryFactory
                 .select(new QRecommendItemQueryDto(
-                        QRecommend.recommend.id, monthlyBoard.imgUrl, item.name, item.brand, item.price, item.imgUrl, like, recommend.title, recommend.subTitle)
+                        recommend.id, monthlyBoard.imgUrl, item.id, item.name, item.brand, item.price, item.imgUrl, like, recommend.title, recommend.subTitle)
                 )
                 .from(recommendItem)
                 .leftJoin(recommendItem.item, item)
