@@ -151,18 +151,15 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
             booleanBuilder.and(job.name.containsIgnoreCase(searchCondition.getJobName()));
         }
 
-        if (isNotEmpty(searchCondition.getJobName())) {
-            booleanBuilder.and(job.name.containsIgnoreCase(searchCondition.getJobName()));
+        if (!isNotEmpty(searchCondition.getGender()) &&isNotEmpty(searchCondition.getSituationName())) {
+            booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getSituationName()));
         }
-        if (isNotEmpty(searchCondition.getJobName())) {
-            booleanBuilder.and(job.name.containsIgnoreCase(searchCondition.getJobName()));
+
+        if (isNotEmpty(searchCondition.getGender()) && !isNotEmpty(searchCondition.getSituationName())) {
+            booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getGender()));
         }
 
         if (isNotEmpty(searchCondition.getSituationName()) && isNotEmpty(searchCondition.getGender())) {
-                BooleanBuilder conditionBuilder = new BooleanBuilder();
-                conditionBuilder.or(itemFilter.name.equalsIgnoreCase(searchCondition.getSituationName()))
-                        .or(itemFilter.name.equalsIgnoreCase(searchCondition.getGender()));
-
             List<Long> list = queryDslConfig.jpaQueryFactory().select(itemFilter.item.id)
                     .from(itemFilter)
                     .where(itemFilter.name.in(searchCondition.getSituationName(), searchCondition.getGender()))
@@ -173,13 +170,6 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
             booleanBuilder.and(item.id.in(list));
         }
 
-        if (isNotEmpty(searchCondition.getSituationName())) {
-            booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getSituationName()));
-        }
-
-        if (isNotEmpty(searchCondition.getGender())) {
-            booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getGender()));
-        }
         return booleanBuilder;
     }
 
