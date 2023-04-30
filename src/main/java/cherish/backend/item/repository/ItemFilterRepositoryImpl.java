@@ -2,7 +2,6 @@ package cherish.backend.item.repository;
 
 import cherish.backend.common.config.QueryDslConfig;
 import cherish.backend.item.dto.*;
-import cherish.backend.item.model.*;
 import cherish.backend.member.model.Member;
 import cherish.backend.member.model.QMember;
 import com.querydsl.core.BooleanBuilder;
@@ -13,8 +12,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -99,8 +98,9 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        JPAQuery<Item> countQuery = queryDslConfig.jpaQueryFactory()
-                .selectFrom(item)
+        JPAQuery<Long> total = queryDslConfig.jpaQueryFactory()
+                .select(item.id.count())
+                .from(item)
                 .leftJoin(item.itemFilters, itemFilter)
                 .leftJoin(item.itemJobs, itemJob)
                 .leftJoin(item.itemCategories, itemCategory)
@@ -110,12 +110,9 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .leftJoin(itemLike).on(item.id.eq(itemLike.item.id).and(member != null ? itemLike.member.id.eq(member.getId()) : null))
                 .leftJoin(itemLike.member, QMember.member)
                 .where(getSearchCondition(searchCondition))
-                .distinct()
-                .select(item);
+                .distinct();
 
-        long total = countQuery.fetch().size();
-
-        return new PageImpl<>(content, pageable, total);
+        return PageableExecutionUtils.getPage(content, pageable, total::fetchFirst);
     }
 
     private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {
@@ -151,12 +148,23 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
             booleanBuilder.and(job.name.containsIgnoreCase(searchCondition.getJobName()));
         }
 
-        if (isNotEmpty(searchCondition.getSituationName())) {
+        if (!isNotEmpty(searchCondition.getGender()) &&isNotEmpty(searchCondition.getSituationName())) {
             booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getSituationName()));
         }
 
-        if (isNotEmpty(searchCondition.getGender())) {
+        if (isNotEmpty(searchCondition.getGender()) && !isNotEmpty(searchCondition.getSituationName())) {
             booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getGender()));
+        }
+
+        if (isNotEmpty(searchCondition.getSituationName()) && isNotEmpty(searchCondition.getGender())) {
+            List<Long> list = queryDslConfig.jpaQueryFactory().select(itemFilter.item.id)
+                    .from(itemFilter)
+                    .where(itemFilter.name.in(searchCondition.getSituationName(), searchCondition.getGender()))
+                    .groupBy(itemFilter.item.id)
+                    .having(itemFilter.name.countDistinct().goe(2))
+                    .fetch();
+
+            booleanBuilder.and(item.id.in(list));
         }
 
         return booleanBuilder;

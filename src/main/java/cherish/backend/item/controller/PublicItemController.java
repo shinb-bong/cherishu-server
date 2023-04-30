@@ -9,9 +9,10 @@ import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,24 +22,7 @@ public class PublicItemController {
     private final ItemService itemService;
 
     @GetMapping("/search")
-    public Page<ItemSearchResponseDto> searchItemWithFilter(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String categoryName,
-            @RequestParam(required = false) String jobName,
-            @RequestParam(required = false) String situationName,
-            @RequestParam(required = false) String gender,
-            @CurrentUser Member member, Pageable pageable) {
-        ItemSearchCondition condition = new ItemSearchCondition();
-
-        condition.setKeyword(keyword);
-        if (categoryName != null && !categoryName.isEmpty()) {
-            List<String> categories = List.of(categoryName.split(","));
-            condition.setCategoryName(categories);
-        }
-        condition.setJobName(jobName);
-        condition.setSituationName(situationName);
-        condition.setGender(gender);
-
+    public Page<ItemSearchResponseDto> searchItemWithFilter(ItemSearchCondition condition, @CurrentUser Member member, Pageable pageable) {
         return itemService.searchItem(condition, member, pageable);
     }
 
