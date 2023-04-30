@@ -1,6 +1,7 @@
 package cherish.backend.item.controller;
 
 import cherish.backend.auth.security.CurrentUser;
+import cherish.backend.item.constant.ItemSortConstants;
 import cherish.backend.item.dto.ItemInfoViewDto;
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchResponseDto;
@@ -14,20 +15,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Set;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/public/item")
 public class PublicItemController {
 
     private final ItemService itemService;
-    private final List<String> sortOptions = List.of("추천", "인기", "최신", "고가", "저가");
 
     @GetMapping("/search")
     public Page<ItemSearchResponseDto> searchItemWithFilter(ItemSearchCondition condition, @CurrentUser Member member, Pageable pageable) {
-        if (condition.getSort() != null && !sortOptions.contains(condition.getSort())) {
+        if (condition.getSort() != null && !ItemSortConstants.SORT_OPTIONS.contains(condition.getSort())) {
             throw new IllegalArgumentException("지원하지 않는 정렬입니다: " + condition.getSort());
         }
         return itemService.searchItem(condition, member, pageable);
