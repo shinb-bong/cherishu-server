@@ -74,6 +74,7 @@ public class SecurityConfig {
 
         corsProperties.getAllowedOrigins().forEach(config::addAllowedOrigin);
         corsProperties.getAllowedMethods().forEach(config::addAllowedMethod);
+        corsProperties.getAllowedHeaders().forEach(config::addAllowedHeader);
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
