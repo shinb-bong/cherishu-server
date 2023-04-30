@@ -67,6 +67,7 @@ cors:
     - OPTIONS
   allowed-origins:
     - https://cherishu.firebaseapp.com
+    - https://cherishu.web.app
 ---
 spring:
   config:
