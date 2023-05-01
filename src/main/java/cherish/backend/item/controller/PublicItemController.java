@@ -1,6 +1,7 @@
 package cherish.backend.item.controller;
 
 import cherish.backend.auth.security.CurrentUser;
+import cherish.backend.item.constant.ItemSortConstants;
 import cherish.backend.item.dto.ItemInfoViewDto;
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchResponseDto;
@@ -23,6 +24,9 @@ public class PublicItemController {
 
     @GetMapping("/search")
     public Page<ItemSearchResponseDto> searchItemWithFilter(ItemSearchCondition condition, @CurrentUser Member member, Pageable pageable) {
+        if (condition.getSort() != null && !ItemSortConstants.SORT_OPTIONS.contains(condition.getSort())) {
+            throw new IllegalArgumentException("지원하지 않는 정렬입니다: " + condition.getSort());
+        }
         return itemService.searchItem(condition, member, pageable);
     }
 
