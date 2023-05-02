@@ -23,6 +23,7 @@ public class MonthlyCurationResponseDto {
         private String brand;
         private String description;
         private int price;
+        private String imgUrl;
         private boolean like;
 
         public static CurationItem of(MonthlyCurationQueryDto queryDto) {
@@ -31,6 +32,7 @@ public class MonthlyCurationResponseDto {
                 .brand(queryDto.getBrand())
                 .description(queryDto.getDescription())
                 .price(queryDto.getPrice())
+                .imgUrl(queryDto.getImgUrl())
                 .like(queryDto.isLike())
                 .build();
         }

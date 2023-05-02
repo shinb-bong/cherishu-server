@@ -13,10 +13,11 @@ public class MonthlyCurationQueryDto {
     private String brand;
     private String description;
     private int price;
+    private String imgUrl;
     private boolean like;
 
     @QueryProjection
-    public MonthlyCurationQueryDto(long id, String title, String subtitle, String img, String name, String brand, String description, int price, boolean like) {
+    public MonthlyCurationQueryDto(long id, String title, String subtitle, String img, String name, String brand, String description, int price, String imgUrl, boolean like) {
         this.id = id;
         this.title = title;
         this.subtitle = subtitle;
@@ -25,6 +26,7 @@ public class MonthlyCurationQueryDto {
         this.brand = brand;
         this.description = description;
         this.price = price;
+        this.imgUrl = imgUrl;
         this.like = like;
     }
 }
