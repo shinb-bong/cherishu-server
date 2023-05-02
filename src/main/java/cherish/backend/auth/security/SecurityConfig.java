@@ -1,13 +1,17 @@
 package cherish.backend.auth.security;
 
+import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.auth.jwt.filter.JwtAuthenticationFilter;
 import cherish.backend.auth.jwt.filter.JwtExceptionFilter;
-import cherish.backend.auth.jwt.JwtTokenProvider;
 import cherish.backend.common.config.cors.CorsProperties;
+import cherish.backend.common.dto.ErrorResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,12 +19,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.io.PrintWriter;
 
 @EnableConfigurationProperties(CorsProperties.class)
 @Configuration
@@ -49,6 +56,9 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
         return http
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedEntryPoint)
+                .and()
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -82,4 +92,12 @@ public class SecurityConfig {
         return source;
     }
 
+    private final AuthenticationEntryPoint unauthorizedEntryPoint = (request, response, authException) -> {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        String json = new ObjectMapper().writeValueAsString(new ErrorResponseDto("Authentication is required."));
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        PrintWriter writer = response.getWriter();
+        writer.write(json);
+        writer.flush();
+    };
 }
