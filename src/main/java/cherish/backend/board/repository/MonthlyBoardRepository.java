@@ -37,6 +37,7 @@ public class MonthlyBoardRepository {
                         item.brand,
                         item.description,
                         item.price,
+                        item.imgUrl,
                         Expressions.asBoolean(false)
                     )
                 )
@@ -59,6 +60,7 @@ public class MonthlyBoardRepository {
                     item.brand,
                     item.description,
                     item.price,
+                    item.imgUrl,
                     JPAExpressions
                         .select(itemLike.id)
                         .from(itemLike)

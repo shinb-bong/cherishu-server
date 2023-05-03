@@ -77,7 +77,7 @@ public class ItemSearchServiceTest {
 
         ItemSearchCondition condition = new ItemSearchCondition();
         condition.setKeyword(keyword);
-        condition.setCategoryName(Collections.singletonList(category.getName()));
+        condition.setCategoryName(Collections.singleton(category.getName()));
 
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
 
