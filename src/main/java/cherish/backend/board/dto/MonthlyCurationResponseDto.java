@@ -19,6 +19,7 @@ public class MonthlyCurationResponseDto {
     @Builder
     @Data
     public static class CurationItem {
+        private long id;
         private String name;
         private String brand;
         private String description;
@@ -28,6 +29,7 @@ public class MonthlyCurationResponseDto {
 
         public static CurationItem of(MonthlyCurationQueryDto queryDto) {
             return CurationItem.builder()
+                .id(queryDto.getItemId())
                 .name(queryDto.getName())
                 .brand(queryDto.getBrand())
                 .description(queryDto.getDescription())
