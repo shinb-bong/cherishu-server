@@ -33,10 +33,12 @@ public class MonthlyBoardRepository {
                         monthlyBoard.title,
                         monthlyBoard.subTitle,
                         monthlyBoard.imgUrl,
+                        item.id,
                         item.name,
                         item.brand,
                         item.description,
                         item.price,
+                        item.imgUrl,
                         Expressions.asBoolean(false)
                     )
                 )
@@ -55,10 +57,12 @@ public class MonthlyBoardRepository {
                     monthlyBoard.title,
                     monthlyBoard.subTitle,
                     monthlyBoard.imgUrl,
+                    item.id,
                     item.name,
                     item.brand,
                     item.description,
                     item.price,
+                    item.imgUrl,
                     JPAExpressions
                         .select(itemLike.id)
                         .from(itemLike)

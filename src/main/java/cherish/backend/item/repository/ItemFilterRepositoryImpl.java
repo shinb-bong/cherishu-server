@@ -1,32 +1,36 @@
 package cherish.backend.item.repository;
 
 import cherish.backend.common.config.QueryDslConfig;
+import cherish.backend.item.constant.ItemSortConstants;
 import cherish.backend.item.dto.*;
 import cherish.backend.member.model.Member;
 import cherish.backend.member.model.QMember;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static cherish.backend.category.model.QCategory.*;
-import static cherish.backend.category.model.QFilter.*;
-import static cherish.backend.item.model.QItem.*;
-import static cherish.backend.item.model.QItemCategory.*;
-import static cherish.backend.item.model.QItemFilter.*;
+import static cherish.backend.category.model.QCategory.category;
+import static cherish.backend.category.model.QFilter.filter;
+import static cherish.backend.item.model.QItem.item;
+import static cherish.backend.item.model.QItemCategory.itemCategory;
+import static cherish.backend.item.model.QItemFilter.itemFilter;
 import static cherish.backend.item.model.QItemJob.itemJob;
-import static cherish.backend.item.model.QItemLike.*;
+import static cherish.backend.item.model.QItemLike.itemLike;
 import static cherish.backend.member.model.QJob.job;
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor
 public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
@@ -82,7 +86,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
 
         List<ItemSearchResponseDto> content = queryDslConfig.jpaQueryFactory()
                 .selectDistinct(Projections.constructor(ItemSearchResponseDto.class,
-                        item.id, item.name, item.brand, item.description, item.price, item.imgUrl, isLiked.as("isLiked")))
+                        item.id, item.name, item.brand, item.description, item.price, item.imgUrl, isLiked.as("isLiked"), item.views, item.modifiedDate))
                 .from(item)
                 .leftJoin(item.itemFilters, itemFilter)
                 .leftJoin(item.itemJobs, itemJob)
@@ -93,7 +97,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .leftJoin(itemLike).on(item.id.eq(itemLike.item.id).and(member != null ? itemLike.member.id.eq(member.getId()) : null))
                 .leftJoin(itemLike.member, QMember.member)
                 .where(getSearchCondition(searchCondition))
-                .orderBy(item.id.asc()) // 기본 정렬
+                .orderBy(getOrderSpecifier(searchCondition.getSort())) // 기본 정렬
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -113,6 +117,20 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .distinct();
 
         return PageableExecutionUtils.getPage(content, pageable, total::fetchFirst);
+    }
+
+    private OrderSpecifier<?> getOrderSpecifier(final String sort) {
+        if (StringUtils.isEmpty(sort)) {
+            return new OrderSpecifier<>(Order.ASC, item.id);
+        }
+        return switch (sort) {
+            case ItemSortConstants.MOST_RECOMMENDED -> new OrderSpecifier<>(Order.ASC, item.id);
+            case ItemSortConstants.MOST_POPULAR -> new OrderSpecifier<>(Order.DESC, item.views);
+            case ItemSortConstants.LATEST -> new OrderSpecifier<>(Order.DESC, item.modifiedDate);
+            case ItemSortConstants.MOST_EXPENSIVE -> new OrderSpecifier<>(Order.DESC, item.price);
+            case ItemSortConstants.LEAST_EXPENSIVE -> new OrderSpecifier<>(Order.ASC, item.price);
+            default -> throw new IllegalArgumentException("Sort error");
+        };
     }
 
     private BooleanBuilder getSearchCondition(ItemSearchCondition searchCondition) {

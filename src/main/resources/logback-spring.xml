@@ -7,6 +7,8 @@
     <springProfile name="local">
         <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
         <logger name="cherish.backend" level="DEBUG"/>
+        <logger name="org.springframework.web.servlet.mvc" level="DEBUG"/>
+        <logger name="org.springframework.web.cors" level="DEBUG"/>
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
@@ -25,6 +27,8 @@
                 <maxHistory>14</maxHistory>
             </rollingPolicy>
         </appender>
+        <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor" level="DEBUG"/>
+        <logger name="org.springframework.web.cors.DefaultCorsProcessor" level="DEBUG"/>
         <root level="INFO">
             <appender-ref ref="FILE"/>
         </root>
