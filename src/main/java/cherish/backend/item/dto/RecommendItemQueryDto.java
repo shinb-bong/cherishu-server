@@ -13,19 +13,21 @@ public class RecommendItemQueryDto {
     private String name;
     private String brand;
     private int price;
+    private Long monthlyBoardId;
     private String imgUrl;
     private boolean like;
     private String title;
     private String subtitle;
 
     @QueryProjection
-    public RecommendItemQueryDto(Long recommendId, String bannerUrl, Long itemId, String name, String brand, int price, String imgUrl, boolean like, String title, String subtitle) {
+    public RecommendItemQueryDto(Long recommendId, String bannerUrl, Long itemId, String name, String brand, int price, Long monthlyBoardId, String imgUrl, boolean like, String title, String subtitle) {
         this.recommendId = recommendId;
         this.bannerUrl = bannerUrl;
         this.itemId = itemId;
         this.name = name;
         this.brand = brand;
         this.price = price;
+        this.monthlyBoardId = monthlyBoardId;
         this.imgUrl = imgUrl;
         this.like = like;
         this.title = title;

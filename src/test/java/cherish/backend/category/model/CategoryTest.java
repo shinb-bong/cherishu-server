@@ -1,6 +1,5 @@
 package cherish.backend.category.model;
 
-import cherish.backend.category.model.Category;
 import cherish.backend.category.repository.CategoryRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
