@@ -15,7 +15,7 @@ public class PageResponse<T> {
     public PageResponse(Page<T> page) {
         this.data = page.getContent();
         this.pageInfo = PageInfo.builder()
-            .pageNumber(page.getNumber())
+            .pageNumber(page.getNumber() + 1)
             .pageSize(page.getSize())
             .totalPages(page.getTotalPages())
             .totalElements(page.getTotalElements())
