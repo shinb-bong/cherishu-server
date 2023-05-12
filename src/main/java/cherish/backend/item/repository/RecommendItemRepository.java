@@ -39,15 +39,16 @@ public class RecommendItemRepository {
                 .leftJoin(recommendItem.recommend, recommend)
                 .leftJoin(item.monthlyBoardItems, monthlyBoardItem)
                 .leftJoin(monthlyBoardItem.monthlyBoard, monthlyBoard)
+                .leftJoin(recommendItem.item.itemLikes, itemLike)
                 .where(
-                        member != null ? itemLike.member.id.eq(member.getId()) : null,
-                        monthlyBoard.id.in(
-                                JPAExpressions
-                                        .select(QMonthlyBoard.monthlyBoard.id.min())
-                                        .from(QMonthlyBoard.monthlyBoard)
-                                        .where(QMonthlyBoard.monthlyBoard.month.in(months))
-                                        .groupBy(QMonthlyBoard.monthlyBoard.month)
-                                )
+                        member != null ? itemLike.member.id.eq(member.getId()) : null
+//                        monthlyBoard.id.in(
+//                                JPAExpressions
+//                                        .select(QMonthlyBoard.monthlyBoard.id.min())
+//                                        .from(QMonthlyBoard.monthlyBoard)
+//                                        .where(QMonthlyBoard.monthlyBoard.month.in(months))
+//                                        .groupBy(QMonthlyBoard.monthlyBoard.month)
+//                                )
                 )
                 .fetch();
     }

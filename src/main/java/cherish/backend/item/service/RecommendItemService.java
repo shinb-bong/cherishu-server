@@ -5,7 +5,6 @@ import cherish.backend.item.dto.RecommendItemResponseDto;
 import cherish.backend.item.repository.RecommendItemRepository;
 import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RecommendItemService {
@@ -26,7 +24,6 @@ public class RecommendItemService {
 
         Map<Long, List<RecommendItemQueryDto>> recommendItemMap = recommendItemList.stream()
                 .collect(Collectors.groupingBy(RecommendItemQueryDto::getRecommendId));
-
         List<RecommendItemResponseDto> result = recommendItemMap.entrySet().stream()
                 .map(entry -> {
                     List<RecommendItemResponseDto.RecommendItemDto> recommendItemDtos = entry.getValue().stream()
@@ -38,7 +35,7 @@ public class RecommendItemService {
                     responseDto.setTitle(itemQueryDto.getTitle());
                     responseDto.setSubtitle(itemQueryDto.getSubtitle());
                     responseDto.setRecommendItemList(recommendItemDtos);
-                    responseDto.setBannerUrl(itemQueryDto.getBannerUrl());
+                    responseDto.setBannerUrl(entry.getValue().get(0).getBannerUrl());
 
                     return responseDto;
                 })
