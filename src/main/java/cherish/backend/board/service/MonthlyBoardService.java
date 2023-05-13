@@ -3,7 +3,7 @@ package cherish.backend.board.service;
 import cherish.backend.board.dto.MonthlyCurationResponseDto;
 import cherish.backend.board.dto.query.MonthlyCurationQueryDto;
 import cherish.backend.board.dto.query.condition.MonthlyCurationCondition;
-import cherish.backend.board.repository.MonthlyBoardRepository;
+import cherish.backend.board.repository.MonthlyBoardRepositoryCustom;
 import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class MonthlyBoardService {
-    private final MonthlyBoardRepository monthlyBoardRepository;
+    private final MonthlyBoardRepositoryCustom monthlyBoardRepository;
 
     public List<MonthlyCurationResponseDto> getMonthlyCurationList(int year, int month, Member member) {
         List<MonthlyCurationResponseDto> result = new ArrayList<>();
