@@ -5,7 +5,7 @@ server:
       cookie:
         same-site: none
         secure: true
-        domain: https://cherishu.web.app
+        domain: cherishu.web.app
 
 spring:
   datasource:
