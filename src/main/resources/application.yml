@@ -10,7 +10,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8008 #admin server url
+        url: http://localhost:6061 #admin server url
         instance:
           name: Cherishu Server #admin UI 에서 보여질 이름 설정
 
