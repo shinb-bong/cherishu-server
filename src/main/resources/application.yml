@@ -1,5 +1,10 @@
 server:
   shutdown: graceful # 정상적인 종료
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true
 
 spring:
   datasource:
