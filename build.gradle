@@ -67,11 +67,13 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'de.codecentric:spring-boot-admin-starter-client:2.6.2'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
 
 // Querydsl 설정부
 def generated = 'src/main/generated'

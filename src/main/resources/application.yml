@@ -5,7 +5,15 @@ server:
       cookie:
         same-site: none
         secure: true
+
 spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:8008 #admin server url
+        instance:
+          name: Cherishu Server #admin UI 에서 보여질 이름 설정
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu?stringtype=unspecified
