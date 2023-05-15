@@ -5,7 +5,6 @@ server:
       cookie:
         same-site: none
         secure: true
-
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -95,6 +94,8 @@ management:
       enabled: true
     loggers:
       enabled: true
+    httpexchanges:
+      enabled: true
 
   endpoints:
     jmx:
@@ -103,10 +104,9 @@ management:
     web:
       base-path: /monitor
       exposure:
-        include: "info, health"
+        include: "info, health, httpexchanges, loggers"
   server:
     port: 9292
-
 ---
 spring:
   config:
