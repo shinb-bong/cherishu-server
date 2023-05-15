@@ -93,6 +93,8 @@ management:
       show-components: always
     info:
       enabled: true
+    loggers:
+      enabled: true
 
   endpoints:
     jmx:
