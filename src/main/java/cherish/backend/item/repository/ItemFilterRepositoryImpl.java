@@ -103,7 +103,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .fetch();
 
         JPAQuery<Long> total = queryDslConfig.jpaQueryFactory()
-                .select(item.id.count())
+                .select(item.id.countDistinct())
                 .from(item)
                 .leftJoin(item.itemFilters, itemFilter)
                 .leftJoin(item.itemJobs, itemJob)
@@ -113,8 +113,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                 .leftJoin(itemCategory.category, category)
                 .leftJoin(itemLike).on(item.id.eq(itemLike.item.id).and(member != null ? itemLike.member.id.eq(member.getId()) : null))
                 .leftJoin(itemLike.member, QMember.member)
-                .where(getSearchCondition(searchCondition))
-                .distinct();
+                .where(getSearchCondition(searchCondition));
 
         return PageableExecutionUtils.getPage(content, pageable, total::fetchFirst);
     }

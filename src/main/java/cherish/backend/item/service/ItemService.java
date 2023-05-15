@@ -1,5 +1,6 @@
 package cherish.backend.item.service;
 
+import cherish.backend.common.dto.PageResponse;
 import cherish.backend.item.dto.*;
 import cherish.backend.item.model.Item;
 import cherish.backend.item.repository.ItemFilterRepository;
@@ -28,9 +29,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public Page<ItemSearchResponseDto> searchItem(ItemSearchCondition searchCondition, Member member, Pageable pageable) {
         Page<ItemSearchResponseDto> response = itemFilterRepository.searchItem(searchCondition, member, pageable);
-        long total = response.getTotalElements();
-
-        return new PageImpl<>(response.getContent(), pageable, total);
+        return response;
     }
 
     public ItemInfoViewDto findItemInfo(Long itemId, Member member) {
