@@ -46,7 +46,16 @@ public class PublicMemberController {
             .secure(true)
             .httpOnly(true)
             .build();
+
+        // 임시
+        ResponseCookie tmp = ResponseCookie.from("__session", "test")
+            .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
+            .path("/")
+            .secure(true)
+            .httpOnly(true)
+            .build();
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.setHeader(HttpHeaders.SET_COOKIE, tmp.toString());
         return token.toResponseDto();
     }
     // 비밀번호 수정
