@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -43,19 +44,11 @@ public class PublicMemberController {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, token.getRefreshToken())
             .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
             .path("/")
+            .sameSite(Cookie.SameSite.NONE.attributeValue())
             .secure(true)
             .httpOnly(true)
             .build();
-
-        // 임시
-        ResponseCookie tmp = ResponseCookie.from("__session", "test")
-            .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
-            .path("/")
-            .secure(true)
-            .httpOnly(true)
-            .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, tmp.toString());
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return token.toResponseDto();
     }
     // 비밀번호 수정

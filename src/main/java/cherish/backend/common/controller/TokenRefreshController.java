@@ -31,6 +31,7 @@ public class TokenRefreshController {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, token.getRefreshToken())
             .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
             .path("/")
+            .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
             .secure(true)
             .httpOnly(true)
             .build();
