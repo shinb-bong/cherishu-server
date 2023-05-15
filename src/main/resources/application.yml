@@ -83,6 +83,26 @@ cors:
     - X-Requested-With
     - Content-Type
     - Accept
+
+management:
+  endpoint:
+    endpoints:
+      enabled-by-default: false
+    health:
+      enabled: true
+    info:
+      enabled: true
+  endpoints:
+    jmx:
+      exposure:
+        exclude: *
+    web:
+      base-path: /monitor
+      exposure:
+        include: info, health
+  server:
+    port: 9292
+
 ---
 spring:
   config:
