@@ -90,8 +90,10 @@ management:
       enabled-by-default: false
     health:
       enabled: true
+      show-components: always
     info:
       enabled: true
+
   endpoints:
     jmx:
       exposure:
@@ -99,7 +101,7 @@ management:
     web:
       base-path: /monitor
       exposure:
-        include: info, health
+        include: "info, health"
   server:
     port: 9292
 
