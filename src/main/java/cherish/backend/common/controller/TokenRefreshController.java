@@ -32,7 +32,6 @@ public class TokenRefreshController {
             .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
             .path("/")
             .sameSite(org.springframework.boot.web.server.Cookie.SameSite.NONE.attributeValue())
-            .domain("cherishu.web.app")
             .secure(true)
             .httpOnly(true)
             .build();

@@ -45,7 +45,6 @@ public class PublicMemberController {
             .maxAge(jwtConfig.getRefreshTokenExpireSeconds())
             .path("/")
             .sameSite(Cookie.SameSite.NONE.attributeValue())
-            .domain("cherishu.web.app")
             .secure(true)
             .httpOnly(true)
             .build();
