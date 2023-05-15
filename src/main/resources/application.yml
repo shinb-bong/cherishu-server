@@ -99,7 +99,7 @@ management:
   endpoints:
     jmx:
       exposure:
-        exclude: *
+        exclude: "*"
     web:
       base-path: /monitor
       exposure:
