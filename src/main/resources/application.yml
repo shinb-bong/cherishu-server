@@ -97,8 +97,6 @@ cors:
     - Authorization
     
 management:
-  server:
-    port: 9292
   endpoint:
     health:
       enabled: true
