@@ -95,8 +95,6 @@ cors:
     - Authorization
     
 management:
-  server:
-    port: 9292
   endpoint:
     health:
       enabled: true
@@ -137,7 +135,8 @@ spring:
 
 logging:
   file:
-    name: /home/ubuntu/log/cherish.log
+    name: cherish.log
+    path: /home/ubuntu/log/
 ---
 spring:
   config:
