@@ -67,7 +67,7 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'de.codecentric:spring-boot-admin-starter-client:2.6.2'
+    implementation 'de.codecentric:spring-boot-admin-starter-client:3.0.4'
 }
 
 tasks.named('test') {
