@@ -141,10 +141,10 @@ management:
     web:
       include: "info, health, loggers, logfile"
 
-#logging:
-#  file:
-#    name: cherish.log
-#    path: /home/ubuntu/log/
+logging:
+  file:
+    name: cherish.log
+    path: /home/ubuntu/log/
 ---
 spring:
   config:
