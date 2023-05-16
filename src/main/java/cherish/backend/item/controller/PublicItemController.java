@@ -6,7 +6,9 @@ import cherish.backend.item.constant.ItemSortConstants;
 import cherish.backend.item.dto.ItemInfoViewDto;
 import cherish.backend.item.dto.ItemSearchCondition;
 import cherish.backend.item.dto.ItemSearchResponseDto;
+import cherish.backend.item.dto.RecommendKeywordResponseDto;
 import cherish.backend.item.service.ItemService;
+import cherish.backend.item.service.RecommendKeywordService;
 import cherish.backend.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicItemController {
 
     private final ItemService itemService;
+    private final RecommendKeywordService recommendKeywordService;
 
     @GetMapping("/search")
     public PageResponse<ItemSearchResponseDto> searchItemWithFilter(ItemSearchCondition condition, @CurrentUser Member member, Pageable pageable) {
@@ -35,5 +38,10 @@ public class PublicItemController {
     @GetMapping("/{itemId}")
     public ItemInfoViewDto findItemInformation(@PathVariable Long itemId, @CurrentUser Member member) {
         return itemService.findItemInfo(itemId, member);
+    }
+
+    @GetMapping("/recommend-keyword")
+    public RecommendKeywordResponseDto getKeywords() {
+        return recommendKeywordService.getKeywords();
     }
 }
