@@ -134,9 +134,8 @@ spring:
       on-profile: dev, main
 
 logging:
-  config: classpath:logback-spring.xml
   file:
-    path: /home/ubuntu/log/cherish.log
+    name: /home/ubuntu/log/cherish.log
 ---
 spring:
   config:
