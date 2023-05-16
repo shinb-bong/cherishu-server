@@ -114,8 +114,6 @@ management:
       exposure:
         include: "info, health, httpexchanges, loggers"
   server:
-    ssl:
-      enabled: false
     port: 9292
 ---
 spring:
