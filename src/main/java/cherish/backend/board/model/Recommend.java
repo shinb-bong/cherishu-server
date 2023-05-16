@@ -19,4 +19,5 @@ public class Recommend {
 
     private String title;
     private String subTitle;
+    private String linkParam;
 }
