@@ -7,6 +7,13 @@ server:
         secure: true
 
 spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:6061 #admin server url
+        instance:
+          name: Cherishu Server #admin UI 에서 보여질 이름 설정
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu?stringtype=unspecified
@@ -47,7 +54,6 @@ spring:
           timeout: 5000
           starttls:
             enable: true
-
 decorator:
   datasource:
     p6spy:
@@ -61,7 +67,6 @@ aws:
   ses:
     access-key: ${SES_ACCESS_KEY}
     secret-key: ${SES_SECRET_KEY}
-
 jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
   access-token-expire-time: 30m
@@ -83,13 +88,34 @@ cors:
     - X-Requested-With
     - Content-Type
     - Accept
-    - Authorization
+
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-components: always
+    info:
+      enabled: true
+    loggers:
+      enabled: true
+    httpexchanges:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    jmx:
+      exposure:
+        exclude: "*"
+    web:
+      base-path: /monitor
+      exposure:
+        include: "info, health, httpexchanges, loggers"
+  server:
+    port: 9292
 ---
 spring:
   config:
     activate:
       on-profile: local
-
 decorator:
   datasource:
     p6spy:
