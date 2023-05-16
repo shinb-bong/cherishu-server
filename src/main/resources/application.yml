@@ -107,6 +107,8 @@ management:
       enabled: true
     httpexchanges:
       enabled: true
+    logfile:
+      enabled: true
   endpoints:
     enabled-by-default: false
     jmx:
@@ -115,7 +117,7 @@ management:
     web:
       base-path: /monitor
       exposure:
-        include: "info, health, httpexchanges, loggers"
+        include: "info, health, httpexchanges, loggers, logfile"
 ---
 spring:
   config:
@@ -139,14 +141,9 @@ management:
     httpexchanges:
       enabled: false
     logfile:
-      enabled: true
+      external-file: /home/ubuntu/log/cherish.log
     web:
       include: "info, health, loggers, logfile"
-
-logging:
-  file:
-    name: cherish.log
-    path: /home/ubuntu/log/
 ---
 spring:
   config:
