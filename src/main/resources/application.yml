@@ -90,6 +90,7 @@ cors:
     - X-Requested-With
     - Content-Type
     - Accept
+    - Authorization
 
 management:
   endpoint:
