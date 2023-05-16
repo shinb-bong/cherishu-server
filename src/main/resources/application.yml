@@ -13,7 +13,7 @@ spring:
         url: http://localhost:6061 #admin server url
         instance:
           name: Cherishu Server #admin UI 에서 보여질 이름 설정
-          service-url: https://back.cherishu.kro.kr/
+          service-url: https://localhost:6061
 
   datasource:
     driver-class-name: org.postgresql.Driver
