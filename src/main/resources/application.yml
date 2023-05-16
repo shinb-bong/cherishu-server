@@ -15,6 +15,8 @@ spring:
           name: Cherishu Server #admin UI 에서 보여질 이름 설정
           management-base-url: https://back.cherishu.kro.kr
           service-url: https://back.cherishu.kro.kr
+        username: ${ADMIN_SERVER_USERNAME}
+        password: ${ADMIN_SERVER_PASSWORD}
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu?stringtype=unspecified
@@ -95,6 +97,8 @@ cors:
     - Authorization
     
 management:
+  server:
+    port: 9292
   endpoint:
     health:
       enabled: true
@@ -139,10 +143,10 @@ management:
     web:
       include: "info, health, loggers, logfile"
 
-logging:
-  file:
-    name: cherish.log
-    path: /home/ubuntu/log/
+#logging:
+#  file:
+#    name: cherish.log
+#    path: /home/ubuntu/log/
 ---
 spring:
   config:
