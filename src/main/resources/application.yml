@@ -54,6 +54,7 @@ spring:
           timeout: 5000
           starttls:
             enable: true
+
 decorator:
   datasource:
     p6spy:
@@ -67,6 +68,7 @@ aws:
   ses:
     access-key: ${SES_ACCESS_KEY}
     secret-key: ${SES_SECRET_KEY}
+
 jwt:
   secret: akwEyVBsYt9djeG77Tejkeo83yzblYcfPQye08f7MGVdjdo19A
   access-token-expire-time: 30m
@@ -116,10 +118,24 @@ spring:
   config:
     activate:
       on-profile: local
+management:
+  endpoint:
+    health:
+      show-details: always
 decorator:
   datasource:
     p6spy:
       enable-logging: true
+---
+spring:
+  config:
+    activate:
+      on-profile: dev, main
+
+logging:
+  config: classpath:logback-spring.xml
+  file:
+    path: /home/ubuntu/log/cherish.log
 ---
 spring:
   config:
@@ -136,6 +152,12 @@ spring:
 server:
   http2:
     enabled: true
+management:
+  endpoint:
+    httpexchanges:
+      enabled: false
+    web:
+      include: "info, health, loggers"
 vault.props:
   schema: http
   host: ec2-54-180-219-125.ap-northeast-2.compute.amazonaws.com
