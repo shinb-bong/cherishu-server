@@ -93,8 +93,6 @@ cors:
 
 management:
   endpoint:
-    endpoints:
-      enabled-by-default: false
     health:
       enabled: true
       show-components: always
@@ -104,8 +102,8 @@ management:
       enabled: true
     httpexchanges:
       enabled: true
-
   endpoints:
+    enabled-by-default: false
     jmx:
       exposure:
         exclude: "*"
