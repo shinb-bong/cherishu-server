@@ -132,6 +132,12 @@ spring:
   config:
     activate:
       on-profile: dev, main
+management:
+  endpoint:
+    httpexchanges:
+      enabled: false
+    web:
+      include: "info, health, loggers, logfile"
 
 logging:
   file:
@@ -153,12 +159,7 @@ spring:
 server:
   http2:
     enabled: true
-management:
-  endpoint:
-    httpexchanges:
-      enabled: false
-    web:
-      include: "info, health, loggers"
+
 vault.props:
   schema: http
   host: ec2-54-180-219-125.ap-northeast-2.compute.amazonaws.com
