@@ -10,11 +10,11 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:6061 #admin server url
+        url: https://back.cherishu.kro.kr:6061 #admin server url
         instance:
           name: Cherishu Server #admin UI 에서 보여질 이름 설정
-          management-base-url: http://localhost:8443
-          service-url: http://localhost:8443
+          management-base-url: https://back.cherishu.kro.kr:8443
+          service-url: https://back.cherishu.kro.kr:8443
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://cherishu-db.czzht1ogb1na.ap-northeast-2.rds.amazonaws.com:5432/cherishu?stringtype=unspecified
