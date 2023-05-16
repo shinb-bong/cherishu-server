@@ -91,7 +91,7 @@ cors:
     - Content-Type
     - Accept
     - Authorization
-
+    
 management:
   endpoint:
     health:
