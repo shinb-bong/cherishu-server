@@ -138,6 +138,8 @@ management:
   endpoint:
     httpexchanges:
       enabled: false
+    logfile:
+      enabled: true
     web:
       include: "info, health, loggers, logfile"
 
