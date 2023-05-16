@@ -1,6 +1,7 @@
 package cherish.backend.item.repository;
 
-import cherish.backend.item.dto.*;
+import cherish.backend.item.dto.QRecommendItemQueryDto;
+import cherish.backend.item.dto.RecommendItemQueryDto;
 import cherish.backend.member.model.Member;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static cherish.backend.board.model.QRecommend.*;
+import static cherish.backend.board.model.QRecommend.recommend;
 import static cherish.backend.item.model.QItem.item;
-import static cherish.backend.item.model.QItemLike.*;
+import static cherish.backend.item.model.QItemLike.itemLike;
 import static cherish.backend.item.model.QRecommendItem.recommendItem;
 
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class RecommendItemRepository {
 
         return queryFactory
                 .select(new QRecommendItemQueryDto(
-                        recommend.id, item.id, item.name, item.brand, item.price, item.imgUrl, like, recommend.title, recommend.subTitle)
+                        recommend.id, item.id, item.name, item.brand, item.price, item.imgUrl, like, recommend.title, recommend.subTitle, recommend.linkParam)
                 )
                 .from(recommendItem)
                 .leftJoin(recommendItem.item, item)

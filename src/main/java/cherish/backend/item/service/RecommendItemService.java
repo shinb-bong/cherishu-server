@@ -42,6 +42,7 @@ public class RecommendItemService {
                     responseDto.setTitle(itemQueryDto.getTitle());
                     responseDto.setSubtitle(itemQueryDto.getSubtitle());
                     responseDto.setRecommendItemList(recommendItemDtos);
+                    responseDto.setKeywordParameter(itemQueryDto.getLinkParam());
 
                     // refactor 필요
                     Optional<MonthlyBoard> monthlyBoard = monthlyBoardRepository.findMonthlyBoardByMonths(Collections.singletonList(5));
