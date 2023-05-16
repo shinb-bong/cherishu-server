@@ -14,6 +14,7 @@ spring:
         instance:
           name: Cherishu Server #admin UI 에서 보여질 이름 설정
 #          management-base-url: https://back.cherishu.kro.kr
+          management-base-url: https://localhost:9292
 #          service-url: https://back.cherishu.kro.kr
           service-url: https://localhost:9292
   datasource:
