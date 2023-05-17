@@ -142,8 +142,10 @@ management:
       enabled: false
     logfile:
       external-file: /home/ubuntu/log/cherish.log
+  endpoints:
     web:
-      include: "info, health, loggers, logfile"
+      exposure:
+        include: "info, health, loggers, logfile"
 server:
   http2:
     enabled: true
