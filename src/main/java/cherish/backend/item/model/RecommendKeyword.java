@@ -1,23 +1,23 @@
-package cherish.backend.board.model;
+package cherish.backend.item.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-@ToString
-public class Recommend {
+@Data
+@Entity
+public class RecommendKeyword {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
-    private String title;
-    private String subTitle;
-    private String linkParam;
+    private String value;
 }
