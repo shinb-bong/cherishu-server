@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static cherish.backend.category.model.QCategory.category;
@@ -165,20 +166,26 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
             booleanBuilder.and(job.name.containsIgnoreCase(searchCondition.getJobName()));
         }
 
-        if (!isNotEmpty(searchCondition.getGender()) &&isNotEmpty(searchCondition.getSituationName())) {
-            booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getSituationName()));
+        List<String> conditions = new ArrayList<>();
+
+        if (isNotEmpty(searchCondition.getSituationName())) {
+            conditions.add(searchCondition.getSituationName());
         }
 
-        if (isNotEmpty(searchCondition.getGender()) && !isNotEmpty(searchCondition.getSituationName())) {
-            booleanBuilder.and(itemFilter.name.containsIgnoreCase(searchCondition.getGender()));
+        if (isNotEmpty(searchCondition.getGender())) {
+            conditions.add(searchCondition.getGender());
         }
 
-        if (isNotEmpty(searchCondition.getSituationName()) && isNotEmpty(searchCondition.getGender())) {
+        if (isNotEmpty(searchCondition.getEmotionName())) {
+            conditions.add(searchCondition.getEmotionName());
+        }
+
+        if (!conditions.isEmpty()) {
             List<Long> list = queryDslConfig.jpaQueryFactory().select(itemFilter.item.id)
                     .from(itemFilter)
-                    .where(itemFilter.name.in(searchCondition.getSituationName(), searchCondition.getGender()))
+                    .where(itemFilter.name.in(conditions))
                     .groupBy(itemFilter.item.id)
-                    .having(itemFilter.name.countDistinct().goe(2))
+                    .having(itemFilter.name.countDistinct().goe(conditions.size()))
                     .fetch();
 
             booleanBuilder.and(item.id.in(list));
