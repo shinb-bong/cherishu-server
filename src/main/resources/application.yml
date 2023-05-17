@@ -144,23 +144,19 @@ management:
       external-file: /home/ubuntu/log/cherish.log
     web:
       include: "info, health, loggers, logfile"
+server:
+  http2:
+    enabled: true
 ---
 spring:
   config:
     activate:
       on-profile: dev
-server:
-  http2:
-    enabled: true
 ---
 spring:
   config:
     activate:
       on-profile: main
-server:
-  http2:
-    enabled: true
-
 vault.props:
   schema: http
   host: ec2-54-180-219-125.ap-northeast-2.compute.amazonaws.com
