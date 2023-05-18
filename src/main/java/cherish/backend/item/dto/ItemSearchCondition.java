@@ -13,5 +13,6 @@ public class ItemSearchCondition {
     private String jobName;
     private String situationName;
     private String gender;
+    private String emotionName;
     private String sort;
 }
