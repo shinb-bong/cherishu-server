@@ -22,6 +22,7 @@ public class ItemLikeRepositoryImpl implements ItemLikeRepositoryCustom{
                 .leftJoin(itemLike.item, item)
                 .leftJoin(itemLike.member, QMember.member)
                 .where(itemLike.member.eq(member))
+                .orderBy(itemLike.id.desc())
                 .fetch();
     }
 
