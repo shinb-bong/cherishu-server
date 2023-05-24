@@ -28,9 +28,14 @@ public class ItemLikeService {
     public Long likeItem(Member member, Long itemId){
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalStateException(ItemConstant.ITEM_NOT_FOUND));
         ItemLike itemLike = ItemLike.createItemLike(member, item);
-        itemLikeRepository.save(itemLike);
+        if (itemLikeRepository.findItemLikeByItemIdAndMember(itemId, member).isEmpty()) {
+            itemLikeRepository.save(itemLike);
+        } else {
+            throw new IllegalStateException(ItemConstant.ITEM_LIKE_EXISTS);
+        }
         return itemLike.getId();
     }
+
     // 삭제
     @Transactional
     public void deleteLikeItem(Long itemId, String email){

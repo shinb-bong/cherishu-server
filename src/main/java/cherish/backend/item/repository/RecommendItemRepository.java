@@ -26,7 +26,7 @@ public class RecommendItemRepository {
     private final JPAQueryFactory queryFactory;
 
     public List<RecommendItemQueryDto> getRecommendItemList(Member member) {
-        BooleanExpression like = Expressions.asBoolean(false);
+        BooleanExpression like = member != null ? new CaseBuilder().when(itemLike.member.eq(member)).then(true).otherwise(false) : Expressions.asBoolean(false);
 
         JPAQuery<RecommendItemQueryDto> query = queryFactory
                 .select(new QRecommendItemQueryDto(
@@ -38,18 +38,7 @@ public class RecommendItemRepository {
 
         if (member != null) {
             query = query.leftJoin(recommendItem.item.itemLikes, itemLike)
-                    .on(itemLike.member.eq(member).and(itemLike.item.eq(item)))
-                    .where(itemLike.id.in(
-                            JPAExpressions.select(itemLike.id)
-                                    .from(itemLike)
-                                    .where(itemLike.member.eq(member), itemLike.item.eq(item))
-                                    .groupBy(itemLike.item.id)
-                                    .having(itemLike.item.id.count().gt(1))
-                    ));
-            like = new CaseBuilder()
-                    .when(itemLike.id.isNotNull())
-                    .then((Predicate) Expressions.asBoolean(true))
-                    .otherwise(Expressions.asBoolean(false));
+                    .on(itemLike.member.eq(member).and(itemLike.item.eq(item)));
         }
 
         return query.fetch();
