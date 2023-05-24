@@ -35,6 +35,7 @@ public class RecommendItemService {
                 .map(entry -> {
                     List<RecommendItemResponseDto.RecommendItemDto> recommendItemDtos = entry.getValue().stream()
                             .map(RecommendItemResponseDto.RecommendItemDto::item)
+                            .distinct()
                             .toList();
 
                     RecommendItemQueryDto itemQueryDto = entry.getValue().get(0);

@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class ItemSearchControllerTest {
         List<ItemSearchResponseDto> expected = Arrays.asList(
                 new ItemSearchResponseDto(1008L, "캐롯 카로틴 카밍 워터 패드 (250g, 60매)", "스킨푸드",
                         "스킨푸드의 베스트셀러, 당근패드에요. 자연의 당근씨 오일에서 얻은 베타카로틴 성분이 함유되어 있어 무너진 피부 컨디션을 진정시켜줘요.",
-                        26000, "https://firebasestorage.googleapis.com/v0/b/quickstart-1606792103333.appspot.com/o/img%2Fitem%2F01008.png?alt=media", false));
+                        26000, "https://firebasestorage.googleapis.com/v0/b/quickstart-1606792103333.appspot.com/o/img%2Fitem%2F01008.png?alt=media", false, 5, LocalDate.now()));
         Page<ItemSearchResponseDto> page = new PageImpl<>(expected, pageable, 20);
 
         given(itemService.searchItem(condition, member, pageable)).willReturn(page);
