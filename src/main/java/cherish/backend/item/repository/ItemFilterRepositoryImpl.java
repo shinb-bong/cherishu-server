@@ -146,7 +146,7 @@ public class ItemFilterRepositoryImpl implements ItemFilterRepositoryCustom{
                             .or(job.name.contains(keyword))
                             .or(itemJob.job.name.contains(keyword))
                             .or(filter.name.contains(keyword))
-                            .or(itemFilter.filter.name.contains(keyword))
+                            .or(itemFilter.name.contains(keyword))
             );
         }
 
