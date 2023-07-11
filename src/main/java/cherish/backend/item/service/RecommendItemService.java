@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,7 +45,7 @@ public class RecommendItemService {
                     responseDto.setKeywordParameter(itemQueryDto.getLinkParam());
 
                     // refactor 필요
-                    Optional<MonthlyBoard> monthlyBoard = monthlyBoardRepository.findMonthlyBoardByMonths(Collections.singletonList(5));
+                    Optional<MonthlyBoard> monthlyBoard = monthlyBoardRepository.findLatestMonthlyBoard();
                     responseDto.setBannerUrl(monthlyBoard.get().getImgUrl());
                     return responseDto;
                 })
